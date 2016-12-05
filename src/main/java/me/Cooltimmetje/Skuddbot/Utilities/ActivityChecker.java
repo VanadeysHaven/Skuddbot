@@ -1,0 +1,55 @@
+package me.Cooltimmetje.Skuddbot.Utilities;
+
+import me.Cooltimmetje.Skuddbot.Profiles.Server;
+import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TimerTask;
+
+/**
+ * Created by Tim on 9/13/2016.
+ */
+public class ActivityChecker extends TimerTask {
+
+    /**
+     * This checks if a user is active or not, runs every 10 minutes.
+     * When it runs, we set every active user to inactive, and inactive (those that were inactive prior to setting everyone inactive) users are saved to the database and unloaded.
+     */
+    public void run(){
+        Logger.info("Activity check running...");
+
+        for(Server server : ServerManager.servers.values()){
+            ArrayList<SkuddUser> done = new ArrayList<>();
+            ArrayList<SkuddUser> inactiveDiscord = new ArrayList<>();
+            ArrayList<SkuddUser> inactiveTwitch = new ArrayList<>();
+            HashMap<String,SkuddUser> discord = server.discordProfiles;
+            HashMap<String,SkuddUser> twitch = server.twitchProfiles;
+            for(SkuddUser user : discord.values()){
+                if(user.isInactive()){
+                    inactiveDiscord.add(user);
+                    done.add(user);
+                } else {
+                    user.setInactive(true);
+                    done.add(user);
+                }
+            }
+            twitch.values().stream().filter(user -> !done.contains(user)).forEach(user -> {
+                if (user.isInactive()) {
+                    inactiveTwitch.add(user);
+                } else {
+                    user.setInactive(true);
+                }
+            });
+
+            for(SkuddUser su : inactiveDiscord){
+                su.unload();
+            }
+            for(SkuddUser su : inactiveTwitch){
+                su.unload();
+            }
+        }
+    }
+
+}
