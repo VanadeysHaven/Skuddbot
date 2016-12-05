@@ -12,7 +12,7 @@ import sx.blah.discord.handle.obj.IMessage;
 public class ReloadGlobal {
 
     public static void run(IMessage message){
-        if (message.getAuthor().getID().equals(Constants.TIMMY_ID)){
+        if (message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
             Constants.config.clear();
             MySqlManager.loadGlobal();
             MessagesUtils.sendSuccess("Global config reloaded!", message.getChannel());

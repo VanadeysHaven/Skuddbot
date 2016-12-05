@@ -13,7 +13,7 @@ import sx.blah.discord.handle.obj.IMessage;
 public class LoadAuth {
 
     public static void run(IMessage message){
-        if (message.getAuthor().getID().equals(Constants.TIMMY_ID)){
+        if (message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
             CreateServerListener.authorized.clear();
             MySqlManager.loadAuth();
             MessagesUtils.sendSuccess("Authorized Servers reloaded.", message.getChannel());

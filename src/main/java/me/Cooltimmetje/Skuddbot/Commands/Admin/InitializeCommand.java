@@ -34,7 +34,7 @@ public class InitializeCommand {
             }
         }
         if(!hasAdmin){
-            hasAdmin = (message.getAuthor() == message.getGuild().getOwner()) || (message.getAuthor().getID().equals(Constants.TIMMY_ID));
+            hasAdmin = (message.getAuthor() == message.getGuild().getOwner()) || (Constants.adminUser.contains(message.getAuthor().getID()));
         }
         boolean weHaveAdmin = false;
         List<IRole> ourRoles = Main.getInstance().getSkuddbot().getOurUser().getRolesForGuild(message.getGuild());

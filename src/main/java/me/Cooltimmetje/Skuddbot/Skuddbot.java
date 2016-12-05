@@ -84,7 +84,7 @@ public class Skuddbot {
     public void onMention(MentionEvent event){
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
-                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_ID)) {
+                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)) {
                     MessagesUtils.sendSuccess("Well, okay then...\n`Shutting down...`", event.getMessage().getChannel());
                     Main.stopTimer();
                     ServerManager.saveAll();

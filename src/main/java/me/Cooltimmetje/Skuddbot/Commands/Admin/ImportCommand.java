@@ -22,7 +22,7 @@ import java.util.List;
 public class ImportCommand {
 
     public static void run(IMessage message) throws IOException {
-        if (message.getAuthor().getID().equals(Constants.TIMMY_ID)){
+        if (message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
             File file = new File("/skuddbot/import.txt");
             int imported = 0;
 

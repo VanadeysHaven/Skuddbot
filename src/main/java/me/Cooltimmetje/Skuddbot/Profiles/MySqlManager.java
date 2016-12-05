@@ -17,7 +17,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 /**
- * Created by Tim on 8/15/2016.
+ * This class handles everything to do with the database, and contains all operations we can run on the database.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class MySqlManager {
 
@@ -851,6 +855,248 @@ public class MySqlManager {
             if(ps != null){
                 try {
                     ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a request to the database to add a awesome user to the database.
+     *
+     * @param id The Discord ID associated with the person we want to add.
+     */
+    public static void addAwesome(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO awesome_users VALUES(?);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a request to the database to remove a awesome user form the database.
+     *
+     * @param id The Discord ID associated with the person we want to remove.
+     */
+    public static void removeAwesome(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "DELETE FROM awesome_users WHERE id=?;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * This loads all awesome ID's (users) from the database and adds them to the ArrayList.
+     */
+    public static void loadAwesome(){
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM awesome_users;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                Constants.awesomeUser.add(rs.getString(1));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a request to the database to add a Admin user to the database.
+     *
+     * @param id The Discord ID associated with the person we want to add.
+     */
+    public static void addAdmin(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO admin_users VALUES(?);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a request to the database to remove a admin user form the database.
+     *
+     * @param id The Discord ID associated with the person we want to remove.
+     */
+    public static void removeAdmin(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "DELETE FROM admin_users WHERE id=?;;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * This loads all admin ID's (users) from the database and adds them to the ArrayList.
+     */
+    public static void loadAdmin(){
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM admin_users;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                Constants.adminUser.add(rs.getString(1));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

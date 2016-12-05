@@ -2,10 +2,15 @@ package me.Cooltimmetje.Skuddbot.Utilities;
 
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Tim on 8/2/2016.
+ * This will class holds lots of data, mostly global data.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class Constants {
 
@@ -31,5 +36,8 @@ public class Constants {
 
     public static HashMap<String,SkuddUser> verifyCodes = new HashMap<>();
     public static HashMap<String,String> config = new HashMap<>();
+
+    public static ArrayList<String> awesomeUser = new ArrayList<>();
+    public static ArrayList<String> adminUser = new ArrayList<>();
 
 }

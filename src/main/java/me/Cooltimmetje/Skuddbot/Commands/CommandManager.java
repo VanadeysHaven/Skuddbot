@@ -1,16 +1,27 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AdminManager;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AwesomeManager;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 
 import java.io.IOException;
 
 /**
- * Created by Tim on 8/2/2016.
+ * This class handles everything commands, and triggers the right bit of code to process the command!
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class CommandManager {
 
+    /**
+     * EVENT: This event gets triggered when a message gets posted, it will check for a command and then run the code to process that command.
+     *
+     * @param event The event that the message triggered.
+     */
     @EventSubscriber
     public void onMessage(MessageReceivedEvent event){
         if(!event.getMessage().getChannel().isPrivate()) {
@@ -57,6 +68,18 @@ public class CommandManager {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    break;
+                case "!addawesome":
+                    AwesomeManager.add(event.getMessage());
+                    break;
+                case "!removeawesome":
+                    AwesomeManager.remove(event.getMessage());
+                    break;
+                case "!addadmin":
+                    AdminManager.add(event.getMessage());
+                    break;
+                case "!removeadmin":
+                    AdminManager.remove(event.getMessage());
                     break;
             }
         } else {

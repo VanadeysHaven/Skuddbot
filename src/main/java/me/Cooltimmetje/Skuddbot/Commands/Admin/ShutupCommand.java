@@ -13,7 +13,7 @@ public class ShutupCommand {
     @EventSubscriber
     public void onMention(MentionEvent event){
 
-        if(event.getMessage().getAuthor().getID().equals(Constants.TIMMY_ID)){
+        if(event.getMessage().getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
             if(event.getMessage().getContent().split(" ").length > 1){
                 if(event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("shutup")){
                     Constants.MUTED = !Constants.MUTED;

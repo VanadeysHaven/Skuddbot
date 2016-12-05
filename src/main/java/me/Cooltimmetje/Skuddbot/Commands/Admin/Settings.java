@@ -20,7 +20,7 @@ public class Settings {
 
     public static void run(IMessage message){
         Server server = ServerManager.getServer(message.getGuild().getID());
-        if ((server.getAdminRole() != null && message.getAuthor().getRolesForGuild(message.getGuild()).contains(message.getGuild().getRolesByName(server.getAdminRole()).get(0))) || message.getAuthor() == message.getGuild().getOwner() || message.getAuthor().getID().equals(Constants.TIMMY_ID)) {
+        if ((server.getAdminRole() != null && message.getAuthor().getRolesForGuild(message.getGuild()).contains(message.getGuild().getRolesByName(server.getAdminRole()).get(0))) || message.getAuthor() == message.getGuild().getOwner() || Constants.adminUser.contains(message.getAuthor().getID())) {
             if(message.getContent().split(" ").length == 1){
                 StringBuilder sb = new StringBuilder();
 
@@ -78,11 +78,11 @@ public class Settings {
 
                 if(setting == SettingsInfo.TWITCH_CHANNEL && !message.getContent().split(" ")[2].equalsIgnoreCase("null")){
                     SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
-                    if(su.getTwitchUsername() == null && !su.getId().equals(Constants.TIMMY_ID)){
+                    if(su.getTwitchUsername() == null && !Constants.adminUser.contains(message.getAuthor().getID())){
                         MessagesUtils.sendError("You do not have a Twitch Account linked, type '!twitch' to get started with linking!", message.getChannel());
                         return;
                     }
-                    if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !su.getId().equals(Constants.TIMMY_ID)){
+                    if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !Constants.adminUser.contains(message.getAuthor().getID())){
                         MessagesUtils.sendError("You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact Tim.)", message.getChannel());
                         return;
                     }

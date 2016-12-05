@@ -1,32 +1,34 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Main;
+import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Status;
 
 /**
- * Created by Tim on 8/2/2016.
+ * This command changes the playing status of Skuddbot.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class GameCommand {
 
     /**
-     * This command will change the "playing" status of Skuddbot to whatever gets specified, not avaialble to everyone.
+     * CMD: This command will change the "playing" status of Skuddbot to whatever gets specified, only available to Awesome users.
      *
      * @param message This is the message that ran the command, and contains the arguments.
      */
-
     public static void run(IMessage message){
         String msgContent = message.getContent(); //Message content.
         IChannel channel = message.getChannel(); //Channel to send the confirmation message to
         IUser user = message.getAuthor(); //User that sent the message - Used to check the permissions.
-        IGuild rayGuild = Main.getInstance().getSkuddbot().getGuildByID("157774629975490561"); //Instance of Ray's server - Used to check perms
 
-        if(!rayGuild.getUsers().contains(user)){ //If they are not in Ray's server we can assume they do not have permission.
-            Logger.info(user.getName() + " attempted to do something they don't have permission for.");
-            return;
-        }
-        if(!user.getRolesForGuild(rayGuild).contains(rayGuild.getRolesByName("Bot Testers").get(0))){ //Actual permission check
+        if(!Constants.awesomeUser.contains(user.getID())){ //Actual permission check
             Logger.info(user.getName() + " attempted to do something they don't have permission for.");
         } else {
             if(msgContent.split(" ").length >= 2){ //Check arguments - Is there something specified?
