@@ -3,6 +3,7 @@ package me.Cooltimmetje.Skuddbot;
 import me.Cooltimmetje.Skuddbot.Cleverbot.MentionListener;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.ShutupCommand;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Listeners.JoinQuitListener;
@@ -12,6 +13,7 @@ import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -53,7 +55,8 @@ public class Skuddbot {
     @EventSubscriber
     public void onReady(ReadyEvent event){
         if(!listenersReady){
-            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
+//            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
+            Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
             skuddbot.getDispatcher().registerListener(new MentionListener());
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());

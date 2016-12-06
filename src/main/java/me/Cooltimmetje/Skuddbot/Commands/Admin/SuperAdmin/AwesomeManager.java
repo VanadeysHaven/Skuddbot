@@ -35,11 +35,12 @@ public class AwesomeManager {
                                     "Hello **{0}**,\n\n" +
                                             "You have been added as a awesome user in Skuddbot, that means you get various benefits, Whoohoo!\n" +
                                             "These benefits include but are not limited to:\n\n" +
-                                            "- Add up to 5 messages to the playing status pool.\n" +
-                                            "- Add up to 5 messages to the error messages pool.\n" +
-                                            "- Add up to 5 messages to the \"I'm alive\" messages pool.\n" +
+                                            "- Add messages to the playing status pool.\n" +
+                                            "- Add messages to the error messages pool.\n" +
+                                            "- Add messages to the \"I'm alive\" messages pool.\n" +
                                             "- Set a custom `!ping` message!\n" +
-                                            "- Gain access to the `!game` command.\n\n" +
+                                            "- Gain access to the `!game` command.\n" +
+                                            "**VERY IMPORTANT NOTE: Once you added a message, it cannot be removed unless you ask Timmy.** Please think twice before you add something. - We also track who added what. Just saying..." +
                                             "For more information please refer to the manual or ask Timmy!\n" +
                                             "Manual: " + Constants.config.get("manual"),
                                     user.getName()));
@@ -90,6 +91,15 @@ public class AwesomeManager {
             } else {
                 MessagesUtils.sendError("Not enough arguments: !removeawesome <mention>", message.getChannel());
             }
+        }
+    }
+
+    public static void reload(IMessage message){
+        if(Constants.adminUser.contains(message.getAuthor().getID())) { //Check permissions
+            long start = System.currentTimeMillis();
+            Constants.awesomeStrings.clear();
+            MySqlManager.loadAwesomeData();
+            MessagesUtils.sendSuccess("Reloaded! Took `" + (System.currentTimeMillis() - start) + "`", message.getChannel());
         }
     }
 

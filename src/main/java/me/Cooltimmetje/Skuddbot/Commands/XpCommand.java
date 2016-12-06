@@ -28,9 +28,17 @@ public class XpCommand {
             mention = true;
         }
 
+        String name = (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(su.getId()).getDisplayName(message.getGuild()) : su.getTwitchUsername()));
+
         assert su != null;
+        if(su.getTwitchUsername() != null){
+            if(su.getTwitchUsername().equals("jaschmedia")){
+                name = "JuiceMedia";
+            }
+        }
+
         int[] stats = su.calcXP(!mention, message);
-        MessagesUtils.sendPlain("**" + (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(su.getId()).getDisplayName(message.getGuild()) : su.getTwitchUsername())) + " | Level: " + stats[3] + " | Level progress: " + stats[0] + "/" + stats[2] + " (" + (int) (((double) stats[0] / (double) stats[2]) * 100) + "%) | Total XP: " + stats[1] + "**", message.getChannel());
+        MessagesUtils.sendPlain("**" + name + " | Level: " + stats[3] + " | Level progress: " + stats[0] + "/" + stats[2] + " (" + (int) (((double) stats[0] / (double) stats[2]) * 100) + "%) | Total XP: " + stats[1] + "**", message.getChannel());
     }
 
 }

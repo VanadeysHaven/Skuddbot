@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class Constants {
     public static HashMap<String,String> config = new HashMap<>();
 
     public static ArrayList<String> awesomeUser = new ArrayList<>();
+    public static HashMap<String,DataTypes> awesomeStrings = new HashMap<>();
     public static ArrayList<String> adminUser = new ArrayList<>();
 
 }

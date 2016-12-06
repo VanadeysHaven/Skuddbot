@@ -1,5 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+
 import java.text.SimpleDateFormat;
 import java.util.Random;
 
@@ -37,6 +39,12 @@ public class MiscUtils {
         return sdf.format(time - (3600 * 24 * 1000));
     }
 
+    /**
+     * (╯°□°）╯︵ ¿uoıʇɐuıɐldxǝ uɐ pǝǝu ʎllɐǝɹ sıɥʇ sǝop
+     *
+     * @param input input
+     * @return ʇnduı
+     */
     public static String flipText(String input){
         String normal = "abcdefghijklmnopqrstuvwxyz_,;.?!'()[]{}";
         String split  = "ɐqɔpǝɟbɥıɾʞlɯuodbɹsʇnʌʍxʎz‾'؛˙¿¡,)(][}{";
@@ -56,5 +64,28 @@ public class MiscUtils {
             sb.append((a != -1) ? split.charAt(a) : letter);
         }
         return sb.reverse().toString();
+    }
+
+    /**
+     * Gets a random message from the awesome message pool of the given type.
+     *
+     * @param type Type required.
+     * @return The selected message.
+     */
+    public static String getRandomMessage(DataTypes type){
+        boolean rightType = false;
+        String selectedMessage = "null";
+        while (!rightType) {
+            Random generator = new Random();
+            Object[] values = Constants.awesomeStrings.values().toArray();
+            int selected = generator.nextInt(values.length);
+            DataTypes dataType = (DataTypes) values[selected];
+            if(dataType == type){
+                rightType = true;
+                selectedMessage = (String) Constants.awesomeStrings.keySet().toArray()[selected];
+            }
+        }
+
+        return selectedMessage;
     }
 }

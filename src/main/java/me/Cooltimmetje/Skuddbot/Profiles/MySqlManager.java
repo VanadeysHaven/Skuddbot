@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.SkuddbotTwitch;
@@ -871,13 +872,14 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "INSERT INTO awesome_users VALUES(?);";
+        String query = "INSERT INTO awesome_users VALUES(?,?);";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(query);
 
             ps.setString(1, id);
+            ps.setString(2, Main.getInstance().getSkuddbot().getUserByID(id).getName());
 
             ps.execute();
         } catch (SQLException e){
@@ -941,7 +943,7 @@ public class MySqlManager {
     /**
      * This loads all awesome ID's (users) from the database and adds them to the ArrayList.
      */
-    public static void loadAwesome(){
+    public static void loadAwesomeUsers(){
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -976,6 +978,93 @@ public class MySqlManager {
             if(rs != null){
                 try {
                     rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Loads all awesome data from the database and adds them to the HashMap.
+     */
+    public static void loadAwesomeData(){
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM awesome_data;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                Constants.awesomeStrings.put(rs.getString(4), DataTypes.valueOf(rs.getString(3).toUpperCase()));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a awesome string to the database!
+     *
+     * @param dataType Message type.
+     * @param message The message itself.
+     * @param id The ID of the user that added it.
+     */
+    public static void addAwesomeString(DataTypes dataType, String message, String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO awesome_data VALUES(null,?,?,?);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+            ps.setString(2, dataType.toString());
+            ps.setString(3, message);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -1103,4 +1192,6 @@ public class MySqlManager {
             }
         }
     }
+
+
 }

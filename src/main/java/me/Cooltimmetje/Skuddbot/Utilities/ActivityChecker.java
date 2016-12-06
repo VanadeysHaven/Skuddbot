@@ -1,21 +1,30 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+import sx.blah.discord.handle.obj.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimerTask;
 
 /**
- * Created by Tim on 9/13/2016.
+ * Activity checker to prevent memory leaks.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.2-ALPHA
  */
 public class ActivityChecker extends TimerTask {
 
     /**
      * This checks if a user is active or not, runs every 10 minutes.
      * When it runs, we set every active user to inactive, and inactive (those that were inactive prior to setting everyone inactive) users are saved to the database and unloaded.
+     *
+     * I also use this to rotate the playing message. Just becuz.
      */
     public void run(){
         Logger.info("Activity check running...");
@@ -50,6 +59,8 @@ public class ActivityChecker extends TimerTask {
                 su.unload();
             }
         }
+
+        Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
     }
 
 }

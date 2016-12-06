@@ -69,18 +69,6 @@ public class CommandManager {
                         e.printStackTrace();
                     }
                     break;
-                case "!addawesome":
-                    AwesomeManager.add(event.getMessage());
-                    break;
-                case "!removeawesome":
-                    AwesomeManager.remove(event.getMessage());
-                    break;
-                case "!addadmin":
-                    AdminManager.add(event.getMessage());
-                    break;
-                case "!removeadmin":
-                    AdminManager.remove(event.getMessage());
-                    break;
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {
@@ -95,6 +83,21 @@ public class CommandManager {
                     break;
                 case "!say":
                     SayCommand.sayMessage(event.getMessage());
+                    break;
+                case "!addawesome":
+                    AwesomeManager.add(event.getMessage());
+                    break;
+                case "!removeawesome":
+                    AwesomeManager.remove(event.getMessage());
+                    break;
+                case "!addadmin":
+                    AdminManager.add(event.getMessage());
+                    break;
+                case "!removeadmin":
+                    AdminManager.remove(event.getMessage());
+                    break;
+                case "!reloadawesome":
+                    AwesomeManager.reload(event.getMessage());
                     break;
             }
         }

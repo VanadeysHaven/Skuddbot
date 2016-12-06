@@ -38,7 +38,14 @@ public class Leaderboard {
         for(int i2 : top.descendingKeySet()){
             SkuddUser user = top.get(i2);
             String name = user.getId() == null ? user.getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() :
-                    (Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).isPresent() ? Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).get() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+                    (Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).isPresent() ?
+                            Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).get() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+
+            if(user.getTwitchUsername() != null){
+                if(user.getTwitchUsername().equals("jaschmedia")){
+                    name = "JuiceMedia";
+                }
+            }
 
             if(name.length() > lengthName){
                 lengthName = name.length();

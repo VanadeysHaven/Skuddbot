@@ -1,8 +1,10 @@
 package me.Cooltimmetje.Skuddbot.Listeners;
 
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.StatusChangeEvent;
@@ -18,7 +20,7 @@ public class TwitchLiveListener {
         if(event.getMessage().mentionsEveryone()){
             if(event.getMessage().getAuthor().getID().equals("165140151121608704")){
                 if(ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel() != null){
-                    Main.getSkuddbotTwitch().sendMessage("#" + ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel(), "Locked and loaded, lets go boys!");
+                    Main.getSkuddbotTwitch().sendMessage("#" + ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel(), MiscUtils.getRandomMessage(DataTypes.ALIVE));
                 }
             }
         }
