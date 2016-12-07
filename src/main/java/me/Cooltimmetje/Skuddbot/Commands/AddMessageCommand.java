@@ -1,0 +1,53 @@
+package me.Cooltimmetje.Skuddbot.Commands;
+
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
+import me.Cooltimmetje.Skuddbot.Utilities.Constants;
+import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import sx.blah.discord.handle.obj.IMessage;
+
+/**
+ * Allows awesome users to add stuff to the pool of messages!
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.3-ALPHA-DEV
+ */
+public class AddMessageCommand {
+
+    public static void run(IMessage message){
+        if(Constants.awesomeUser.contains(message.getAuthor().getID())){
+            String[] args = message.getContent().split(" ");
+            if(args.length > 2){
+                DataTypes dataType;
+
+                try {
+                    dataType = DataTypes.valueOf(args[1].toUpperCase());
+                } catch (IllegalArgumentException e){
+                    MessagesUtils.sendError("Unknown type: " + args[1].toUpperCase(), message.getChannel());
+                    return;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                for(int i = 2; i<args.length; i++){
+                    sb.append(args[i]).append(" ");
+                }
+
+                String input = sb.toString().trim();
+                String trimmed = input.substring(0, Math.min(input.length(), dataType.getMaxLength()));
+
+                if(input.length() > dataType.getMaxLength()){
+                        MessagesUtils.sendPlain(":warning: Your message is exceeding the __" + dataType.getMaxLength() + " character limit__. To add it you need to make it shorter." +
+                                "For your convinence: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel());
+                } else {
+                    MessagesUtils.sendSuccess("Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", message.getChannel());
+                    MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getID());
+                    Constants.awesomeStrings.put(trimmed, dataType);
+                }
+            } else {
+                MessagesUtils.sendError("Not enough arguments: !addmsg <type> <message>", message.getChannel());
+            }
+        }
+    }
+
+}

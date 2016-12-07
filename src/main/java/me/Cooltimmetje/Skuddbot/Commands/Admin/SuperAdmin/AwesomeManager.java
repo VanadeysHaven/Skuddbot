@@ -35,12 +35,12 @@ public class AwesomeManager {
                                     "Hello **{0}**,\n\n" +
                                             "You have been added as a awesome user in Skuddbot, that means you get various benefits, Whoohoo!\n" +
                                             "These benefits include but are not limited to:\n\n" +
-                                            "- Add messages to the playing status pool.\n" +
-                                            "- Add messages to the error messages pool.\n" +
-                                            "- Add messages to the \"I'm alive\" messages pool.\n" +
-                                            "- Set a custom `!ping` message!\n" +
-                                            "- Gain access to the `!game` command.\n" +
-                                            "**VERY IMPORTANT NOTE: Once you added a message, it cannot be removed unless you ask Timmy.** Please think twice before you add something. - We also track who added what. Just saying..." +
+                                            "- Add messages to the playing status pool. - `!addmsg playing <message>` *pm only*\n" +
+                                            "- Add messages to the error messages pool. - `!addmsg error <message>` *pm only*\n" +
+                                            "- Add messages to the \"I'm alive\" messages pool. - `!addmsg alive <message>` *pm only*\n" +
+                                            "- Set a custom `!ping` message! - `!setping <message>` *pm only*\n" +
+                                            "- Gain access to the `!game` command.\n\n" +
+                                            "**VERY IMPORTANT NOTE: Once you added a message, it cannot be removed unless you ask Timmy.** Please think twice before you add something. We also track who added what. Just saying...\n\n" +
                                             "For more information please refer to the manual or ask Timmy!\n" +
                                             "Manual: " + Constants.config.get("manual"),
                                     user.getName()));
