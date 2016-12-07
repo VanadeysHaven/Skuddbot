@@ -69,6 +69,9 @@ public class CommandManager {
                         e.printStackTrace();
                     }
                     break;
+                case "!ping":
+                    PingCommand.run(event.getMessage());
+                    break;
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {
@@ -98,6 +101,15 @@ public class CommandManager {
                     break;
                 case "!reloadawesome":
                     AwesomeManager.reload(event.getMessage());
+                    break;
+                case "!flip":
+                    FlipTextCommand.run(event.getMessage());
+                    break;
+                case "!setping":
+                    SetPing.run(event.getMessage());
+                    break;
+                case "!ping":
+                    PingCommand.run(event.getMessage());
                     break;
             }
         }

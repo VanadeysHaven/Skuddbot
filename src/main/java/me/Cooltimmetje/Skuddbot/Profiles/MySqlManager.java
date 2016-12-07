@@ -872,7 +872,7 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "INSERT INTO awesome_users VALUES(?,?);";
+        String query = "INSERT INTO awesome_users VALUES(?,?,null);";
 
         try {
             c = hikari.getConnection();
@@ -900,6 +900,46 @@ public class MySqlManager {
                 }
             }
         }
+    }
+
+    /**
+     * This will update the ping message in the database for the specified user.
+     *
+     * @param id The ID of the user.
+     * @param ping The message.
+     */
+    public static void updateAwesome(String id, String ping){ //UPDATE `awesome_users` SET `ping` = 'It''s lit.' WHERE `awesome_users`.`id` = '148376320726794240';
+            Connection c = null;
+            PreparedStatement ps = null;
+
+            String query = "UPDATE awesome_users SET ping=? WHERE id=?;";
+
+            try {
+                c = hikari.getConnection();
+                ps = c.prepareStatement(query);
+
+                ps.setString(1, ping);
+                ps.setString(2, id);
+
+                ps.execute();
+            } catch (SQLException e){
+                e.printStackTrace();
+            } finally {
+                if(c != null){
+                    try {
+                        c.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(ps != null){
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
     }
 
     /**
@@ -957,6 +997,9 @@ public class MySqlManager {
 
             while(rs.next()){
                 Constants.awesomeUser.add(rs.getString(1));
+                if(rs.getString(3) != null) {
+                    Constants.awesomePing.put(rs.getString(1), rs.getString(3));
+                }
             }
         } catch (SQLException e){
             e.printStackTrace();

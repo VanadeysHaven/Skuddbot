@@ -39,6 +39,7 @@ public class Constants {
     public static HashMap<String,String> config = new HashMap<>();
 
     public static ArrayList<String> awesomeUser = new ArrayList<>();
+    public static HashMap<String,String> awesomePing = new HashMap<>();
     public static HashMap<String,DataTypes> awesomeStrings = new HashMap<>();
     public static ArrayList<String> adminUser = new ArrayList<>();
 
