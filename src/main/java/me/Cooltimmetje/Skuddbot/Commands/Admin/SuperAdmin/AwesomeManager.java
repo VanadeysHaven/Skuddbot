@@ -94,6 +94,11 @@ public class AwesomeManager {
         }
     }
 
+    /**
+     * CMD: Reload all strings form the database.
+     *
+     * @param message The message that triggered this command.
+     */
     public static void reload(IMessage message){
         if(Constants.adminUser.contains(message.getAuthor().getID())) { //Check permissions
             long start = System.currentTimeMillis();
