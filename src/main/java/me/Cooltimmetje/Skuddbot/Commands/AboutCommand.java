@@ -23,15 +23,14 @@ public class AboutCommand {
                 "Built on:        {2}\n" +
                 "Branch:          {3}\n" +
                 "Deployed from:   {4}\n" +
-                "Build ID:        {5}\n\n" +
 
-                "Users in memory: {6}\n\n" +
+                "Users in memory: {5}\n\n" +
 
-                "Manual:          {7}\n" +
-                "Changelog:       {8}" +
+                "Manual:          {6}\n" +
+                "Changelog:       {7}" +
                 "\n```",
                 Constants.config.get("version"), Constants.config.get("deployed_on"), Constants.config.get("built_on"), Constants.config.get("branch"), Constants.config.get("deployed_from"),
-                Constants.config.get("build_id"), Constants.PROFILES_IN_MEMORY, Constants.config.get("manual"), Constants.config.get("changelog")), message.getChannel());
+                Constants.PROFILES_IN_MEMORY, Constants.config.get("manual"), Constants.config.get("changelog")), message.getChannel());
 
     }
 

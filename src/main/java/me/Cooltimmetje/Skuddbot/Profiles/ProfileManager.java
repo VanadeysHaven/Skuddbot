@@ -3,7 +3,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 /**
  * This class handles all profiles, getting them from either memory or the database, or creating new ones.
  *
- * @author Tim (Cooltimmetje9)
+ * @author Tim (Cooltimmetje)
  * @version v0.2-ALPHA
  * @since v0.1-ALPHA
  */

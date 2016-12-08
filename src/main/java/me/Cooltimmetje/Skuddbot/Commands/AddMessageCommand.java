@@ -36,6 +36,11 @@ public class AddMessageCommand {
                 String input = sb.toString().trim();
                 String trimmed = input.substring(0, Math.min(input.length(), dataType.getMaxLength()));
 
+                if(Constants.awesomeStrings.containsKey(trimmed)){
+                    MessagesUtils.sendError("This message already exists!", message.getChannel());
+                    return;
+                }
+
                 if(input.length() > dataType.getMaxLength()){
                         MessagesUtils.sendPlain(":warning: Your message is exceeding the __" + dataType.getMaxLength() + " character limit__. To add it you need to make it shorter." +
                                 "For your convinence: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel());
