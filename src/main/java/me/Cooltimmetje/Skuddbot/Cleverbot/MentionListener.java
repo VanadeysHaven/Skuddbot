@@ -10,7 +10,11 @@ import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**
- * Created by Tim on 8/2/2016.
+ * This manages the input from users for the cleverbot.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
 public class MentionListener {
 

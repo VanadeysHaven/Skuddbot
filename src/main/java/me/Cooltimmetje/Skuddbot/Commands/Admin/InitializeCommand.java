@@ -18,7 +18,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Tim on 8/22/2016.
+ * CMD: Initializes servers when the bot joins for the first time.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.2-ALPHA
  */
 public class InitializeCommand {
     

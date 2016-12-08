@@ -17,7 +17,11 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Tim on 10/24/2016.
+ * CMD: Imports XP form other bots (Like Meme6)
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.2-ALPHA
  */
 public class ImportCommand {
 

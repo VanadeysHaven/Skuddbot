@@ -1,17 +1,14 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin;
 
-import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
- * Created by Tim on 9/4/2016.
+ * CMD: Creates JSON dumps of the database.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.1-ALPHA
+ * @since v0.1-ALPHA
  */
 public class DumpData {
 
