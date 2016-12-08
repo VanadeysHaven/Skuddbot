@@ -11,6 +11,7 @@ import org.jibble.pircbot.PircBot;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
 
@@ -21,6 +22,7 @@ public class SkuddbotTwitch extends PircBot{
 
     private boolean terminated = false;
     public static ArrayList<String> bannedUsers = new ArrayList<>();
+    public static HashMap<String,Long> cooldown = new HashMap<>();
 
     public SkuddbotTwitch() {
         this.setName(Constants.twitchBot);
@@ -57,18 +59,18 @@ public class SkuddbotTwitch extends PircBot{
     }
 
     @Override
-    protected void onMessage(String channel, String sender, String login, String hostname, String message){
+    protected void onMessage(String channel, String sender, String login, String hostname, String message) {
         int gain = 0;
-        if(twitchServers.containsKey(channel.replace("#", " ").trim())){
+        if (twitchServers.containsKey(channel.replace("#", " ").trim())) {
 
-            if(message.startsWith("!riot") || message.startsWith("(╯°□°）╯︵ ┻━┻")){
+            if (message.startsWith("!riot") || message.startsWith("(╯°□°）╯︵ ┻━┻")) {
                 sendMessage(channel, "(╯°□°）╯︵ ┻━┻");
-            } else if(channel.equals("#rayskudda") && message.startsWith("!salad")){
+            } else if (channel.equals("#rayskudda") && message.startsWith("!salad")) {
                 sendMessage(channel, "\\ PogChamp / GO SALAD! GO! \\ PogChamp /");
-            } else if(message.startsWith("!xpban") && sender.equalsIgnoreCase("cooltimmetje")){
+            } else if (message.startsWith("!xpban") && sender.equalsIgnoreCase("cooltimmetje")) {
                 String[] args = message.split(" ");
-                if(args.length > 1){
-                    if(!bannedUsers.contains(args[1].toLowerCase())){
+                if (args.length > 1) {
+                    if (!bannedUsers.contains(args[1].toLowerCase())) {
                         sendMessage(channel, args[1] + " is now globally banned from gaining XP. #rekt");
                         bannedUsers.add(args[1].toLowerCase());
                         MySqlManager.banUser(args[1].toLowerCase());
@@ -76,8 +78,18 @@ public class SkuddbotTwitch extends PircBot{
                         sendMessage(channel, args[1] + " is already globally banned from gaining XP.");
                     }
                 }
+            } else if (message.startsWith("!flip")) {
+                if (cooldown.containsKey(channel)) {
+                    if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
+                        sendMessage(channel, "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim()));
+                        cooldown.put(channel, System.currentTimeMillis());
+                    }
+                } else {
+                    sendMessage(channel, "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim()));
+                    cooldown.put(channel, System.currentTimeMillis());
+                }
             } else {
-                if(!bannedUsers.contains(sender)) {
+                if (!bannedUsers.contains(sender)) {
                     SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
                     Server server = ServerManager.getTwitch(channel.replace("#", " ").trim());
                     gain = MiscUtils.randomInt(server.getMinXpTwitch(), server.getMaxXpTwitch());
@@ -85,12 +97,12 @@ public class SkuddbotTwitch extends PircBot{
                 }
             }
 
-        } else if (channel.equals("#" + Constants.twitchBot)){
-            if (message.startsWith("!verify")){
+        } else if (channel.equals("#" + Constants.twitchBot)) {
+            if (message.startsWith("!verify")) {
                 String[] args = message.split(" ");
-                if(args.length >= 2){
+                if (args.length >= 2) {
                     SkuddUser user = Constants.verifyCodes.get(args[1].toUpperCase());
-                    if(user != null){
+                    if (user != null) {
                         Logger.info("found user");
                         Constants.verifyCodes.remove(args[1].toUpperCase());
                         user.setTwitchVerify(null);
@@ -106,6 +118,7 @@ public class SkuddbotTwitch extends PircBot{
 
         Logger.info(MessageFormat.format("Twitch Message: {0} - {1}: {2} - XP: +{3}", channel, sender, message, gain));
     }
+
 
     public void terminate(){
         terminated = true;

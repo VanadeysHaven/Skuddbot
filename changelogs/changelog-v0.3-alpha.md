@@ -22,6 +22,6 @@
 * Rob has been unbanned from XP gain. LUL
 * HikariCP version 2.4.7 -> 2.5.1
 * Some refactoring
-* `!flip` is now available in PM's. (Jasch, I got ya covered)
+* `!flip` is now available in PM's and Twitch Chat (Twitch chat has a 30 second cooldown). (Jasch, I got ya covered)
 * Shit got more Juicy!
 * Playing messages now rotate through the messages pool that can be set by awesome users!
