@@ -1,7 +1,6 @@
 package me.Cooltimmetje.Skuddbot;
 
 import me.Cooltimmetje.Skuddbot.Cleverbot.MentionListener;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.ShutupCommand;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
@@ -61,7 +60,6 @@ public class Skuddbot {
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());
-            skuddbot.getDispatcher().registerListener(new ShutupCommand());
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
             Main.getSkuddbotTwitch().joinChannels();
 

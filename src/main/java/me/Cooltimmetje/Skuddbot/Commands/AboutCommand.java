@@ -7,7 +7,11 @@ import sx.blah.discord.handle.obj.IMessage;
 import java.text.MessageFormat;
 
 /**
- * Created by Tim on 10/2/2016.
+ * This class shows some information about the bot, such as the current branch, commit, and the manual.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA
+ * @since v0.2-ALPHA
  */
 public class AboutCommand {
 

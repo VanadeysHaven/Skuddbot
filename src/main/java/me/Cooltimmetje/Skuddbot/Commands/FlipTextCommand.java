@@ -5,7 +5,11 @@ import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**
- * Created by Tim on 10/19/2016.
+ * (╯°□°）╯︵ uoıʇɐʇuǝɯnɔop pǝǝu ʇ,usǝop sıɥʇ
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA
+ * @since v0.2-ALPHA
  */
 public class FlipTextCommand {
 

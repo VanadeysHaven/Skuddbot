@@ -11,10 +11,19 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
- * Created by Tim on 8/21/2016.
+ * Show the XP leaderboard of the server.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
 public class Leaderboard {
 
+    /**
+     * CMD: Show the XP leaderboard of the current server.
+     *
+     * @param message This is the message that triggered the command.
+     */
     public static void run(IMessage message){
         message.getChannel().toggleTypingStatus();
         long startTime = System.currentTimeMillis();
