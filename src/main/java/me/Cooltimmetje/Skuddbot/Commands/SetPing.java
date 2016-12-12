@@ -14,6 +14,11 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public class SetPing {
 
+    /**
+     * CMD: Update your ping response.
+     *
+     * @param message The message that triggered this command.
+     */
     public static void run(IMessage message){
         if(Constants.awesomeUser.contains(message.getAuthor().getID())){ //Check if awesome
             String[] args = message.getContent().split(" "); //Split arguments

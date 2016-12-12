@@ -7,10 +7,19 @@ import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**
- * Created by Tim on 10/2/2016.
+ * This class is used for reloading the list of global information.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.2-ALPHA
  */
 public class ReloadGlobal {
 
+    /**
+     * CMD: Reloading the list of global information.
+     *
+     * @param message The message that the command got triggered off.
+     */
     public static void run(IMessage message){
         if (message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
             Constants.config.clear();

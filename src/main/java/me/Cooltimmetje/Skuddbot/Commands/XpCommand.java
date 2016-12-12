@@ -8,10 +8,19 @@ import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**
- * Created by Tim on 8/4/2016.
+ * This class shows the user their XP and levels.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
 public class XpCommand {
 
+    /**
+     * CMD: Show the user their XP on the current server.
+     *
+     * @param message The message that triggered this command.
+     */
     public static void run(IMessage message) { //return new int[]{exp, getXp(), needed, level};
         boolean mention = false;
         SkuddUser su = null;

@@ -13,6 +13,11 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public class PingCommand {
 
+    /**
+     * PONG MOTHERFUCKER!
+     *
+     * @param message The message that pinged.
+     */
     public static void run(IMessage message){
         MessagesUtils.sendSuccess((Constants.awesomePing.containsKey(message.getAuthor().getID()) ?
                 Constants.awesomePing.get(message.getAuthor().getID()) : "PONG!"), message.getChannel());

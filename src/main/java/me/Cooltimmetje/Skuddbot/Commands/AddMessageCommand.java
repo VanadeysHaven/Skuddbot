@@ -15,6 +15,12 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public class AddMessageCommand {
 
+
+    /**
+     * CMD: Allows awesome users to add stuff to the pool of messages!
+     *
+     * @param message The message that triggered this command.
+     */
     public static void run(IMessage message){
         if(Constants.awesomeUser.contains(message.getAuthor().getID())){
             String[] args = message.getContent().split(" ");
