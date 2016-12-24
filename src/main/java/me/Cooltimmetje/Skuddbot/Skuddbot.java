@@ -2,7 +2,6 @@ package me.Cooltimmetje.Skuddbot;
 
 import me.Cooltimmetje.Skuddbot.Cleverbot.MentionListener;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
-import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Listeners.JoinQuitListener;
@@ -19,7 +18,6 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
 import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.RateLimitException;
 
@@ -55,7 +53,7 @@ public class Skuddbot {
     public void onReady(ReadyEvent event){
         if(!listenersReady){
 //            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
-            Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
+            MiscUtils.setPlaying();
             skuddbot.getDispatcher().registerListener(new MentionListener());
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());
