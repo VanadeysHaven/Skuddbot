@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * Allows awesome users to add stuff to the pool of messages!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA-DEV
+ * @version v0.3-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 public class AddMessageCommand {
@@ -49,7 +49,7 @@ public class AddMessageCommand {
 
                 if(input.length() > dataType.getMaxLength()){
                         MessagesUtils.sendPlain(":warning: Your message is exceeding the __" + dataType.getMaxLength() + " character limit__. To add it you need to make it shorter." +
-                                "For your convinence: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel());
+                                "For your convenience: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel());
                 } else {
                     MessagesUtils.sendSuccess("Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", message.getChannel());
                     MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getID());

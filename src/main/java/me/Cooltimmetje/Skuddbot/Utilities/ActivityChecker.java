@@ -1,11 +1,8 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
-import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
-import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
-import sx.blah.discord.handle.obj.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +57,7 @@ public class ActivityChecker extends TimerTask {
             }
         }
 
-        Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
+        MiscUtils.setPlaying();
     }
 
 }

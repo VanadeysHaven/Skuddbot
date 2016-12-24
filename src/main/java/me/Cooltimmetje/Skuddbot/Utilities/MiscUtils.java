@@ -1,8 +1,12 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import me.Cooltimmetje.Skuddbot.Main;
+import sx.blah.discord.handle.obj.Status;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Random;
 
 /**
@@ -87,5 +91,26 @@ public class MiscUtils {
         }
 
         return selectedMessage;
+    }
+
+    public static void setPlaying(){
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM");
+        Calendar cal = Calendar.getInstance();
+        String date = dateFormat.format(cal.getTime());
+
+        switch (date) {
+            case "24/12":
+            case "25/12":
+            case "26/12":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_CHRISTMAS)));
+                break;
+            case "01/01":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR)));
+                break;
+            default:
+                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
+                break;
+        }
+
     }
 }
