@@ -32,6 +32,8 @@ public class Constants {
     public static int MAX_GAIN_TWITCH = 15;
 
     public static boolean MUTED = false;
+    public static boolean EVENT_ACTIVE = false;
+    public static String CURRENT_EVENT;
 
     public static int INACTIVE_DELAY = 600000;
 

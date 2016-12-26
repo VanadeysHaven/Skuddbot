@@ -99,16 +99,32 @@ public class MiscUtils {
         String date = dateFormat.format(cal.getTime());
 
         switch (date) {
+
+            //Birthdays
+            case "21/10":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY TIMMY!"));
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+
+            //Seasonal events
             case "24/12":
             case "25/12":
             case "26/12":
                 Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_CHRISTMAS)));
+                Constants.CURRENT_EVENT = "It's Christmas time!";
+                Constants.EVENT_ACTIVE = true;
                 break;
             case "01/01":
                 Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR)));
+                Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
+                Constants.EVENT_ACTIVE = true;
                 break;
+
+            //Default
             default:
                 Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
+                Constants.EVENT_ACTIVE = false;
                 break;
         }
 
