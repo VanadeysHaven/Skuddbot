@@ -30,6 +30,7 @@ public class Constants {
     public static int MIN_GAIN_TWITCH = 10;
     public static int MAX_GAIN = 15;
     public static int MAX_GAIN_TWITCH = 15;
+    public static boolean VR_MODE = false;
 
     public static boolean MUTED = false;
     public static boolean EVENT_ACTIVE = false;

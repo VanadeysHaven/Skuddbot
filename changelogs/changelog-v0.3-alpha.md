@@ -17,6 +17,9 @@
   * I only documented new stuff and stuff I changed!
 * Command: `!ping`
   * **PONG!**
+* Settings
+  * `VR_MODE` (boolean - true/false)
+    * This mode is for VR streamers, this will put a exclamation mark (!) and a space in front of every message Skuddbot posts in Twitch Chat. That way you can exclude those message from being read out by a TTS bot. (Requested by [Melsh](https://www.twitch.tv/melsh87) (Go follow him! <3))
   
 ## Changed
 * Rob has been unbanned from XP gain. LUL

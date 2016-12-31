@@ -38,6 +38,7 @@ public class Server {
     private String welcomeGoodbyeChannel;
     private String adminRole;
     private String roleOnJoin;
+    private boolean vrMode;
     private boolean serverInitialized;
     private ChatterBotSession session;
 
@@ -57,6 +58,7 @@ public class Server {
         this.maxXpTwitch = Constants.MAX_GAIN_TWITCH;
         this.xpBase = Constants.BASE_LEVEL;
         this.xpMultiplier = Constants.LEVEL_MULTIPLIER;
+        this.vrMode = Constants.VR_MODE;
         this.serverInitialized = false;
 
         ServerManager.servers.put(serverID, this);
@@ -85,8 +87,9 @@ public class Server {
      * @param welcomeGoodbyeChannel The WELCOME_GOODBYE_CHAN setting.
      * @param adminRole The ADMIN_ROLE setting.
      * @param roleOnJoin The ROLE_ON_JOIN setting.
+     * @param vrMode The VR_MODE setting.
      */
-    public Server(String serverID, int minXP, int maxXP, int minXpTwitch, int maxXpTwitch, int xpBase, double xpMultiplier, String cleverbotChannel, String twitchChannel, String welcomeMessage, String goodbyeMessage, String welcomeGoodbyeChannel, String adminRole, String roleOnJoin) {
+    public Server(String serverID, int minXP, int maxXP, int minXpTwitch, int maxXpTwitch, int xpBase, double xpMultiplier, String cleverbotChannel, String twitchChannel, String welcomeMessage, String goodbyeMessage, String welcomeGoodbyeChannel, String adminRole, String roleOnJoin, boolean vrMode) {
         this.serverID = serverID;
         this.minXP = minXP;
         this.maxXP = maxXP;
@@ -101,6 +104,7 @@ public class Server {
         this.adminRole = adminRole;
         this.roleOnJoin = roleOnJoin;
         this.welcomeGoodbyeChannel = welcomeGoodbyeChannel;
+        this.vrMode = vrMode;
         this.serverInitialized = true;
 
         ServerManager.servers.put(serverID, this);
@@ -168,6 +172,8 @@ public class Server {
                 return getRoleOnJoin();
             case WELCOME_GOODBYE_CHAN:
                 return getWelcomeGoodbyeChannel();
+            case VR_MODE:
+                return isVrMode() + "";
         }
     }
 
@@ -181,6 +187,7 @@ public class Server {
     @SuppressWarnings("all") //Fuck you IntelliJ
     public String setSetting(SettingsInfo si, String value){
         double doubleValue = 0;
+        boolean booleanValue = false;
         int intValue = 0;
         boolean intUsed = false;
 
@@ -200,6 +207,13 @@ public class Server {
                     return "Value is not a Integer.";
                 }
                 break;
+            case "boolean":
+                booleanValue = Boolean.parseBoolean(value);
+                if (!booleanValue) {
+                    if(!value.equalsIgnoreCase("false")){
+                           return "Value is not a boolean.";
+                    }
+                }
             default:
                 if(value.equalsIgnoreCase("null")){
                     value = null;
@@ -267,6 +281,9 @@ public class Server {
                 return null;
             case WELCOME_GOODBYE_CHAN:
                 setWelcomeGoodbyeChannel(value);
+                return null;
+            case VR_MODE:
+                setVrMode(booleanValue);
                 return null;
         }
     }

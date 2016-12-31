@@ -64,28 +64,26 @@ public class SkuddbotTwitch extends PircBot{
         if (twitchServers.containsKey(channel.replace("#", " ").trim())) {
 
             if (message.startsWith("!riot") || message.startsWith("(╯°□°）╯︵ ┻━┻")) {
-                sendMessage(channel, "(╯°□°）╯︵ ┻━┻");
-            } else if (channel.equals("#rayskudda") && message.startsWith("!salad")) {
-                sendMessage(channel, "\\ PogChamp / GO SALAD! GO! \\ PogChamp /");
-            } else if (message.startsWith("!xpban") && sender.equalsIgnoreCase("cooltimmetje")) {
+                sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ ┻━┻").trim());
+            } else if (message.startsWith("!xpban") && (sender.equalsIgnoreCase("cooltimmetje") || sender.equalsIgnoreCase("jaschmedia"))) {
                 String[] args = message.split(" ");
                 if (args.length > 1) {
                     if (!bannedUsers.contains(args[1].toLowerCase())) {
-                        sendMessage(channel, args[1] + " is now globally banned from gaining XP. #rekt");
+                        sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + args[1] + " is now globally banned from gaining XP. #rekt").trim());
                         bannedUsers.add(args[1].toLowerCase());
                         MySqlManager.banUser(args[1].toLowerCase());
                     } else {
-                        sendMessage(channel, args[1] + " is already globally banned from gaining XP.");
+                        sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + args[1] + " is already globally banned from gaining XP.").trim());
                     }
                 }
             } else if (message.startsWith("!flip")) {
                 if (cooldown.containsKey(channel)) {
                     if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
-                        sendMessage(channel, "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim()));
+                        sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
                         cooldown.put(channel, System.currentTimeMillis());
                     }
                 } else {
-                    sendMessage(channel, "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim()));
+                    sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
                     cooldown.put(channel, System.currentTimeMillis());
                 }
             } else {

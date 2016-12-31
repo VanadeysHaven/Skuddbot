@@ -415,7 +415,7 @@ public class MySqlManager {
             rs = ps.executeQuery();
             if(rs.next()){
                 loaded = new Server(rs.getString(1),rs.getInt(2),rs.getInt(3),rs.getInt(4),rs.getInt(5),rs.getInt(6),rs.getDouble(7),
-                        rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13),rs.getString(14));
+                        rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13),rs.getString(14),rs.getBoolean(15));
             }
 
         } catch (SQLException e) {
@@ -451,7 +451,7 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "INSERT INTO servers VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE xp_min=?,xp_max=?,xp_min_twitch=?,xp_max_twitch=?,xp_base=?,xp_multiplier=?,cleverbot_channel=?,twitch_channel=?,welcome_message=?,goodbye_message=?,welcome_goodbye_chan=?,admin_role=?,role_on_join=?";
+        String query = "INSERT INTO servers VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE xp_min=?,xp_max=?,xp_min_twitch=?,xp_max_twitch=?,xp_base=?,xp_multiplier=?,cleverbot_channel=?,twitch_channel=?,welcome_message=?,goodbye_message=?,welcome_goodbye_chan=?,admin_role=?,role_on_join=?,vr_mode=?";
 
         try {
             c = hikari.getConnection();
@@ -471,19 +471,21 @@ public class MySqlManager {
             ps.setString(12, server.getWelcomeGoodbyeChannel());
             ps.setString(13, server.getAdminRole());
             ps.setString(14, server.getRoleOnJoin());
-            ps.setInt(15, server.getMinXP());
-            ps.setInt(16, server.getMaxXP());
-            ps.setInt(17, server.getMinXpTwitch());
-            ps.setInt(18, server.getMaxXpTwitch());
-            ps.setInt(19, server.getXpBase());
-            ps.setDouble(20, server.getXpMultiplier());
-            ps.setString(21, server.getCleverbotChannel());
-            ps.setString(22, server.getTwitchChannel());
-            ps.setString(23, server.getWelcomeMessage());
-            ps.setString(24, server.getGoodbyeMessage());
-            ps.setString(25, server.getWelcomeGoodbyeChannel());
-            ps.setString(26, server.getAdminRole());
-            ps.setString(27, server.getRoleOnJoin());
+            ps.setBoolean(15, server.isVrMode());
+            ps.setInt(16, server.getMinXP());
+            ps.setInt(17, server.getMaxXP());
+            ps.setInt(18, server.getMinXpTwitch());
+            ps.setInt(19, server.getMaxXpTwitch());
+            ps.setInt(20, server.getXpBase());
+            ps.setDouble(21, server.getXpMultiplier());
+            ps.setString(22, server.getCleverbotChannel());
+            ps.setString(23, server.getTwitchChannel());
+            ps.setString(24, server.getWelcomeMessage());
+            ps.setString(25, server.getGoodbyeMessage());
+            ps.setString(26, server.getWelcomeGoodbyeChannel());
+            ps.setString(27, server.getAdminRole());
+            ps.setString(28, server.getRoleOnJoin());
+            ps.setBoolean(29, server.isVrMode());
 
             ps.execute();
         } catch (SQLException e) {
