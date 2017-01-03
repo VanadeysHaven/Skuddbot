@@ -265,6 +265,9 @@ public class Server {
                 setCleverbotChannel(value);
                 return null;
             case TWITCH_CHANNEL:
+                if(ServerManager.twitchServers.containsKey(value)){
+                    return "This channel is already in use on a different server, if you think this is an error, please contact a Skuddbot admin.";
+                }
                 setTwitchChannel(value);
                 return null;
             case WELCOME_MESSAGE:
