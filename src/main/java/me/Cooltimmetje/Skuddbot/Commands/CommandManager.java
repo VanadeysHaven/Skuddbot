@@ -3,6 +3,8 @@ package me.Cooltimmetje.Skuddbot.Commands;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AdminManager;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AwesomeManager;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.ChangeAvatar;
+import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 
@@ -83,6 +85,15 @@ public class CommandManager {
                     break;
                 case "!removeadmin":
                     AdminManager.remove(event.getMessage());
+                    break;
+                case "!userinfo":
+                    UserInfo.run(event.getMessage());
+                    break;
+                case "!riot":
+                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel());
+                    break;
+                case "!changeavatar":
+                    ChangeAvatar.run(event.getMessage());
                     break;
             }
         } else {

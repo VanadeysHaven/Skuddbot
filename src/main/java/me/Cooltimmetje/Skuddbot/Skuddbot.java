@@ -15,11 +15,10 @@ import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
+import sx.blah.discord.handle.impl.events.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,7 +65,7 @@ public class Skuddbot {
     }
 
     @EventSubscriber
-    public void onDisconnect(DiscordDisconnectedEvent event){
+    public void onDisconnect(DisconnectedEvent event){
         CompletableFuture.runAsync(() -> {
             if(reconnect.get()) {
                 Logger.info("Attempting to reconnect bot...");
@@ -101,7 +100,7 @@ public class Skuddbot {
         reconnect.set(false);
         try {
             skuddbot.logout();
-        } catch (DiscordException | RateLimitException e) {
+        } catch (DiscordException e) {
             Logger.warn("Couldn't log out.", e);
         }
 
