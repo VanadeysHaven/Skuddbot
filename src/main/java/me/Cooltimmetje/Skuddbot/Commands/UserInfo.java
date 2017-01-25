@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
@@ -24,6 +25,10 @@ public class UserInfo {
         IUser user = message.getAuthor();
         if (!message.getMentions().isEmpty()) {
             user = message.getMentions().get(0);
+        } else if (message.getContent().split(" ").length > 1){
+            if(Main.getInstance().getSkuddbot().getUserByID(message.getContent().split(" ")[1]) != null){
+                user = Main.getInstance().getSkuddbot().getUserByID(message.getContent().split(" ")[1]);
+            }
         }
 
         EmbedBuilder embed = new EmbedBuilder();
@@ -36,6 +41,9 @@ public class UserInfo {
             } else {
                 embed.withColor(218,165,32).withDesc("Awesome!");
             }
+        }
+        if(user.getID().equals("214049996163645441")){
+            embed.withColor(255,105,180).withDesc("Glitter queen!");
         }
 
         embed.appendField("__User ID:__", user.getID(), false);
