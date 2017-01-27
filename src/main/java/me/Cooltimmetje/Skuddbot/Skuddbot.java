@@ -20,7 +20,6 @@ import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.util.DiscordException;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -39,7 +38,7 @@ public class Skuddbot {
     }
 
     public void login() throws DiscordException {
-        skuddbot = new ClientBuilder().withToken(token).login();
+        skuddbot = new ClientBuilder().withToken(token).setMaxReconnectAttempts(3).login();
         if(!preReadyListenersReady) {
             skuddbot.getDispatcher().registerListener(this);
             skuddbot.getDispatcher().registerListener(new CreateServerListener());
@@ -68,16 +67,16 @@ public class Skuddbot {
 
     @EventSubscriber
     public void onDisconnect(DisconnectedEvent event){
-        CompletableFuture.runAsync(() -> {
-            if(reconnect.get()) {
-                Logger.info("Attempting to reconnect bot...");
-                try {
-                    login();
-                } catch (DiscordException e) {
-                    Logger.warn("Well rip.", e);
-                }
-            }
-        });
+//        CompletableFuture.runAsync(() -> {
+//            if(reconnect.get()) {
+//                Logger.info("Attempting to reconnect bot...");
+//                try {
+//                    login();
+//                } catch (DiscordException e) {
+//                    Logger.warn("Well rip.", e);
+//                }
+//            }
+//        });
     }
 
     @EventSubscriber
