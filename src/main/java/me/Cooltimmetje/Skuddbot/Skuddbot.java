@@ -61,6 +61,8 @@ public class Skuddbot {
             Main.getSkuddbotTwitch().joinChannels();
 
             listenersReady = true;
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> terminate(true)));
+            MessagesUtils.sendPlain(":robot: Startup sequence complete!", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
         }
     }
 
@@ -82,13 +84,10 @@ public class Skuddbot {
     public void onMention(MentionEvent event){
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
-                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)) {
+                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || event.getMessage().getAuthor().getID().equals(Constants.JASCH_OVERRIDE)) {
                     MessagesUtils.sendSuccess("Well, okay then...\n`Shutting down...`", event.getMessage().getChannel());
-                    Main.stopTimer();
-                    ServerManager.saveAll();
-                    Main.getSkuddbotTwitch().terminate();
-                    MySqlManager.disconnect();
-                    terminate();
+
+                    terminate(false);
                 } else {
                     MessagesUtils.sendError("Ur not timmy >=(", event.getMessage().getChannel());
                 }
@@ -96,9 +95,18 @@ public class Skuddbot {
         }
     }
 
-    public void terminate() {
+    public void terminate(boolean sigterm) {
+        if(sigterm){
+            MessagesUtils.sendPlain(":robot: Logging out due to SIGTERM...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
+        } else {
+            MessagesUtils.sendPlain(":robot: Logging out due to command...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
+        }
         reconnect.set(false);
         try {
+            Main.stopTimer();
+            ServerManager.saveAll();
+            Main.getSkuddbotTwitch().terminate();
+            MySqlManager.disconnect();
             skuddbot.logout();
         } catch (DiscordException e) {
             Logger.warn("Couldn't log out.", e);
