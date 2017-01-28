@@ -28,7 +28,7 @@ public class SayCommand {
      * @param message MEMES?!
      */
     public static void setChannel(IMessage message){
-        if(message.getAuthor().getID().equals(Constants.TIMMY_ID) || message.getAuthor().getID().equals(Constants.JASCH_ID)){
+        if(message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getID().equals(Constants.JASCH_OVERRIDE)){
             String[] args = message.getContent().split(" ");
             if (args.length > 1) {
                 IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(args[1]);
@@ -51,7 +51,7 @@ public class SayCommand {
      * @param message SPICY MEMES!
      */
     public static void sayMessage(IMessage message){
-        if(message.getAuthor().getID().equals(Constants.TIMMY_ID) || message.getAuthor().getID().equals(Constants.JASCH_ID)){
+        if(message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getID().equals(Constants.JASCH_OVERRIDE)){
             String[] args = message.getContent().split(" ");
             if (args.length > 1) {
                 IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(channels.get(message.getAuthor().getID()));

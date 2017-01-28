@@ -13,7 +13,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Tim on 8/22/2016.
+ * This class holds settings and profiles for servers, and manages them too.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.2-ALPHA
  */
 
 @Getter
@@ -34,12 +38,18 @@ public class Server {
     private String welcomeGoodbyeChannel;
     private String adminRole;
     private String roleOnJoin;
+    private boolean vrMode;
     private boolean serverInitialized;
     private ChatterBotSession session;
 
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
 
+    /**
+     * Constructor for a new server, it puts all the settings to default and asks to initialize the server.
+     *
+     * @param serverID The ID of the server.
+     */
     public Server(String serverID){
         this.serverID = serverID;
         this.minXP = Constants.MIN_GAIN;
@@ -48,6 +58,7 @@ public class Server {
         this.maxXpTwitch = Constants.MAX_GAIN_TWITCH;
         this.xpBase = Constants.BASE_LEVEL;
         this.xpMultiplier = Constants.LEVEL_MULTIPLIER;
+        this.vrMode = Constants.VR_MODE;
         this.serverInitialized = false;
 
         ServerManager.servers.put(serverID, this);
@@ -59,7 +70,26 @@ public class Server {
 
     }
 
-    public Server(String serverID, int minXP, int maxXP, int minXpTwitch, int maxXpTwitch, int xpBase, double xpMultiplier, String cleverbotChannel, String twitchChannel, String welcomeMessage, String goodbyeMessage, String welcomeGoodbyeChannel, String adminRole, String roleOnJoin) {
+    /**
+     * This is the constructor for existing servers loaded from the database.
+     *
+     * @param serverID The ID of the server.
+     * @param minXP The MIN_XP setting.
+     * @param maxXP The MAX_XP setting.
+     * @param minXpTwitch The XP_TWITCH_MIN setting.
+     * @param maxXpTwitch The XP_TWITCH_MAX setting.
+     * @param xpBase The XP_BASE setting.
+     * @param xpMultiplier The XP_MULTIPLIER setting.
+     * @param cleverbotChannel The CLEVERBOT_CHANEL setting.
+     * @param twitchChannel The TWITCH_CHANNEL setting.
+     * @param welcomeMessage The WELCOME_MESSAGE setting.
+     * @param goodbyeMessage The GOODBYE_MESSAGE setting.
+     * @param welcomeGoodbyeChannel The WELCOME_GOODBYE_CHAN setting.
+     * @param adminRole The ADMIN_ROLE setting.
+     * @param roleOnJoin The ROLE_ON_JOIN setting.
+     * @param vrMode The VR_MODE setting.
+     */
+    public Server(String serverID, int minXP, int maxXP, int minXpTwitch, int maxXpTwitch, int xpBase, double xpMultiplier, String cleverbotChannel, String twitchChannel, String welcomeMessage, String goodbyeMessage, String welcomeGoodbyeChannel, String adminRole, String roleOnJoin, boolean vrMode) {
         this.serverID = serverID;
         this.minXP = minXP;
         this.maxXP = maxXP;
@@ -74,6 +104,7 @@ public class Server {
         this.adminRole = adminRole;
         this.roleOnJoin = roleOnJoin;
         this.welcomeGoodbyeChannel = welcomeGoodbyeChannel;
+        this.vrMode = vrMode;
         this.serverInitialized = true;
 
         ServerManager.servers.put(serverID, this);
@@ -84,6 +115,9 @@ public class Server {
         Logger.info("[LoadServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
     }
 
+    /**
+     * Saves the server settings, and all profiles to the database.
+     */
     public void save(){
         if(serverInitialized){
             MySqlManager.saveServer(this);
@@ -102,6 +136,12 @@ public class Server {
         }
     }
 
+    /**
+     * Get the value for the specifed setting.
+     *
+     * @param si The setting that should be returned.
+     * @return The value of the setting in String form.
+     */
     public String getSetting(SettingsInfo si){
         switch (si){
             default:
@@ -132,12 +172,22 @@ public class Server {
                 return getRoleOnJoin();
             case WELCOME_GOODBYE_CHAN:
                 return getWelcomeGoodbyeChannel();
+            case VR_MODE:
+                return isVrMode() + "";
         }
     }
 
+    /**
+     * Changes the setting to the specifed value.
+     *
+     * @param si The setting that should be changed.
+     * @param value The value that should be set.
+     * @return When the value was changed succesfully it returns 'null'. When a error occured it returns what went wrong.
+     */
     @SuppressWarnings("all") //Fuck you IntelliJ
     public String setSetting(SettingsInfo si, String value){
         double doubleValue = 0;
+        boolean booleanValue = false;
         int intValue = 0;
         boolean intUsed = false;
 
@@ -157,6 +207,13 @@ public class Server {
                     return "Value is not a Integer.";
                 }
                 break;
+            case "boolean":
+                booleanValue = Boolean.parseBoolean(value);
+                if (!booleanValue) {
+                    if(!value.equalsIgnoreCase("false")){
+                           return "Value is not a boolean.";
+                    }
+                }
             default:
                 if(value.equalsIgnoreCase("null")){
                     value = null;
@@ -208,6 +265,9 @@ public class Server {
                 setCleverbotChannel(value);
                 return null;
             case TWITCH_CHANNEL:
+                if(ServerManager.twitchServers.containsKey(value)){
+                    return "This channel is already in use on a different server, if you think this is an error, please contact a Skuddbot admin.";
+                }
                 setTwitchChannel(value);
                 return null;
             case WELCOME_MESSAGE:
@@ -225,17 +285,34 @@ public class Server {
             case WELCOME_GOODBYE_CHAN:
                 setWelcomeGoodbyeChannel(value);
                 return null;
+            case VR_MODE:
+                setVrMode(booleanValue);
+                return null;
         }
     }
 
+    /**
+     * Get a profile by Discord ID.
+     *
+     * @param id The ID of the user that we want.
+     * @return The profile of the user with the specified ID.
+     */
     public SkuddUser getDiscord(String id){
         return discordProfiles.get(id);
     }
 
+    /**
+     * Adds a profile to the HashMap with the Discord ID as the key.
+     *
+     * @param user The user that should be added.
+     */
     public void addDiscord(SkuddUser user){
         discordProfiles.put(user.getId(), user);
     }
 
+    /**
+     * Clear the profiles when we initialize the server.
+     */
     public void clearProfiles() {
         if(!serverInitialized){
             discordProfiles.clear();
@@ -243,18 +320,39 @@ public class Server {
         }
     }
 
+    /**
+     * Adds a profile to the HashMap with the Twitch username as the key.
+     *
+     * @param user The user that should be added.
+     */
     public void addTwitch(SkuddUser user) {
         twitchProfiles.put(user.getTwitchUsername(), user);
     }
 
+    /**
+     * Get a profile by Twitch username.
+     *
+     * @param username The username of the profile we want.
+     * @return The profile of the specified username.
+     */
     public SkuddUser getTwitch(String username){
         return twitchProfiles.get(username);
     }
 
+    /**
+     * Remove a profile from the HashMap by Twitch username.
+     *
+     * @param twitchUsername The username of the profile that should be removed.
+     */
     public void removeTwitch(String twitchUsername){
         twitchProfiles.remove(twitchUsername);
     }
 
+    /**
+     * Join the correct Twitch channels for the server (and leave if there are any).
+     *
+     * @param twitchChannel The channel that should be joined.
+     */
     public void setTwitch(String twitchChannel){
         if(twitchChannel.equalsIgnoreCase("null")){
             twitchChannel = null;

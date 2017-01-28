@@ -1,17 +1,24 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Tim on 8/2/2016.
+ * This will class holds lots of data, mostly global data.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class Constants {
 
     public static String SKUDDBOT_MENTION = "<@209779500018434058>";
-    public static String TIMMY_ID = "76593288865394688";
-    public static String JASCH_ID = "148376320726794240";
+    public static String TIMMY_OVERRIDE = "76593288865394688";
+    public static String JASCH_OVERRIDE = "148376320726794240";
+    public static String LOG_CHANNEL = "274542577880006656";
     public static String twitchBot;
     public static String twitchOauth;
 
@@ -24,12 +31,20 @@ public class Constants {
     public static int MIN_GAIN_TWITCH = 10;
     public static int MAX_GAIN = 15;
     public static int MAX_GAIN_TWITCH = 15;
+    public static boolean VR_MODE = false;
 
     public static boolean MUTED = false;
+    public static boolean EVENT_ACTIVE = false;
+    public static String CURRENT_EVENT;
 
     public static int INACTIVE_DELAY = 600000;
 
     public static HashMap<String,SkuddUser> verifyCodes = new HashMap<>();
     public static HashMap<String,String> config = new HashMap<>();
+
+    public static ArrayList<String> awesomeUser = new ArrayList<>();
+    public static HashMap<String,String> awesomePing = new HashMap<>();
+    public static HashMap<String,DataTypes> awesomeStrings = new HashMap<>();
+    public static ArrayList<String> adminUser = new ArrayList<>();
 
 }

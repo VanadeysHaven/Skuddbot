@@ -1,7 +1,6 @@
 package me.Cooltimmetje.Skuddbot;
 
 import me.Cooltimmetje.Skuddbot.Cleverbot.MentionListener;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.ShutupCommand;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
@@ -12,17 +11,15 @@ import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.DiscordDisconnectedEvent;
+import sx.blah.discord.handle.impl.events.DisconnectedEvent;
 import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.obj.Status;
 import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.RateLimitException;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -41,7 +38,7 @@ public class Skuddbot {
     }
 
     public void login() throws DiscordException {
-        skuddbot = new ClientBuilder().withToken(token).login();
+        skuddbot = new ClientBuilder().withToken(token).setMaxReconnectAttempts(3).login();
         if(!preReadyListenersReady) {
             skuddbot.getDispatcher().registerListener(this);
             skuddbot.getDispatcher().registerListener(new CreateServerListener());
@@ -53,44 +50,43 @@ public class Skuddbot {
     @EventSubscriber
     public void onReady(ReadyEvent event){
         if(!listenersReady){
-            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
+//            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
+            MiscUtils.setPlaying();
             skuddbot.getDispatcher().registerListener(new MentionListener());
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());
-            skuddbot.getDispatcher().registerListener(new ShutupCommand());
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
             Main.getSkuddbotTwitch().joinChannels();
 
             listenersReady = true;
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> terminate(true)));
+            MessagesUtils.sendPlain(":robot: Startup sequence complete!", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
         }
     }
 
     @EventSubscriber
-    public void onDisconnect(DiscordDisconnectedEvent event){
-        CompletableFuture.runAsync(() -> {
-            if(reconnect.get()) {
-                Logger.info("Attempting to reconnect bot...");
-                try {
-                    login();
-                } catch (DiscordException e) {
-                    Logger.warn("Well rip.", e);
-                }
-            }
-        });
+    public void onDisconnect(DisconnectedEvent event){
+//        CompletableFuture.runAsync(() -> {
+//            if(reconnect.get()) {
+//                Logger.info("Attempting to reconnect bot...");
+//                try {
+//                    login();
+//                } catch (DiscordException e) {
+//                    Logger.warn("Well rip.", e);
+//                }
+//            }
+//        });
     }
 
     @EventSubscriber
     public void onMention(MentionEvent event){
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
-                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_ID)) {
+                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || event.getMessage().getAuthor().getID().equals(Constants.JASCH_OVERRIDE)) {
                     MessagesUtils.sendSuccess("Well, okay then...\n`Shutting down...`", event.getMessage().getChannel());
-                    Main.stopTimer();
-                    ServerManager.saveAll();
-                    Main.getSkuddbotTwitch().terminate();
-                    MySqlManager.disconnect();
-                    terminate();
+
+                    terminate(false);
                 } else {
                     MessagesUtils.sendError("Ur not timmy >=(", event.getMessage().getChannel());
                 }
@@ -98,11 +94,20 @@ public class Skuddbot {
         }
     }
 
-    public void terminate() {
+    public void terminate(boolean sigterm) {
+        if(sigterm){
+            MessagesUtils.sendPlain(":robot: Logging out due to SIGTERM...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
+        } else {
+            MessagesUtils.sendPlain(":robot: Logging out due to command...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
+        }
         reconnect.set(false);
         try {
+            Main.stopTimer();
+            ServerManager.saveAll();
+            Main.getSkuddbotTwitch().terminate();
+            MySqlManager.disconnect();
             skuddbot.logout();
-        } catch (DiscordException | RateLimitException e) {
+        } catch (DiscordException e) {
             Logger.warn("Couldn't log out.", e);
         }
 

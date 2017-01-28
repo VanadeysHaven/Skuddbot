@@ -1,6 +1,12 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import me.Cooltimmetje.Skuddbot.Main;
+import sx.blah.discord.handle.obj.Status;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Random;
 
 /**
@@ -37,6 +43,12 @@ public class MiscUtils {
         return sdf.format(time - (3600 * 24 * 1000));
     }
 
+    /**
+     * (╯°□°）╯︵ ¿uoıʇɐuıɐldxǝ uɐ pǝǝu ʎllɐǝɹ sıɥʇ sǝop
+     *
+     * @param input input
+     * @return ʇnduı
+     */
     public static String flipText(String input){
         String normal = "abcdefghijklmnopqrstuvwxyz_,;.?!'()[]{}";
         String split  = "ɐqɔpǝɟbɥıɾʞlɯuodbɹsʇnʌʍxʎz‾'؛˙¿¡,)(][}{";
@@ -56,5 +68,65 @@ public class MiscUtils {
             sb.append((a != -1) ? split.charAt(a) : letter);
         }
         return sb.reverse().toString();
+    }
+
+    /**
+     * Gets a random message from the awesome message pool of the given type.
+     *
+     * @param type Type required.
+     * @return The selected message.
+     */
+    public static String getRandomMessage(DataTypes type){
+        boolean rightType = false;
+        String selectedMessage = "null";
+        while (!rightType) {
+            Random generator = new Random();
+            Object[] values = Constants.awesomeStrings.values().toArray();
+            int selected = generator.nextInt(values.length);
+            DataTypes dataType = (DataTypes) values[selected];
+            if(dataType == type){
+                rightType = true;
+                selectedMessage = (String) Constants.awesomeStrings.keySet().toArray()[selected];
+            }
+        }
+
+        return selectedMessage;
+    }
+
+    public static void setPlaying(){
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM");
+        Calendar cal = Calendar.getInstance();
+        String date = dateFormat.format(cal.getTime());
+
+        switch (date) {
+
+            //Birthdays
+            case "21/10":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY TIMMY!"));
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+
+            //Seasonal events
+            case "24/12":
+            case "25/12":
+            case "26/12":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_CHRISTMAS)));
+                Constants.CURRENT_EVENT = "It's Christmas time!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+            case "01/01":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR)));
+                Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+
+            //Default
+            default:
+                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
+                Constants.EVENT_ACTIVE = false;
+                break;
+        }
+
     }
 }

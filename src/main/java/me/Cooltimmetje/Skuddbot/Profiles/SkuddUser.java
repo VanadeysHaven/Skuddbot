@@ -19,7 +19,11 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Created by Tim on 8/4/2016.
+ * Holds user data. Doesn't need much explaination imo...
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 @Getter
 @Setter
@@ -123,6 +127,12 @@ public class SkuddUser {
 
         String nameUser = (id == null ? getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(getId()) == null ? name : (Main.getInstance().getSkuddbot().getUserByID(getId()).getNicknameForGuild(Main.getInstance().getSkuddbot().getGuildByID(getServerID())).isPresent() ?
                 Main.getInstance().getSkuddbot().getUserByID(getId()).getNicknameForGuild(Main.getInstance().getSkuddbot().getGuildByID(getServerID())).get() : Main.getInstance().getSkuddbot().getUserByID(getId()).getName())));
+
+        if(this.getTwitchUsername() != null){
+            if(this.getTwitchUsername().equals("jaschmedia")){
+                nameUser = "JuiceMedia";
+            }
+        }
 
         int progress = (int) (((double)exp / (double)needed)*100); //We don't really care about rounding here. Ain't nobody noticing that shit... Unless your name is Jasch.
 

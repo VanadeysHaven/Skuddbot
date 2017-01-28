@@ -48,6 +48,9 @@ public class Main {
 
         MySqlManager.loadAuth();
         MySqlManager.loadBans();
+        MySqlManager.loadAdmin();
+        MySqlManager.loadAwesomeUsers();
+        MySqlManager.loadAwesomeData();
         log.info("All systems operational. Ready to connect to Discord.");
         try {
             skuddbot.login();

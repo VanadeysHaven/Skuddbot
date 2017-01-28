@@ -11,10 +11,19 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
- * Created by Tim on 8/21/2016.
+ * Show the XP leaderboard of the server.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
 public class Leaderboard {
 
+    /**
+     * CMD: Show the XP leaderboard of the current server.
+     *
+     * @param message This is the message that triggered the command.
+     */
     public static void run(IMessage message){
         message.getChannel().toggleTypingStatus();
         long startTime = System.currentTimeMillis();
@@ -38,7 +47,14 @@ public class Leaderboard {
         for(int i2 : top.descendingKeySet()){
             SkuddUser user = top.get(i2);
             String name = user.getId() == null ? user.getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() :
-                    (Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).isPresent() ? Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).get() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+                    (Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).isPresent() ?
+                            Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).get() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+
+            if(user.getTwitchUsername() != null){
+                if(user.getTwitchUsername().equals("jaschmedia")){
+                    name = "JuiceMedia";
+                }
+            }
 
             if(name.length() > lengthName){
                 lengthName = name.length();

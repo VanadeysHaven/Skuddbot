@@ -18,7 +18,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Tim on 8/22/2016.
+ * CMD: Initializes servers when the bot joins for the first time.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.2-ALPHA
  */
 public class InitializeCommand {
     
@@ -34,7 +38,7 @@ public class InitializeCommand {
             }
         }
         if(!hasAdmin){
-            hasAdmin = (message.getAuthor() == message.getGuild().getOwner()) || (message.getAuthor().getID().equals(Constants.TIMMY_ID));
+            hasAdmin = (message.getAuthor() == message.getGuild().getOwner()) || (Constants.adminUser.contains(message.getAuthor().getID()));
         }
         boolean weHaveAdmin = false;
         List<IRole> ourRoles = Main.getInstance().getSkuddbot().getOurUser().getRolesForGuild(message.getGuild());

@@ -14,14 +14,24 @@ import sx.blah.discord.handle.obj.IMessage;
 import java.text.MessageFormat;
 
 /**
- * Created by Tim on 9/6/2016.
+ * This class allows server owners to view and alter settings to their liking.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.2-ALPHA
  */
 public class Settings {
 
+    /**
+     * CMD: Server owners can view and alter settings.
+     * Please see the documentation in the code for more detail.
+     *
+     * @param message The message that this command got triggered off.
+     */
     public static void run(IMessage message){
         Server server = ServerManager.getServer(message.getGuild().getID());
-        if ((server.getAdminRole() != null && message.getAuthor().getRolesForGuild(message.getGuild()).contains(message.getGuild().getRolesByName(server.getAdminRole()).get(0))) || message.getAuthor() == message.getGuild().getOwner() || message.getAuthor().getID().equals(Constants.TIMMY_ID)) {
-            if(message.getContent().split(" ").length == 1){
+        if ((server.getAdminRole() != null && message.getAuthor().getRolesForGuild(message.getGuild()).contains(message.getGuild().getRolesByName(server.getAdminRole()).get(0))) || message.getAuthor() == message.getGuild().getOwner() || Constants.adminUser.contains(message.getAuthor().getID())) {
+            if(message.getContent().split(" ").length == 1){ //No arguments: Show list of the settings.
                 StringBuilder sb = new StringBuilder();
 
                 sb.append(MessageFormat.format("Settings for **{0}** | ID: `{1}`\n\n```", message.getGuild().getName(), message.getGuild().getID()));
@@ -48,7 +58,7 @@ public class Settings {
 
                 MessagesUtils.sendPlain(sb.toString(), message.getChannel());
 
-            } else if (message.getContent().split(" ").length == 2){
+            } else if (message.getContent().split(" ").length == 2){ //1 argument: Show the setting that got specified in more detail.
 
                 try {
                     SettingsInfo setting = SettingsInfo.valueOf(message.getContent().split(" ")[1].toUpperCase());
@@ -66,7 +76,7 @@ public class Settings {
                     MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
                 }
 
-            } else if(message.getContent().split(" ").length > 2){
+            } else if(message.getContent().split(" ").length > 2){ //2 or more arguments: Change the specified setting to the specified value.
 
                 SettingsInfo setting = null;
                 try {
@@ -78,11 +88,11 @@ public class Settings {
 
                 if(setting == SettingsInfo.TWITCH_CHANNEL && !message.getContent().split(" ")[2].equalsIgnoreCase("null")){
                     SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
-                    if(su.getTwitchUsername() == null && !su.getId().equals(Constants.TIMMY_ID)){
+                    if(su.getTwitchUsername() == null && !Constants.adminUser.contains(message.getAuthor().getID())){
                         MessagesUtils.sendError("You do not have a Twitch Account linked, type '!twitch' to get started with linking!", message.getChannel());
                         return;
                     }
-                    if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !su.getId().equals(Constants.TIMMY_ID)){
+                    if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !Constants.adminUser.contains(message.getAuthor().getID())){
                         MessagesUtils.sendError("You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact Tim.)", message.getChannel());
                         return;
                     }

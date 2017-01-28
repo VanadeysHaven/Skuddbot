@@ -17,12 +17,16 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Tim on 10/24/2016.
+ * CMD: Imports XP form other bots (Like Meme6)
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.2-ALPHA
  */
 public class ImportCommand {
 
     public static void run(IMessage message) throws IOException {
-        if (message.getAuthor().getID().equals(Constants.TIMMY_ID)){
+        if (message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
             File file = new File("/skuddbot/import.txt");
             int imported = 0;
 

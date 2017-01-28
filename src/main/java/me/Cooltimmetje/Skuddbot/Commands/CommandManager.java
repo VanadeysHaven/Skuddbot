@@ -1,16 +1,29 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AdminManager;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AwesomeManager;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.ChangeAvatar;
+import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 
 import java.io.IOException;
 
 /**
- * Created by Tim on 8/2/2016.
+ * This class handles everything commands, and triggers the right bit of code to process the command!
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class CommandManager {
 
+    /**
+     * EVENT: This event gets triggered when a message gets posted, it will check for a command and then run the code to process that command.
+     *
+     * @param event The event that the message triggered.
+     */
     @EventSubscriber
     public void onMessage(MessageReceivedEvent event){
         if(!event.getMessage().getChannel().isPrivate()) {
@@ -58,6 +71,30 @@ public class CommandManager {
                         e.printStackTrace();
                     }
                     break;
+                case "!ping":
+                    PingCommand.run(event.getMessage());
+                    break;
+                case "!addawesome":
+                    AwesomeManager.add(event.getMessage());
+                    break;
+                case "!removeawesome":
+                    AwesomeManager.remove(event.getMessage());
+                    break;
+                case "!addadmin":
+                    AdminManager.add(event.getMessage());
+                    break;
+                case "!removeadmin":
+                    AdminManager.remove(event.getMessage());
+                    break;
+                case "!userinfo":
+                    UserInfo.run(event.getMessage());
+                    break;
+                case "!riot":
+                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel());
+                    break;
+                case "!changeavatar":
+                    ChangeAvatar.run(event.getMessage());
+                    break;
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {
@@ -72,6 +109,21 @@ public class CommandManager {
                     break;
                 case "!say":
                     SayCommand.sayMessage(event.getMessage());
+                    break;
+                case "!reloadawesome":
+                    AwesomeManager.reload(event.getMessage());
+                    break;
+                case "!flip":
+                    FlipTextCommand.run(event.getMessage());
+                    break;
+                case "!setping":
+                    SetPing.run(event.getMessage());
+                    break;
+                case "!ping":
+                    PingCommand.run(event.getMessage());
+                    break;
+                case "!addmsg":
+                    AddMessageCommand.run(event.getMessage());
                     break;
             }
         }

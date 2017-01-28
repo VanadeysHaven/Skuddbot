@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.SkuddbotTwitch;
@@ -17,7 +18,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 /**
- * Created by Tim on 8/15/2016.
+ * This class handles everything to do with the database, and contains all operations we can run on the database.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class MySqlManager {
 
@@ -410,7 +415,7 @@ public class MySqlManager {
             rs = ps.executeQuery();
             if(rs.next()){
                 loaded = new Server(rs.getString(1),rs.getInt(2),rs.getInt(3),rs.getInt(4),rs.getInt(5),rs.getInt(6),rs.getDouble(7),
-                        rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13),rs.getString(14));
+                        rs.getString(8),rs.getString(9),rs.getString(10),rs.getString(11),rs.getString(12),rs.getString(13),rs.getString(14),rs.getBoolean(15));
             }
 
         } catch (SQLException e) {
@@ -446,7 +451,7 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "INSERT INTO servers VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE xp_min=?,xp_max=?,xp_min_twitch=?,xp_max_twitch=?,xp_base=?,xp_multiplier=?,cleverbot_channel=?,twitch_channel=?,welcome_message=?,goodbye_message=?,welcome_goodbye_chan=?,admin_role=?,role_on_join=?";
+        String query = "INSERT INTO servers VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE xp_min=?,xp_max=?,xp_min_twitch=?,xp_max_twitch=?,xp_base=?,xp_multiplier=?,cleverbot_channel=?,twitch_channel=?,welcome_message=?,goodbye_message=?,welcome_goodbye_chan=?,admin_role=?,role_on_join=?,vr_mode=?";
 
         try {
             c = hikari.getConnection();
@@ -466,19 +471,21 @@ public class MySqlManager {
             ps.setString(12, server.getWelcomeGoodbyeChannel());
             ps.setString(13, server.getAdminRole());
             ps.setString(14, server.getRoleOnJoin());
-            ps.setInt(15, server.getMinXP());
-            ps.setInt(16, server.getMaxXP());
-            ps.setInt(17, server.getMinXpTwitch());
-            ps.setInt(18, server.getMaxXpTwitch());
-            ps.setInt(19, server.getXpBase());
-            ps.setDouble(20, server.getXpMultiplier());
-            ps.setString(21, server.getCleverbotChannel());
-            ps.setString(22, server.getTwitchChannel());
-            ps.setString(23, server.getWelcomeMessage());
-            ps.setString(24, server.getGoodbyeMessage());
-            ps.setString(25, server.getWelcomeGoodbyeChannel());
-            ps.setString(26, server.getAdminRole());
-            ps.setString(27, server.getRoleOnJoin());
+            ps.setBoolean(15, server.isVrMode());
+            ps.setInt(16, server.getMinXP());
+            ps.setInt(17, server.getMaxXP());
+            ps.setInt(18, server.getMinXpTwitch());
+            ps.setInt(19, server.getMaxXpTwitch());
+            ps.setInt(20, server.getXpBase());
+            ps.setDouble(21, server.getXpMultiplier());
+            ps.setString(22, server.getCleverbotChannel());
+            ps.setString(23, server.getTwitchChannel());
+            ps.setString(24, server.getWelcomeMessage());
+            ps.setString(25, server.getGoodbyeMessage());
+            ps.setString(26, server.getWelcomeGoodbyeChannel());
+            ps.setString(27, server.getAdminRole());
+            ps.setString(28, server.getRoleOnJoin());
+            ps.setBoolean(29, server.isVrMode());
 
             ps.execute();
         } catch (SQLException e) {
@@ -857,4 +864,379 @@ public class MySqlManager {
             }
         }
     }
+
+    /**
+     * Send a request to the database to add a awesome user to the database.
+     *
+     * @param id The Discord ID associated with the person we want to add.
+     */
+    public static void addAwesome(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO awesome_users VALUES(?,?,null);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+            ps.setString(2, Main.getInstance().getSkuddbot().getUserByID(id).getName());
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * This will update the ping message in the database for the specified user.
+     *
+     * @param id The ID of the user.
+     * @param ping The message.
+     */
+    public static void updateAwesome(String id, String ping){ //UPDATE `awesome_users` SET `ping` = 'It''s lit.' WHERE `awesome_users`.`id` = '148376320726794240';
+            Connection c = null;
+            PreparedStatement ps = null;
+
+            String query = "UPDATE awesome_users SET ping=? WHERE id=?;";
+
+            try {
+                c = hikari.getConnection();
+                ps = c.prepareStatement(query);
+
+                ps.setString(1, ping);
+                ps.setString(2, id);
+
+                ps.execute();
+            } catch (SQLException e){
+                e.printStackTrace();
+            } finally {
+                if(c != null){
+                    try {
+                        c.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(ps != null){
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+    }
+
+    /**
+     * Send a request to the database to remove a awesome user form the database.
+     *
+     * @param id The Discord ID associated with the person we want to remove.
+     */
+    public static void removeAwesome(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "DELETE FROM awesome_users WHERE id=?;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * This loads all awesome ID's (users) from the database and adds them to the ArrayList.
+     */
+    public static void loadAwesomeUsers(){
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM awesome_users;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                Constants.awesomeUser.add(rs.getString(1));
+                if(rs.getString(3) != null) {
+                    Constants.awesomePing.put(rs.getString(1), rs.getString(3));
+                }
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Loads all awesome data from the database and adds them to the HashMap.
+     */
+    public static void loadAwesomeData(){
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM awesome_data;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                Constants.awesomeStrings.put(rs.getString(4), DataTypes.valueOf(rs.getString(3).toUpperCase()));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a awesome string to the database!
+     *
+     * @param dataType Message type.
+     * @param message The message itself.
+     * @param id The ID of the user that added it.
+     */
+    public static void addAwesomeString(DataTypes dataType, String message, String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO awesome_data VALUES(null,?,?,?);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+            ps.setString(2, dataType.toString());
+            ps.setString(3, message);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a request to the database to add a Admin user to the database.
+     *
+     * @param id The Discord ID associated with the person we want to add.
+     */
+    public static void addAdmin(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO admin_users VALUES(?);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a request to the database to remove a admin user form the database.
+     *
+     * @param id The Discord ID associated with the person we want to remove.
+     */
+    public static void removeAdmin(String id){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "DELETE FROM admin_users WHERE id=?;;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, id);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * This loads all admin ID's (users) from the database and adds them to the ArrayList.
+     */
+    public static void loadAdmin(){
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM admin_users;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                Constants.adminUser.add(rs.getString(1));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
 }

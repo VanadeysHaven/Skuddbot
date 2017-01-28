@@ -18,13 +18,28 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Tim on 8/16/2016.
+ * This class allows users to link up their Twitch accounts for a real-time combined XP amount for both platforms.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
 public class TwitchLinkCommand {
 
+    /**
+     * Used for storing profiles for which the verify code has already been entered.
+     */
     private static HashMap<SkuddUser, SkuddUser> linkPending = new HashMap<>();
+    /**
+     * Used to track back where the link command originated from.
+     */
     public static HashMap<String, String> serverID = new HashMap<>();
 
+    /**
+     * This gets ran when users type !twitch in any Skuddbot server, this initiates the linking process and shows some information.
+     *
+     * @param message The message that triggered this command..
+     */
     public static void run(IMessage message) {
         SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
         String code;
@@ -70,6 +85,12 @@ public class TwitchLinkCommand {
 
     }
 
+    /**
+     * When the user entered their verify code on Twitch we send a follow up message to complete the linking process.
+     *
+     * @param user The Discord instance of the user.
+     * @param twitch The Twitch instance of the user.
+     */
     public static void sendFollowUp(SkuddUser user, SkuddUser twitch) {
         try {
             user.getVerifyMessage().delete();
@@ -99,6 +120,11 @@ public class TwitchLinkCommand {
 
     }
 
+    /**
+     * If the user confirms, we merge the accounts together and delete the Twitch one.
+     *
+     * @param message The message that triggered this command.
+     */
     public static void confirm(IMessage message) {
         SkuddUser user = ProfileManager.getDiscord(message.getAuthor().getID(), serverID.get(message.getAuthor().getID()), true);
 
@@ -140,6 +166,11 @@ public class TwitchLinkCommand {
 
     }
 
+    /**
+     * When the user cancels we undo this process.
+     *
+     * @param message The message that triggered this command.
+     */
     public static void cancel(IMessage message){
         SkuddUser user = ProfileManager.getDiscord(message.getAuthor().getID(),serverID.get(message.getAuthor().getID()), true);
 

@@ -1,6 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
-import me.Cooltimmetje.Skuddbot.Enums.ErrorMessages;
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Main;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
@@ -34,7 +34,7 @@ public class MessagesUtils {
             final IMessage message;
 
             try {
-                message = channel.sendMessage(":x: " + ErrorMessages.random().getError() + "\n \n`" + error + "`");
+                message = channel.sendMessage(":x: " + MiscUtils.getRandomMessage(DataTypes.ERROR) + "\n \n`" + error + "`");
                 exec.schedule(() -> {
                     assert message != null;
                     try {

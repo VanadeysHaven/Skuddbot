@@ -6,13 +6,20 @@ import com.google.code.chatterbotapi.ChatterBotType;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 
 /**
- * Created by Tim on 8/2/2016.
+ * This class manages everything cleverbots.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
 public class CleverbotManager {
 
     private ChatterBotFactory factory;
     private ChatterBot bot;
 
+    /**
+     * Constructor for this class. Runs upon bot boot.
+     */
     public CleverbotManager(){
         factory = new ChatterBotFactory();
         try {
@@ -22,6 +29,13 @@ public class CleverbotManager {
         }
     }
 
+    /**
+     * Let the cleverbot think what it should respond
+     *
+     * @param input What the user said.
+     * @param server The server this input originates from.
+     * @return The output.
+     */
     public String getOutput(String input, Server server){
         if(server.getSession() == null){
             server.setSession(bot.createSession());

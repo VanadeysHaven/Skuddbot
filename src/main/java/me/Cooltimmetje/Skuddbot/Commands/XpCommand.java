@@ -8,10 +8,19 @@ import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
 /**
- * Created by Tim on 8/4/2016.
+ * This class shows the user their XP and levels.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
 public class XpCommand {
 
+    /**
+     * CMD: Show the user their XP on the current server.
+     *
+     * @param message The message that triggered this command.
+     */
     public static void run(IMessage message) { //return new int[]{exp, getXp(), needed, level};
         boolean mention = false;
         SkuddUser su = null;
@@ -28,9 +37,17 @@ public class XpCommand {
             mention = true;
         }
 
+        String name = (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(su.getId()).getDisplayName(message.getGuild()) : su.getTwitchUsername()));
+
         assert su != null;
+        if(su.getTwitchUsername() != null){
+            if(su.getTwitchUsername().equals("jaschmedia")){
+                name = "JuiceMedia";
+            }
+        }
+
         int[] stats = su.calcXP(!mention, message);
-        MessagesUtils.sendPlain("**" + (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(su.getId()).getDisplayName(message.getGuild()) : su.getTwitchUsername())) + " | Level: " + stats[3] + " | Level progress: " + stats[0] + "/" + stats[2] + " (" + (int) (((double) stats[0] / (double) stats[2]) * 100) + "%) | Total XP: " + stats[1] + "**", message.getChannel());
+        MessagesUtils.sendPlain("**" + name + " | Level: " + stats[3] + " | Level progress: " + stats[0] + "/" + stats[2] + " (" + (int) (((double) stats[0] / (double) stats[2]) * 100) + "%) | Total XP: " + stats[1] + "**", message.getChannel());
     }
 
 }

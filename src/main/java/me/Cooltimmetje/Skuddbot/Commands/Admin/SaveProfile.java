@@ -11,14 +11,25 @@ import sx.blah.discord.handle.obj.IMessage;
 import java.text.MessageFormat;
 
 /**
- * Created by Tim on 8/15/2016.
+ * This class is used to save profiles and other stuff to the database.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.2-ALPHA
+ * @since v0.1-ALPHA
  */
+
+//TODO: Revamp this command.
 public class SaveProfile {
 
+    /**
+     * CMD: Force saving data to the database.
+     *
+     * @param message The message that this command got triggered off.
+     */
     public static void run(IMessage message){
         long startTime = System.currentTimeMillis();
 
-        if(message.getAuthor().getID().equals(Constants.TIMMY_ID)){
+        if(message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
             if(message.getMentions().isEmpty()){
                 if(message.getContent().split(" ").length > 1){
                     if(message.getContent().split(" ")[1].equalsIgnoreCase("-all")){

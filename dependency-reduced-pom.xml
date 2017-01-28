@@ -5,6 +5,7 @@
   <artifactId>Skuddbot</artifactId>
   <version>0.0.1-veryunstableproballywontwork</version>
   <build>
+    <finalName>Skuddbot</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
