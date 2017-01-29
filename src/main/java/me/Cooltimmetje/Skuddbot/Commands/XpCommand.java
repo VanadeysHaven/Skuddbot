@@ -37,9 +37,13 @@ public class XpCommand {
             mention = true;
         }
 
+        if(su == null){
+            MessagesUtils.sendError("It seems you haven't been chatting. So you don't have any XP :(", message.getChannel());
+            return;
+        }
+
         String name = (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(su.getId()).getDisplayName(message.getGuild()) : su.getTwitchUsername()));
 
-        assert su != null;
         if(su.getTwitchUsername() != null){
             if(su.getTwitchUsername().equals("jaschmedia")){
                 name = "JuiceMedia";
