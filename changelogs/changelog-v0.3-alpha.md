@@ -28,3 +28,6 @@
 * `!flip` is now available in PM's and Twitch Chat (Twitch chat has a 30 second cooldown). (Jasch, I got ya covered)
 * Shit got more Juicy!
 * Playing messages now rotate through the messages pool that can be set by awesome users!
+
+## Fixed
+* User that never chatted before and try to view their XP not getting a response.
