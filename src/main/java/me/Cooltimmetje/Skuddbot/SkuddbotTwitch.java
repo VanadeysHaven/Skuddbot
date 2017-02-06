@@ -86,6 +86,18 @@ public class SkuddbotTwitch extends PircBot{
                     sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
                     cooldown.put(channel, System.currentTimeMillis());
                 }
+            } else if(message.startsWith("!reverse")) {
+                if(cooldown.containsKey(channel)){
+                    if (cooldown.containsKey(channel)) {
+                        if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
+                            sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
+                            cooldown.put(channel, System.currentTimeMillis());
+                        }
+                    } else {
+                        sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
+                        cooldown.put(channel, System.currentTimeMillis());
+                    }
+                }
             } else {
                 if (!bannedUsers.contains(sender)) {
                     SkuddUser user = ProfileManager.getTwitch(sender, channel, true);

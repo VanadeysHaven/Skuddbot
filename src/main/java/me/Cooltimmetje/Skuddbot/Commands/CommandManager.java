@@ -95,6 +95,9 @@ public class CommandManager {
                 case "!changeavatar":
                     ChangeAvatar.run(event.getMessage());
                     break;
+                case "!reverse":
+                    ReverseCommand.run(event.getMessage());
+                    break;
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {
@@ -124,6 +127,9 @@ public class CommandManager {
                     break;
                 case "!addmsg":
                     AddMessageCommand.run(event.getMessage());
+                    break;
+                case "!reverse":
+                    ReverseCommand.run(event.getMessage());
                     break;
             }
         }

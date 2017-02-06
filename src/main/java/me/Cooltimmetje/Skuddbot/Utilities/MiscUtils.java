@@ -70,6 +70,10 @@ public class MiscUtils {
         return sb.reverse().toString();
     }
 
+    public static String reverse(String input){
+        return new StringBuilder(input).reverse().toString();
+    }
+
     /**
      * Gets a random message from the awesome message pool of the given type.
      *

@@ -16,7 +16,7 @@ import java.util.HashMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 
