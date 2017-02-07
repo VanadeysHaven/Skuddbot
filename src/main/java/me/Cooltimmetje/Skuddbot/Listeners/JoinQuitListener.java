@@ -27,7 +27,7 @@ public class JoinQuitListener {
         Server server = ServerManager.getServer(event.getGuild().getID());
         if(server.getWelcomeMessage() != null) {
             MessagesUtils.sendPlain(ServerManager.getServer(event.getGuild().getID()).getWelcomeMessage().replace("$user", event.getUser().mention()).replace("$guild", event.getGuild().getName()).replace("$nl","\n"),
-                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(server.getWelcomeGoodbyeChannel()) : event.getGuild().getChannelByID(event.getGuild().getID()));
+                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(server.getWelcomeGoodbyeChannel()) : event.getGuild().getChannelByID(event.getGuild().getID()), false);
         }
         if(server.getRoleOnJoin() != null){
                 IUser user = Main.getInstance().getSkuddbot().getUserByID(event.getUser().getID());
@@ -50,7 +50,7 @@ public class JoinQuitListener {
         Server server = ServerManager.getServer(event.getGuild().getID());
         if(server.getGoodbyeMessage() != null) {
             MessagesUtils.sendPlain(server.getGoodbyeMessage().replace("$user", event.getUser().getName()).replace("$guild", event.getGuild().getName()).replace("$nl","\n"),
-                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(server.getWelcomeGoodbyeChannel()) : event.getGuild().getChannelByID(event.getGuild().getID()));
+                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(server.getWelcomeGoodbyeChannel()) : event.getGuild().getChannelByID(event.getGuild().getID()), false);
         }
     }
 

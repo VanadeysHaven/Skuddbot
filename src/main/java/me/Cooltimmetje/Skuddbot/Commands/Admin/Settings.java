@@ -56,7 +56,7 @@ public class Settings {
 
                 sb.append("```\nType `!settings <name>` to view more info about it. Type `!settings <name> <value>` to change it's value!");
 
-                MessagesUtils.sendPlain(sb.toString(), message.getChannel());
+                MessagesUtils.sendPlain(sb.toString(), message.getChannel(), false);
 
             } else if (message.getContent().split(" ").length == 2){ //1 argument: Show the setting that got specified in more detail.
 
@@ -71,7 +71,7 @@ public class Settings {
                                     "```\n" +
                                     "To alter the value type `!settings {5} <value>`.",
                             setting.toString(), setting.getDescription(), ServerManager.getServer(message.getGuild().getID()).getSetting(setting),
-                            setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel());
+                            setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel(), false);
                 } catch (IllegalArgumentException e){
                     MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
                 }

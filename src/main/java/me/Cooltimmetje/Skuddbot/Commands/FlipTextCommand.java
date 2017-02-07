@@ -45,7 +45,7 @@ public class FlipTextCommand {
             input = "You didn't input any text D:";
         }
 
-        MessagesUtils.sendPlain("(╯°□°）╯︵ " + MiscUtils.flipText(input), message.getChannel());
+        MessagesUtils.sendPlain("(╯°□°）╯︵ " + MiscUtils.flipText(input), message.getChannel(), false);
     }
 
 }

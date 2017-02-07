@@ -15,13 +15,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Tim on 8/2/2016.
  */
-public class MessagesUtils {
+public class MessagesUtils { //@​everyone
 
 
     public static void sendSuccess(String message, IChannel channel){
         if(!Constants.MUTED) {
             try {
-                channel.sendMessage(":white_check_mark: " + message);
+                channel.sendMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
             }
@@ -34,7 +34,7 @@ public class MessagesUtils {
             final IMessage message;
 
             try {
-                message = channel.sendMessage(":x: " + MiscUtils.getRandomMessage(DataTypes.ERROR) + "\n \n`" + error + "`");
+                message = channel.sendMessage((":x: " + MiscUtils.getRandomMessage(DataTypes.ERROR) + "\n \n`" + error + "`").replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
                 exec.schedule(() -> {
                     assert message != null;
                     try {
@@ -55,7 +55,7 @@ public class MessagesUtils {
             final IMessage message;
 
             try {
-                message = channel.sendMessage(":white_check_mark: " + messageString);
+                message = channel.sendMessage(":white_check_mark: " + messageString.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
                 exec.schedule(() -> {
                     assert message != null;
                     try {
@@ -71,7 +71,10 @@ public class MessagesUtils {
     }
 
     @SuppressWarnings("all") //Just because IntelliJ decided to be a dick.
-    public static IMessage sendPlain (String msg, IChannel channel){
+    public static IMessage sendPlain(String msg, IChannel channel, boolean allowEveryone){
+        if(!allowEveryone){
+            msg = msg.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere");
+        }
         if (!Constants.MUTED) {
             try {
                 IMessage message = channel.sendMessage(msg);
@@ -87,7 +90,7 @@ public class MessagesUtils {
     @SuppressWarnings("all") //Just because IntelliJ decided to be a dick.
     public static IMessage sendForce (String msg, IChannel channel){
         try {
-            IMessage message = channel.sendMessage(msg);
+            IMessage message = channel.sendMessage(msg.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
             return message;
         } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
             e.printStackTrace();

@@ -30,11 +30,11 @@ public class TwitchLiveListener {
         if(event.getOldStatus().getType() != Status.StatusType.STREAM) {
             if (event.getUser().getID().equals("131382094457733120")) { //Melsh
                 if (event.getNewStatus().getType() == Status.StatusType.STREAM) {
-                    MessagesUtils.sendPlain("@here melsh87 just went live! Go check them out and show them some love! https://www.twitch.tv/melsh87", Main.getInstance().getSkuddbot().getChannelByID("157855484395782144"));
+                    MessagesUtils.sendPlain("@here melsh87 just went live! Go check them out and show them some love! https://www.twitch.tv/melsh87", Main.getInstance().getSkuddbot().getChannelByID("157855484395782144"), true);
                 }
             } else if (event.getUser().getID().equals("147295556979523584")) { //Ray
                 if (event.getNewStatus().getType() == Status.StatusType.STREAM) {
-                    MessagesUtils.sendPlain("@here rayskudda just went live! Go check them out and show them some love! https://www.twitch.tv/rayskudda", Main.getInstance().getSkuddbot().getChannelByID("231813505961951232"));
+                    MessagesUtils.sendPlain("@here rayskudda just went live! Go check them out and show them some love! https://www.twitch.tv/rayskudda", Main.getInstance().getSkuddbot().getChannelByID("231813505961951232"), true);
                 }
             }
         }

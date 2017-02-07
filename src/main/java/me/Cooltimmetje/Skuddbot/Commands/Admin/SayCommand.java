@@ -60,7 +60,7 @@ public class SayCommand {
                     for(int i=1; i<args.length; i++){
                         sb.append(args[i]).append(" ");
                     }
-                    MessagesUtils.sendPlain(sb.toString().trim(), channel);
+                    MessagesUtils.sendPlain(sb.toString().trim(), channel, true);
                     MessagesUtils.sendSuccess(":mailbox_with_mail: " + channel.mention(), message.getChannel());
                 } else {
                     MessagesUtils.sendError("The channel that you set isn't a thingy anymore O.o (ID: " + channels.get(message.getAuthor().getID()) + ")", message.getChannel());

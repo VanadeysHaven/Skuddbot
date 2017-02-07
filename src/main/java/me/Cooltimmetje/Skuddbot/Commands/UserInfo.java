@@ -50,11 +50,11 @@ public class UserInfo {
         StringBuilder sb = new StringBuilder();
         List<IRole> roles = user.getRolesForGuild(message.getGuild());
         for(IRole role : roles){
-            sb.append(role.getName().replace("@everyone", "@​everyone")).append(", ");
+            sb.append(role.getName().replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere")).append(", ");
         }
         String rolesString = sb.toString();
         rolesString = rolesString.substring(0, rolesString.length() - 2);
-        embed.appendField("__Server Nickname:__", user.getNicknameForGuild(message.getGuild()).isPresent() ? user.getNicknameForGuild(message.getGuild()).get() : "No Nickname", true);
+        embed.appendField("__Server Nickname:__", user.getNicknameForGuild(message.getGuild()).isPresent() ? user.getNicknameForGuild(message.getGuild()).get().replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere") : "No Nickname", true);
         embed.appendField("__Roles:__", rolesString, true);
 
         embed.withFooterText("All this data is obtained through the public Discord API | Skuddbot " + Constants.config.get("version"));

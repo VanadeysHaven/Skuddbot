@@ -90,7 +90,7 @@ public class CommandManager {
                     UserInfo.run(event.getMessage());
                     break;
                 case "!riot":
-                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel());
+                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel(), false);
                     break;
                 case "!changeavatar":
                     ChangeAvatar.run(event.getMessage());

@@ -61,7 +61,7 @@ public class Skuddbot {
 
             listenersReady = true;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> terminate(true)));
-            MessagesUtils.sendPlain(":robot: Startup sequence complete!", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
+            MessagesUtils.sendPlain(":robot: Startup sequence complete!", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
         }
     }
 
@@ -96,9 +96,9 @@ public class Skuddbot {
 
     public void terminate(boolean sigterm) {
         if(sigterm){
-            MessagesUtils.sendPlain(":robot: Logging out due to SIGTERM...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
+            MessagesUtils.sendPlain(":robot: Logging out due to SIGTERM...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
         } else {
-            MessagesUtils.sendPlain(":robot: Logging out due to command...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL));
+            MessagesUtils.sendPlain(":robot: Logging out due to command...", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
         }
         reconnect.set(false);
         try {

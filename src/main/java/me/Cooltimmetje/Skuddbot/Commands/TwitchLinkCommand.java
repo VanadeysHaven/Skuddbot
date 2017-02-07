@@ -57,7 +57,7 @@ public class TwitchLinkCommand {
         serverID.put(message.getAuthor().getID(), message.getGuild().getID());
         
         if (su.getTwitchUsername() == null) {
-            MessagesUtils.sendPlain(message.getAuthor().mention() + ", please check your PM's for further instructions!", message.getChannel());
+            MessagesUtils.sendPlain(message.getAuthor().mention() + ", please check your PM's for further instructions!", message.getChannel(), false);
             if (su.getTwitchVerify() == null) {
                 code = MiscUtils.randomString(6);
                 while (Constants.verifyCodes.containsKey(code)) {

@@ -80,7 +80,7 @@ public class Leaderboard {
             }
         }
 
-        MessagesUtils.sendPlain("**XP Leaderboard** | **" + message.getGuild().getName() + "**\n\n```\n" + sb.toString() + "```\n**PRO-TIP:** You might have more XP if you are marked as \"not linked\", type `!twitch` to get started with linking your accounts! It's really easy to do, promise, and you'll get a nice tasty 1000xp free! Woo!\nGenerated in `" + (System.currentTimeMillis() - startTime) + " ms`", message.getChannel());
+        MessagesUtils.sendPlain("**XP Leaderboard** | **" + message.getGuild().getName() + "**\n\n```\n" + sb.toString() + "```\n**PRO-TIP:** You might have more XP if you are marked as \"not linked\", type `!twitch` to get started with linking your accounts! It's really easy to do, promise, and you'll get a nice tasty 1000xp free! Woo!\nGenerated in `" + (System.currentTimeMillis() - startTime) + " ms`", message.getChannel(), false);
 }
 
 }

@@ -51,7 +51,7 @@ public class XpCommand {
         }
 
         int[] stats = su.calcXP(!mention, message);
-        MessagesUtils.sendPlain("**" + name + " | Level: " + stats[3] + " | Level progress: " + stats[0] + "/" + stats[2] + " (" + (int) (((double) stats[0] / (double) stats[2]) * 100) + "%) | Total XP: " + stats[1] + "**", message.getChannel());
+        MessagesUtils.sendPlain("**" + name + " | Level: " + stats[3] + " | Level progress: " + stats[0] + "/" + stats[2] + " (" + (int) (((double) stats[0] / (double) stats[2]) * 100) + "%) | Total XP: " + stats[1] + "**", message.getChannel(), false);
     }
 
 }
