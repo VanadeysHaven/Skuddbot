@@ -110,6 +110,11 @@ public class MiscUtils {
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
+            case "18/03":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY RAY!"));
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
 
             //Seasonal events
             case "24/12":
