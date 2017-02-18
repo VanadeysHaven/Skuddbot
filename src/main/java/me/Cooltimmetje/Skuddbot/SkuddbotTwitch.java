@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
 
@@ -86,8 +88,8 @@ public class SkuddbotTwitch extends PircBot{
                     sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
                     cooldown.put(channel, System.currentTimeMillis());
                 }
-            } else if(message.startsWith("!reverse")) {
-                if(cooldown.containsKey(channel)){
+            } else if (message.startsWith("!reverse")) {
+                if (cooldown.containsKey(channel)) {
                     if (cooldown.containsKey(channel)) {
                         if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
                             sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
@@ -96,6 +98,20 @@ public class SkuddbotTwitch extends PircBot{
                     } else {
                         sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
                         cooldown.put(channel, System.currentTimeMillis());
+                    }
+                }
+            } else if ((message.startsWith("!votebuy") || message.startsWith("!buy") || message.startsWith("!pass")) && channel.equalsIgnoreCase("#melsh87")){
+                if(message.startsWith("!votebuy") && sender.equalsIgnoreCase("melsh87")){
+                    buyVote();
+                } else if (message.startsWith("!buy")){
+                    if(!voters.contains(sender)) {
+                        voters.add(sender);
+                        buy++;
+                    }
+                } else if (message.startsWith("!pass")){
+                    if(!voters.contains(sender)) {
+                        voters.add(sender);
+                        pass++;
                     }
                 }
             } else {
@@ -153,5 +169,37 @@ public class SkuddbotTwitch extends PircBot{
         sendMessage("#" + channel, message);
     }
 
+
+    private boolean voteActive = false;
+    private ArrayList<String> voters = new ArrayList<>();
+    private int buy = 0;
+    private int pass = 0;
+
+
+    public void buyVote(){
+        if(voteActive){
+            return;
+        }
+        voteActive = true;
+        voters.clear();
+        buy = 0;
+        pass = 0;
+        voters.clear();
+        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(4);
+        String channel = "#melsh87";
+
+        sendMessage(channel, "/me A vote to buy a property has started. - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - Voting ends in 2 minutes!");
+        exec.schedule(() -> sendMessage(channel ,"/me A vote to buy a property is in progress... - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - " + voters.size() + " people have voted so far. - Voting ends in 1 minute!"), 60, TimeUnit.SECONDS);
+        exec.schedule(() -> sendMessage(channel ,"/me A vote to buy a property is in progress... - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - " + voters.size() + " people have voted so far. - Voting ends in 30 seconds!"), 90, TimeUnit.SECONDS);
+        exec.schedule(() -> sendMessage(channel ,"/me A vote to buy a property is in progress... - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - " + voters.size() + " people have voted so far. - Voting ends in 15 seconds!"), 105, TimeUnit.SECONDS);
+        exec.schedule(() -> {
+            if(buy == pass){
+                sendMessage(channel, "/me VOTING HAS ENDED! - TIEBREAKER! - " + voters.get(MiscUtils.randomInt(0, voters.size() - 1)) + " has been selected at random to decide to buy or pass!");
+            } else {
+                sendMessage(channel, "/me VOTING HAS ENDED! - The chat voted: " + ((buy > pass) ? "BUY" : "PASS") + " - [Total votes: " + voters.size() + "][Buy votes: " + buy + "][Pass votes: " + pass + "]");
+            }
+        }, 120, TimeUnit.SECONDS);
+        exec.schedule(() -> voteActive = false, 130, TimeUnit.SECONDS);
+    }
 
 }
