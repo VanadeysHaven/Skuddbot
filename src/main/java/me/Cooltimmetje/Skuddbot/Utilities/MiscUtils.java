@@ -10,7 +10,11 @@ import java.util.Calendar;
 import java.util.Random;
 
 /**
- * Created by Tim on 8/4/2016.
+ * Some useful utilities I can use throughout the code.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.3.01-ALPHA
+ * @since v0.1-ALPHA
  */
 public class MiscUtils {
 
@@ -70,6 +74,27 @@ public class MiscUtils {
         return sb.reverse().toString();
     }
 
+    /**
+     * Normalize a string.
+     *
+     * @param input The string we want to be normalized.
+     * @return The normalized string.
+     */
+    public static String normalizeString(String input){ //
+        String characters = "𝟎𝟐𝓑𝓪𝓮𝐢𝒌𝓵𝓻𝒕";
+        String fixedChars = "02Baeiklrt";
+
+        char letter;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i< input.length(); i++) {
+            letter = input.charAt(i);
+
+            int a = characters.indexOf(letter);
+            sb.append((a != -1) ? fixedChars.charAt(a) : letter);
+        }
+        return sb.toString();
+    }
+
     public static String reverse(String input){
         return new StringBuilder(input).reverse().toString();
     }
@@ -112,6 +137,16 @@ public class MiscUtils {
                 break;
             case "18/03":
                 Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY RAY!"));
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+            case "30/07":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY MELSH!"));
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+            case "03/10":
+                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY JESSICA!"));
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;

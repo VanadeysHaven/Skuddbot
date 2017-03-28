@@ -22,7 +22,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA-DEV
+ * @version v0.3.01-ALPHA
  * @since v0.1-ALPHA
  */
 @Getter
@@ -183,5 +183,14 @@ public class SkuddUser {
         IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(serverID);
         boolean isTwitch = id == null;
         Logger.info(MessageFormat.format("[ProfileUnload][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(id) == null ? name : guild.getUserByID(id).getName()) + " (ID: " + id + ")", guild.getName(), guild.getID(), Constants.PROFILES_IN_MEMORY));
+    }
+
+    /**
+     * This returns if a profile is linked to a Twitch Account.
+     *
+     * @return True when linked, false when not.
+     */
+    public boolean isLinked(){
+        return (twitchUsername != null && id != null);
     }
 }

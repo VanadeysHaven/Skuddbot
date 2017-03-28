@@ -14,7 +14,7 @@ import java.util.TreeMap;
  * Show the XP leaderboard of the server.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.3.01-ALPHA
  * @since v0.1-ALPHA
  */
 public class Leaderboard {
@@ -80,7 +80,10 @@ public class Leaderboard {
             }
         }
 
-        MessagesUtils.sendPlain("**XP Leaderboard** | **" + message.getGuild().getName() + "**\n\n```\n" + sb.toString() + "```\n**PRO-TIP:** You might have more XP if you are marked as \"not linked\", type `!twitch` to get started with linking your accounts! It's really easy to do, promise, and you'll get a nice tasty 1000xp free! Woo!\nGenerated in `" + (System.currentTimeMillis() - startTime) + " ms`", message.getChannel(), false);
+        String leaderboard = sb.toString();
+        boolean displayLinkInfo = leaderboard.contains("(not linked)");
+
+        MessagesUtils.sendPlain("**XP Leaderboard** | **" + message.getGuild().getName() + "**\n\n```\n" + leaderboard + "```\n" + (displayLinkInfo ? "**PRO-TIP:** You might have more XP if you are marked as \"not linked\", type `!twitch` to get started with linking your accounts! It's really easy to do, promise, and you'll get a nice tasty 1000xp free! Woo!\n" : "") + "Generated in `" + (System.currentTimeMillis() - startTime) + " ms`", message.getChannel(), false);
 }
 
 }

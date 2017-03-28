@@ -16,7 +16,7 @@ import java.util.List;
  * This class shows info about the user that ran the command or that has been specified.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA
+ * @version v0.3.01-ALPHA
  * @since v0.3-ALPHA
  */
 public class UserInfo {
@@ -42,8 +42,26 @@ public class UserInfo {
                 embed.withColor(218,165,32).withDesc("Awesome!");
             }
         }
-        if(user.getID().equals("214049996163645441")){
-            embed.withColor(255,105,180).withDesc("Glitter queen!");
+
+        switch (user.getID()){
+            case "214049996163645441":
+                embed.withColor(255,105,180).withDesc("Glitter queen! - Skuddbot Artist");
+                break;
+            case "148376320726794240":
+                embed.withColor(230,126,34).withDesc("Skuddbot Admin - Server Developer");
+                break;
+            case "76593288865394688":
+                embed.withColor(52,152,219).withDesc("Skuddbot Admin - Lead Developer");
+                break;
+            case "147295556979523584":
+                embed.withDesc("Awesome! - !rule0");
+                break;
+            case "91949596737011712":
+                embed.withColor(52,179,79).withDesc("Awesome! - Irish Fuck");
+                break;
+            case "131382094457733120":
+                embed.withColor(229,186,17).withDesc("Awesome! - CHEESE, FOR EVERYONE!");
+                break;
         }
 
         embed.appendField("__User ID:__", user.getID(), false);
