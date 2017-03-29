@@ -1,6 +1,5 @@
 package me.Cooltimmetje.Skuddbot;
 
-import me.Cooltimmetje.Skuddbot.Cleverbot.MentionListener;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
@@ -52,7 +51,6 @@ public class Skuddbot {
         if(!listenersReady){
 //            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
             MiscUtils.setPlaying();
-            skuddbot.getDispatcher().registerListener(new MentionListener());
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());

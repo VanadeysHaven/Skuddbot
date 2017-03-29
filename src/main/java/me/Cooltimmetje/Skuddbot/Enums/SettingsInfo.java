@@ -14,7 +14,6 @@ public enum SettingsInfo {
     XP_TWITCH_MAX        ("The maximum amount of XP per message on Twitch.",                                                                     "15",    "Integer"                         ),
     XP_BASE              ("The amount of XP level 1 wil require to level up. (See manual)",                                                      "1500",  "Integer"                         ),
     XP_MULTIPLIER        ("The multiplier that will be applied to each level. (See manual)",                                                     "1.2",   "Double"                          ),
-    CLEVERBOT_CHANNEL    ("This channel is where the cleverbot is active. (See manual)",                                                         "NULL",  "String (of: Discord Channel ID)" ),
     TWITCH_CHANNEL       ("This is the Twitch Channel that the bot should track for this server. (See manual)",                                  "NULL",  "String (of: Twitch Channel Name)"),
     WELCOME_MESSAGE      ("This will be posted in the channel that you specified when someone joins the server. (See manual)",                   "NULL",  "String"                          ),
     GOODBYE_MESSAGE      ("This will be posted in the channel that you specified when someone leaves the server. (See manual)",                  "NULL",  "String"                          ),

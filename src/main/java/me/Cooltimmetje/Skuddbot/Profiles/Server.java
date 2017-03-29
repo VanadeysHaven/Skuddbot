@@ -31,7 +31,6 @@ public class Server {
     private int maxXpTwitch;
     private int xpBase;
     private double xpMultiplier;
-    private String cleverbotChannel;
     private String twitchChannel;
     private String welcomeMessage;
     private String goodbyeMessage;
@@ -80,7 +79,6 @@ public class Server {
      * @param maxXpTwitch The XP_TWITCH_MAX setting.
      * @param xpBase The XP_BASE setting.
      * @param xpMultiplier The XP_MULTIPLIER setting.
-     * @param cleverbotChannel The CLEVERBOT_CHANEL setting.
      * @param twitchChannel The TWITCH_CHANNEL setting.
      * @param welcomeMessage The WELCOME_MESSAGE setting.
      * @param goodbyeMessage The GOODBYE_MESSAGE setting.
@@ -89,7 +87,7 @@ public class Server {
      * @param roleOnJoin The ROLE_ON_JOIN setting.
      * @param vrMode The VR_MODE setting.
      */
-    public Server(String serverID, int minXP, int maxXP, int minXpTwitch, int maxXpTwitch, int xpBase, double xpMultiplier, String cleverbotChannel, String twitchChannel, String welcomeMessage, String goodbyeMessage, String welcomeGoodbyeChannel, String adminRole, String roleOnJoin, boolean vrMode) {
+    public Server(String serverID, int minXP, int maxXP, int minXpTwitch, int maxXpTwitch, int xpBase, double xpMultiplier, String twitchChannel, String welcomeMessage, String goodbyeMessage, String welcomeGoodbyeChannel, String adminRole, String roleOnJoin, boolean vrMode) {
         this.serverID = serverID;
         this.minXP = minXP;
         this.maxXP = maxXP;
@@ -97,7 +95,6 @@ public class Server {
         this.maxXpTwitch = maxXpTwitch;
         this.xpBase = xpBase;
         this.xpMultiplier = xpMultiplier;
-        this.cleverbotChannel = cleverbotChannel;
         this.twitchChannel = twitchChannel;
         this.welcomeMessage = welcomeMessage;
         this.goodbyeMessage = goodbyeMessage;
@@ -158,8 +155,6 @@ public class Server {
                 return getXpBase() + "";
             case XP_MULTIPLIER:
                 return getXpMultiplier() + "";
-            case CLEVERBOT_CHANNEL:
-                return getCleverbotChannel();
             case TWITCH_CHANNEL:
                 return getTwitchChannel();
             case WELCOME_MESSAGE:
@@ -260,9 +255,6 @@ public class Server {
                     return "XP_MULTIPLIER should always be greater than 1!";
                 }
                 setXpMultiplier(doubleValue);
-                return null;
-            case CLEVERBOT_CHANNEL:
-                setCleverbotChannel(value);
                 return null;
             case TWITCH_CHANNEL:
                 if(ServerManager.twitchServers.containsKey(value)){
