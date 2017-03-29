@@ -90,10 +90,13 @@ public class CommandManager {
                     UserInfo.run(event.getMessage());
                     break;
                 case "!riot":
-                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel());
+                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel(), false);
                     break;
                 case "!changeavatar":
                     ChangeAvatar.run(event.getMessage());
+                    break;
+                case "!reverse":
+                    ReverseCommand.run(event.getMessage());
                     break;
             }
         } else {
@@ -124,6 +127,9 @@ public class CommandManager {
                     break;
                 case "!addmsg":
                     AddMessageCommand.run(event.getMessage());
+                    break;
+                case "!reverse":
+                    ReverseCommand.run(event.getMessage());
                     break;
             }
         }

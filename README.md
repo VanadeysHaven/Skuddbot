@@ -1,4 +1,6 @@
 # Skuddbot
+![Skuddbot](http://i.imgur.com/FPFThi5.png)
+
 Welcome to Skuddbot, the revolutionary (and fun) Discord bot!
 
 ## Skudd-who?

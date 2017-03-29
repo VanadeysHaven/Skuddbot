@@ -49,7 +49,7 @@ public class AddMessageCommand {
 
                 if(input.length() > dataType.getMaxLength()){
                         MessagesUtils.sendPlain(":warning: Your message is exceeding the __" + dataType.getMaxLength() + " character limit__. To add it you need to make it shorter." +
-                                "For your convenience: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel());
+                                "For your convenience: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel(), false);
                 } else {
                     MessagesUtils.sendSuccess("Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", message.getChannel());
                     MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getID());

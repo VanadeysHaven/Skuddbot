@@ -16,7 +16,7 @@ import java.util.List;
  * This class shows info about the user that ran the command or that has been specified.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA
+ * @version v0.3.01-ALPHA
  * @since v0.3-ALPHA
  */
 public class UserInfo {
@@ -42,19 +42,37 @@ public class UserInfo {
                 embed.withColor(218,165,32).withDesc("Awesome!");
             }
         }
-        if(user.getID().equals("214049996163645441")){
-            embed.withColor(255,105,180).withDesc("Glitter queen!");
+
+        switch (user.getID()){
+            case "214049996163645441":
+                embed.withColor(255,105,180).withDesc("Glitter queen! - Skuddbot Artist");
+                break;
+            case "148376320726794240":
+                embed.withColor(230,126,34).withDesc("Skuddbot Admin - Server Developer");
+                break;
+            case "76593288865394688":
+                embed.withColor(52,152,219).withDesc("Skuddbot Admin - Lead Developer");
+                break;
+            case "147295556979523584":
+                embed.withDesc("Awesome! - !rule0");
+                break;
+            case "91949596737011712":
+                embed.withColor(52,179,79).withDesc("Awesome! - Irish Fuck");
+                break;
+            case "131382094457733120":
+                embed.withColor(229,186,17).withDesc("Awesome! - CHEESE, FOR EVERYONE!");
+                break;
         }
 
         embed.appendField("__User ID:__", user.getID(), false);
         StringBuilder sb = new StringBuilder();
         List<IRole> roles = user.getRolesForGuild(message.getGuild());
         for(IRole role : roles){
-            sb.append(role.getName().replace("@everyone", "@​everyone")).append(", ");
+            sb.append(role.getName().replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere")).append(", ");
         }
         String rolesString = sb.toString();
         rolesString = rolesString.substring(0, rolesString.length() - 2);
-        embed.appendField("__Server Nickname:__", user.getNicknameForGuild(message.getGuild()).isPresent() ? user.getNicknameForGuild(message.getGuild()).get() : "No Nickname", true);
+        embed.appendField("__Server Nickname:__", user.getNicknameForGuild(message.getGuild()).isPresent() ? user.getNicknameForGuild(message.getGuild()).get().replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere") : "No Nickname", true);
         embed.appendField("__Roles:__", rolesString, true);
 
         embed.withFooterText("All this data is obtained through the public Discord API | Skuddbot " + Constants.config.get("version"));

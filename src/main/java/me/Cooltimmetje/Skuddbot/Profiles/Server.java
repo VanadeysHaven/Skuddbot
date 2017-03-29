@@ -16,7 +16,7 @@ import java.util.HashMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 
@@ -65,7 +65,7 @@ public class Server {
 
         MessagesUtils.sendPlain("**Welcome to the fun, welcome to the revolution, welcome to Skuddbot.** :eyes:\n\nI see that this server is not yet in my database, therefore I'll need to initialize this server before I can be used on this server!\n" +
                 "In order to do so, please make sure I have a role that has the `ADMINISTRATOR` permission, then run `!initialize`. **NOTE:** This command requires you to also have the `ADMINISTRATOR` permission.",
-                Main.getInstance().getSkuddbot().getGuildByID(serverID).getChannelByID(serverID));
+                Main.getInstance().getSkuddbot().getGuildByID(serverID).getChannelByID(serverID), false);
         Logger.info("[CreateServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
 
     }

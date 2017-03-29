@@ -17,7 +17,7 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.3.01-ALPHA
  * @since v0.2-ALPHA
  */
 public class Settings {
@@ -56,7 +56,7 @@ public class Settings {
 
                 sb.append("```\nType `!settings <name>` to view more info about it. Type `!settings <name> <value>` to change it's value!");
 
-                MessagesUtils.sendPlain(sb.toString(), message.getChannel());
+                MessagesUtils.sendPlain(sb.toString(), message.getChannel(), false);
 
             } else if (message.getContent().split(" ").length == 2){ //1 argument: Show the setting that got specified in more detail.
 
@@ -71,7 +71,7 @@ public class Settings {
                                     "```\n" +
                                     "To alter the value type `!settings {5} <value>`.",
                             setting.toString(), setting.getDescription(), ServerManager.getServer(message.getGuild().getID()).getSetting(setting),
-                            setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel());
+                            setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel(), false);
                 } catch (IllegalArgumentException e){
                     MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
                 }
@@ -88,12 +88,13 @@ public class Settings {
 
                 if(setting == SettingsInfo.TWITCH_CHANNEL && !message.getContent().split(" ")[2].equalsIgnoreCase("null")){
                     SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
-                    if(su.getTwitchUsername() == null && !Constants.adminUser.contains(message.getAuthor().getID())){
+                    assert su != null; //FUCK YOU INTELLIJ, FUCK YOOOOUUUU (╯°□°）╯︵ ┻━┻
+                    if(su.isLinked() && !Constants.adminUser.contains(message.getAuthor().getID())){
                         MessagesUtils.sendError("You do not have a Twitch Account linked, type '!twitch' to get started with linking!", message.getChannel());
                         return;
                     }
                     if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !Constants.adminUser.contains(message.getAuthor().getID())){
-                        MessagesUtils.sendError("You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact Tim.)", message.getChannel());
+                        MessagesUtils.sendError("You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact a Skuddbot Admin.)", message.getChannel());
                         return;
                     }
                 }

@@ -30,7 +30,7 @@ public class MentionListener {
                         if (msgContent.split(" ").length >= 2) {
                             message.getChannel().toggleTypingStatus();
                             String input = event.getMessage().getContent().replace(Constants.SKUDDBOT_MENTION, " ").trim();
-                            MessagesUtils.sendPlain(":speech_balloon: " + Main.getCleverskudd().getOutput(input, server), message.getChannel());
+                            MessagesUtils.sendPlain(":speech_balloon: " + Main.getCleverskudd().getOutput(input, server), message.getChannel(), false);
                         }
                     }
                 }

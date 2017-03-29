@@ -24,7 +24,7 @@ public class CreateServerListener {
             ServerManager.getServer(event.getGuild().getID());
         } else {
             Logger.info("[ServerAuthorization] " + event.getGuild().getName() + " (ID: " + event.getGuild().getID() + ") is not authorized to use Skuddbot. Leaving...");
-            MessagesUtils.sendPlain("I'm sorry but this server is not authorized... Please refer to the manual on how to get your server authorized! You can find the manual here: https://goo.gl/oWoyG2", event.getGuild().getChannelByID(event.getGuild().getID()));
+            MessagesUtils.sendPlain("I'm sorry but this server is not authorized... Please refer to the manual on how to get your server authorized! You can find the manual here: https://goo.gl/oWoyG2", event.getGuild().getChannelByID(event.getGuild().getID()), false);
             try {
                 event.getGuild().leaveGuild();
             } catch (DiscordException | RateLimitException e) {
