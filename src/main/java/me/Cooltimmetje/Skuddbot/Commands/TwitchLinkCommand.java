@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * This class allows users to link up their Twitch accounts for a real-time combined XP amount for both platforms.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class TwitchLinkCommand {
@@ -40,6 +40,7 @@ public class TwitchLinkCommand {
      *
      * @param message The message that triggered this command..
      */
+    @SuppressWarnings("ConstantConditions")
     public static void run(IMessage message) {
         SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
         String code;
@@ -125,6 +126,7 @@ public class TwitchLinkCommand {
      *
      * @param message The message that triggered this command.
      */
+    @SuppressWarnings("ConstantConditions")
     public static void confirm(IMessage message) {
         SkuddUser user = ProfileManager.getDiscord(message.getAuthor().getID(), serverID.get(message.getAuthor().getID()), true);
 
@@ -171,6 +173,7 @@ public class TwitchLinkCommand {
      *
      * @param message The message that triggered this command.
      */
+    @SuppressWarnings("ConstantConditions")
     public static void cancel(IMessage message){
         SkuddUser user = ProfileManager.getDiscord(message.getAuthor().getID(),serverID.get(message.getAuthor().getID()), true);
 

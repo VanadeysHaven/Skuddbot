@@ -22,7 +22,11 @@ import sx.blah.discord.util.DiscordException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by Tim on 8/2/2016.
+ * Holds the Skuddbot instance.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class Skuddbot {
 
@@ -55,6 +59,7 @@ public class Skuddbot {
             skuddbot.getDispatcher().registerListener(new XPGiver());
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
+            skuddbot.getDispatcher().registerListener(new MessagesUtils());
             Main.getSkuddbotTwitch().joinChannels();
 
             listenersReady = true;

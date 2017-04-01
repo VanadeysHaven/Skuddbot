@@ -3,10 +3,14 @@ package me.Cooltimmetje.Skuddbot.Enums;
 import lombok.Getter;
 
 /**
- * Created by Tim on 9/8/2016.
+ * This holds the information for Server ServerSettingsCommand.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4-ALPHA-DEV
+ * @since v0.2-ALPHA
  */
 @Getter
-public enum SettingsInfo {
+public enum ServerSettings {
 
     XP_MIN               ("The maximum amount of XP per message on Discord.",                                                                    "10",    "Integer"                         ),
     XP_MAX               ("The maximum amount of XP per message on Discord.",                                                                    "15",    "Integer"                         ),
@@ -22,12 +26,11 @@ public enum SettingsInfo {
     ROLE_ON_JOIN         ("This role will be assigned to people that join the server. (See manual)",                                             "NULL",  "String (of: Discord Role)"       ),
     VR_MODE              ("This mode is for VR streamers, it'll put a exclamation mark and a space in front of messages in Twitch Chat.",        "false", "Boolean"                         );
 
-
     private String description;
     private String defaultValue;
     private String type;
 
-    SettingsInfo(String s, String s1, String s2){
+    ServerSettings(String s, String s1, String s2){
         this.description = s;
         this.defaultValue = s1;
         this.type = s2;

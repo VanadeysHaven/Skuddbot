@@ -3,7 +3,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 import com.google.code.chatterbotapi.ChatterBotSession;
 import lombok.Getter;
 import lombok.Setter;
-import me.Cooltimmetje.Skuddbot.Enums.SettingsInfo;
+import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
@@ -139,7 +139,7 @@ public class Server {
      * @param si The setting that should be returned.
      * @return The value of the setting in String form.
      */
-    public String getSetting(SettingsInfo si){
+    public String getSetting(ServerSettings si){
         switch (si){
             default:
                 return null;
@@ -180,7 +180,7 @@ public class Server {
      * @return When the value was changed succesfully it returns 'null'. When a error occured it returns what went wrong.
      */
     @SuppressWarnings("all") //Fuck you IntelliJ
-    public String setSetting(SettingsInfo si, String value){
+    public String setSetting(ServerSettings si, String value){
         double doubleValue = 0;
         boolean booleanValue = false;
         int intValue = 0;

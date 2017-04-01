@@ -12,21 +12,23 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
 
 /**
- * Created by Tim on 8/17/2016.
+ * Everything Twitch happens here!
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class SkuddbotTwitch extends PircBot{
 
     private boolean terminated = false;
     public static ArrayList<String> bannedUsers = new ArrayList<>();
-    public static HashMap<String,Long> cooldown = new HashMap<>();
+    private static HashMap<String,Long> cooldown = new HashMap<>();
 
-    public SkuddbotTwitch() {
+    private SkuddbotTwitch() {
         this.setName(Constants.twitchBot);
         this.setLogin(Constants.twitchBot);
     }
@@ -61,6 +63,7 @@ public class SkuddbotTwitch extends PircBot{
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     protected void onMessage(String channel, String sender, String login, String hostname, String message) {
         int gain = 0;
         if (twitchServers.containsKey(channel.replace("#", " ").trim())) {
@@ -90,36 +93,42 @@ public class SkuddbotTwitch extends PircBot{
                 }
             } else if (message.startsWith("!reverse")) {
                 if (cooldown.containsKey(channel)) {
-                    if (cooldown.containsKey(channel)) {
-                        if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
-                            sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
-                            cooldown.put(channel, System.currentTimeMillis());
-                        }
-                    } else {
+                    if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
                         sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
                         cooldown.put(channel, System.currentTimeMillis());
                     }
+                } else {
+                    sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
+                    cooldown.put(channel, System.currentTimeMillis());
                 }
-            } else if ((message.startsWith("!votebuy") || message.startsWith("!buy") || message.startsWith("!pass")) && channel.equalsIgnoreCase("#melsh87")){
-                if(message.startsWith("!votebuy") && sender.equalsIgnoreCase("melsh87")){
-                    buyVote();
-                } else if (message.startsWith("!buy")){
-                    if(!voters.contains(sender)) {
-                        voters.add(sender);
-                        buy++;
+            } else if (message.startsWith("!toggletracking")){
+                if(cooldown.containsKey(sender)){
+                    if((System.currentTimeMillis() - cooldown.get(sender)) > 30000) {
+                        SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
+                        boolean currentlyEnabled = user.isTrackMe();
+                        user.setTrackMe(!user.isTrackMe());
+
+                        sendMessage(channel, sender + ", tracking has been " + (currentlyEnabled ? "disabled" : "enabled") + " for you." +
+                                (user.isLinked() ? " | NOTE: Because your account is linked to Discord, tracking has also been " + (currentlyEnabled ? "disabled" : "enabled") + " on Discord." : ""));
+                        cooldown.put(sender, System.currentTimeMillis());
                     }
-                } else if (message.startsWith("!pass")){
-                    if(!voters.contains(sender)) {
-                        voters.add(sender);
-                        pass++;
-                    }
+                } else {
+                    SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
+                    boolean currentlyEnabled = user.isTrackMe();
+                    user.setTrackMe(!user.isTrackMe());
+
+                    sendMessage(channel, sender + ", tracking has been " + (currentlyEnabled ? "disabled" : "enabled") + " for you." +
+                            (user.isLinked() ? " | NOTE: Because your account is linked to Discord, tracking has also been " + (currentlyEnabled ? "disabled" : "enabled") + " on Discord." : ""));
+                    cooldown.put(sender, System.currentTimeMillis());
                 }
             } else {
                 if (!bannedUsers.contains(sender)) {
                     SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
-                    Server server = ServerManager.getTwitch(channel.replace("#", " ").trim());
-                    gain = MiscUtils.randomInt(server.getMinXpTwitch(), server.getMaxXpTwitch());
-                    user.setXp(user.getXp() + gain);
+                    if(user.isTrackMe()) {
+                        Server server = ServerManager.getTwitch(channel.replace("#", " ").trim());
+                        gain = MiscUtils.randomInt(server.getMinXpTwitch(), server.getMaxXpTwitch());
+                        user.setXp(user.getXp() + gain);
+                    }
                 }
             }
 
@@ -167,39 +176,6 @@ public class SkuddbotTwitch extends PircBot{
 
     public void send(String message, String channel){
         sendMessage("#" + channel, message);
-    }
-
-
-    private boolean voteActive = false;
-    private ArrayList<String> voters = new ArrayList<>();
-    private int buy = 0;
-    private int pass = 0;
-
-
-    public void buyVote(){
-        if(voteActive){
-            return;
-        }
-        voteActive = true;
-        voters.clear();
-        buy = 0;
-        pass = 0;
-        voters.clear();
-        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(4);
-        String channel = "#melsh87";
-
-        sendMessage(channel, "/me A vote to buy a property has started. - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - Voting ends in 2 minutes!");
-        exec.schedule(() -> sendMessage(channel ,"/me A vote to buy a property is in progress... - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - " + voters.size() + " people have voted so far. - Voting ends in 1 minute!"), 60, TimeUnit.SECONDS);
-        exec.schedule(() -> sendMessage(channel ,"/me A vote to buy a property is in progress... - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - " + voters.size() + " people have voted so far. - Voting ends in 30 seconds!"), 90, TimeUnit.SECONDS);
-        exec.schedule(() -> sendMessage(channel ,"/me A vote to buy a property is in progress... - Type \"!buy\" to vote to buy or \"!pass\" to vote to not buy. - " + voters.size() + " people have voted so far. - Voting ends in 15 seconds!"), 105, TimeUnit.SECONDS);
-        exec.schedule(() -> {
-            if(buy == pass){
-                sendMessage(channel, "/me VOTING HAS ENDED! - TIEBREAKER! - " + voters.get(MiscUtils.randomInt(0, voters.size() - 1)) + " has been selected at random to decide to buy or pass!");
-            } else {
-                sendMessage(channel, "/me VOTING HAS ENDED! - The chat voted: " + ((buy > pass) ? "BUY" : "PASS") + " - [Total votes: " + voters.size() + "][Buy votes: " + buy + "][Pass votes: " + pass + "]");
-            }
-        }, 120, TimeUnit.SECONDS);
-        exec.schedule(() -> voteActive = false, 130, TimeUnit.SECONDS);
     }
 
 }

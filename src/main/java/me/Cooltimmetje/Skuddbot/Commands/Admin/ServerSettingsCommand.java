@@ -1,6 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin;
 
-import me.Cooltimmetje.Skuddbot.Enums.SettingsInfo;
+import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -17,10 +17,10 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3.01-ALPHA
+ * @version v0.4-ALPHA-DEV
  * @since v0.2-ALPHA
  */
-public class Settings {
+public class ServerSettingsCommand {
 
     /**
      * CMD: Server owners can view and alter settings.
@@ -34,11 +34,11 @@ public class Settings {
             if(message.getContent().split(" ").length == 1){ //No arguments: Show list of the settings.
                 StringBuilder sb = new StringBuilder();
 
-                sb.append(MessageFormat.format("Settings for **{0}** | ID: `{1}`\n\n```", message.getGuild().getName(), message.getGuild().getID()));
+                sb.append(MessageFormat.format("Server Settings for **{0}** | ID: `{1}`\n\n```", message.getGuild().getName(), message.getGuild().getID()));
 
                 int longest = 0;
 
-                for(SettingsInfo setting : SettingsInfo.values()){
+                for(ServerSettings setting : ServerSettings.values()){
                     int i = setting.toString().length();
                     if(i > longest){
                         longest = i;
@@ -49,19 +49,19 @@ public class Settings {
                 }
                 sb.append("Setting").append(StringUtils.repeat(" ", longest - "Setting".length())).append(" | Value\n");
                 sb.append(StringUtils.repeat("-", longest)).append("-|-").append(StringUtils.repeat("-", longest)).append("\n");
-                for(SettingsInfo setting : SettingsInfo.values()){
+                for(ServerSettings setting : ServerSettings.values()){
                     sb.append(MessageFormat.format("{0} | {1}\n", setting.toString() + StringUtils.repeat(" ", longest - setting.toString().length()),
-                            ((((setting == SettingsInfo.WELCOME_MESSAGE || setting == SettingsInfo.GOODBYE_MESSAGE) && server.getSetting(setting) != null) && server.getSetting(setting).length() > longest) ? "<hidden - view info>" : server.getSetting(setting))));
+                            ((((setting == ServerSettings.WELCOME_MESSAGE || setting == ServerSettings.GOODBYE_MESSAGE) && server.getSetting(setting) != null) && server.getSetting(setting).length() > longest) ? "<hidden - view info>" : server.getSetting(setting))));
                 }
 
-                sb.append("```\nType `!settings <name>` to view more info about it. Type `!settings <name> <value>` to change it's value!");
+                sb.append("```\nType `!serversettings <name>` to view more info about it. Type `!serversettings <name> <value>` to change it's value!");
 
                 MessagesUtils.sendPlain(sb.toString(), message.getChannel(), false);
 
             } else if (message.getContent().split(" ").length == 2){ //1 argument: Show the setting that got specified in more detail.
 
                 try {
-                    SettingsInfo setting = SettingsInfo.valueOf(message.getContent().split(" ")[1].toUpperCase());
+                    ServerSettings setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
                     MessagesUtils.sendPlain(MessageFormat.format("```\n" +
                                     "Setting:       {0}\n" +
                                     "Description:   {1}\n" +
@@ -69,7 +69,7 @@ public class Settings {
                                     "Default Value: {3}\n" +
                                     "Value Type:    {4}\n" +
                                     "```\n" +
-                                    "To alter the value type `!settings {5} <value>`.",
+                                    "To alter the value type `!serversettings {5} <value>`.",
                             setting.toString(), setting.getDescription(), ServerManager.getServer(message.getGuild().getID()).getSetting(setting),
                             setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel(), false);
                 } catch (IllegalArgumentException e){
@@ -78,15 +78,15 @@ public class Settings {
 
             } else if(message.getContent().split(" ").length > 2){ //2 or more arguments: Change the specified setting to the specified value.
 
-                SettingsInfo setting = null;
+                ServerSettings setting = null;
                 try {
-                   setting = SettingsInfo.valueOf(message.getContent().split(" ")[1].toUpperCase());
+                   setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
                 } catch (IllegalArgumentException e){
                     MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
                     return;
                 }
 
-                if(setting == SettingsInfo.TWITCH_CHANNEL && !message.getContent().split(" ")[2].equalsIgnoreCase("null")){
+                if(setting == ServerSettings.TWITCH_CHANNEL && !message.getContent().split(" ")[2].equalsIgnoreCase("null")){
                     SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
                     assert su != null; //FUCK YOU INTELLIJ, FUCK YOOOOUUUU (╯°□°）╯︵ ┻━┻
                     if(su.isLinked() && !Constants.adminUser.contains(message.getAuthor().getID())){
@@ -99,7 +99,7 @@ public class Settings {
                     }
                 }
                 String value = message.getContent().split(" ")[2];
-                if(setting == SettingsInfo.WELCOME_MESSAGE || setting == SettingsInfo.GOODBYE_MESSAGE || setting == SettingsInfo.ADMIN_ROLE || setting == SettingsInfo.ROLE_ON_JOIN){
+                if(setting == ServerSettings.WELCOME_MESSAGE || setting == ServerSettings.GOODBYE_MESSAGE || setting == ServerSettings.ADMIN_ROLE || setting == ServerSettings.ROLE_ON_JOIN){
                     StringBuilder sb = new StringBuilder();
                     String[] args = message.getContent().split(" ");
                     for(int i=2; i < args.length; i++){
@@ -108,7 +108,7 @@ public class Settings {
                     value = sb.toString().trim();
                 }
                 String result = null;
-                if(setting == SettingsInfo.TWITCH_CHANNEL){
+                if(setting == ServerSettings.TWITCH_CHANNEL){
                     server.setTwitch(value);
                 } else {
                     result = ServerManager.getServer(message.getGuild().getID()).setSetting(setting, value);

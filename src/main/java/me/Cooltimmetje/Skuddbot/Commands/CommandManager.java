@@ -14,7 +14,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA-DEV
+ * @version v0.4-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class CommandManager {
@@ -49,8 +49,8 @@ public class CommandManager {
                 case "!dumpdata":
                     DumpData.run(event.getMessage());
                     break;
-                case "!settings":
-                    Settings.run(event.getMessage());
+                case "!serversettings":
+                    ServerSettingsCommand.run(event.getMessage());
                     break;
                 case "!reloadglobal":
                     ReloadGlobal.run(event.getMessage());
@@ -97,6 +97,9 @@ public class CommandManager {
                     break;
                 case "!reverse":
                     ReverseCommand.run(event.getMessage());
+                    break;
+                case "!usersettings":
+                    UserSettingsCommand.run(event.getMessage());
                     break;
             }
         } else {

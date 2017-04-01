@@ -67,7 +67,7 @@ public class MySqlManager {
             ps = c.prepareStatement(query);
             rs = ps.executeQuery();
             if(rs.next()){
-                user = new SkuddUser(rs.getString("discord_id"), serverID, rs.getString("discord_username"), rs.getInt("xp"), rs.getString("twitch_username"));
+                user = new SkuddUser(rs.getString("discord_id"), serverID, rs.getString("discord_username"), rs.getInt("xp"), rs.getString("twitch_username"), rs.getString("settings"));
             } else {
                 user = null;
             }
@@ -113,7 +113,7 @@ public class MySqlManager {
             ps = c.prepareStatement(query);
             rs = ps.executeQuery();
             if(rs.next()){
-                user = new SkuddUser(null, serverID, null,rs.getInt("xp"), rs.getString("twitch_user"));
+                user = new SkuddUser(null, serverID, null,rs.getInt("xp"), rs.getString("twitch_user"), rs.getString("settings"));
             } else {
                 user = null;
             }
@@ -149,7 +149,7 @@ public class MySqlManager {
     public static void saveTwitch(SkuddUser user){
         Connection c = null;
         PreparedStatement ps = null;
-        String create = "INSERT INTO " + user.getServerID() + "_twitch VALUES(?,?)ON DUPLICATE KEY UPDATE xp=?";
+        String create = "INSERT INTO " + user.getServerID() + "_twitch VALUES(?,?,?)ON DUPLICATE KEY UPDATE xp=?,settings=?";
 
         try {
             c = hikari.getConnection();
@@ -157,7 +157,9 @@ public class MySqlManager {
 
             ps.setString(1, user.getTwitchUsername());
             ps.setInt(2, user.getXp());
-            ps.setInt(3, user.getXp());
+            ps.setString(3, user.jsonSettings());
+            ps.setInt(4, user.getXp());
+            ps.setString(5, user.jsonSettings());
 
             ps.execute();
         } catch (SQLException e) {
@@ -194,7 +196,7 @@ public class MySqlManager {
             rs = ps.executeQuery();
 
             if(rs.next()){
-                user = new SkuddUser(rs.getString("discord_id"),serverID, rs.getString("discord_username"), rs.getInt("xp"), rs.getString("twitch_username"));
+                user = new SkuddUser(rs.getString("discord_id"),serverID, rs.getString("discord_username"), rs.getInt("xp"), rs.getString("twitch_username"), rs.getString("settings"));
             } else {
                 user = null;
             }
@@ -230,7 +232,7 @@ public class MySqlManager {
     public static void saveProfile(SkuddUser user) {
         Connection c = null;
         PreparedStatement ps = null;
-        String create = "INSERT INTO " + user.getServerID() + "_discord VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE discord_username=?,xp=?,twitch_username=?";
+        String create = "INSERT INTO " + user.getServerID() + "_discord VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE discord_username=?,xp=?,twitch_username=?,settings=?";
 
         try {
             c = hikari.getConnection();
@@ -240,9 +242,11 @@ public class MySqlManager {
             ps.setString(2, (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
             ps.setInt(3, user.getXp());
             ps.setString(4, user.getTwitchUsername());
-            ps.setString(5, (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
-            ps.setInt(6, user.getXp());
-            ps.setString(7, user.getTwitchUsername());
+            ps.setString(5, user.jsonSettings());
+            ps.setString(6, (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+            ps.setInt(7, user.getXp());
+            ps.setString(8, user.getTwitchUsername());
+            ps.setString(9, user.jsonSettings());
 
             ps.execute();
         } catch (SQLException e) {
@@ -297,6 +301,7 @@ public class MySqlManager {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static HashMap<Integer,SkuddUser> getTopDiscord(String serverID){
         HashMap<Integer,SkuddUser> top = new HashMap<>();
 
@@ -517,7 +522,7 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "CREATE TABLE " + serverID + "_discord (discord_id VARCHAR(25),discord_username VARCHAR(100) NOT NULL,xp INT(11) DEFAULT 0 NOT NULL,twitch_username VARCHAR(100) NULL DEFAULT NULL, PRIMARY KEY (discord_id));";
+        String query = "CREATE TABLE " + serverID + "_discord (discord_id VARCHAR(25),discord_username VARCHAR(100) NOT NULL,xp INT(11) DEFAULT 0 NOT NULL,twitch_username VARCHAR(100) NULL DEFAULT NULL, settings VARCHAR(512) NOT NULL DEFAULT '{\"level_up_notify\":0}', PRIMARY KEY (discord_id));";
 
         try {
             c = hikari.getConnection();
@@ -549,7 +554,7 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "CREATE TABLE " + serverID + "_twitch (twitch_user VARCHAR(100),xp INT(11) DEFAULT 0 NOT NULL, PRIMARY KEY (twitch_user));";
+        String query = "CREATE TABLE " + serverID + "_twitch (twitch_user VARCHAR(100),xp INT(11) DEFAULT 0 NOT NULL, settings VARCHAR(512) NOT NULL DEFAULT '{\"level_up_notify\":0}', PRIMARY KEY (twitch_user));";
 
         try {
             c = hikari.getConnection();
