@@ -41,13 +41,18 @@
   * `ALLOW_ANALYTICS` - This defines if you want analytics to be generated upon the end of the stream.
   * `ALLOW_REWARDS` - This defines if you want rewards to be granted to users when they did well in the analytics.
 * Attempts to reduce messages. REACTIONS FTW!
+* Lots of documentation added. Still not everything has been documented.
 
 ## Changed
 * Level up notification's are now shown with reactions. You can also alter how you see your level up's with the newly added User Settings!
 * `!settings` is now `!serversettings`
   * Classes regarding server settings have also been refactored.
-* Database Structure changed to have room for the new user settings.
+* Database Structure changed to have room for the new user settings and is now much more efficient.
 * Server settings are now much easier to handle in the code. (Doesn't matter for the end user... but we got it!)
+* Server settings can now be saved without the profiles in that server.
+* Added some warning suppression's because we want neat looking code.
+* Moved some constants to the server class and also removed some.
+* Min/Max values are now ignored when loading settings.
 
 ## Fixed
 * Several typo's have been addressed. I can English.
