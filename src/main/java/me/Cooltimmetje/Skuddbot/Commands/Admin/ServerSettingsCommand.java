@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin;
 
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
@@ -73,7 +74,7 @@ public class ServerSettingsCommand {
                             setting.toString(), setting.getDescription(), ServerManager.getServer(message.getGuild().getID()).getSetting(setting),
                             setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel(), false);
                 } catch (IllegalArgumentException e){
-                    MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
+                    MessagesUtils.addReaction(message, "Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), EmojiEnum.X);
                 }
 
             } else if(message.getContent().split(" ").length > 2){ //2 or more arguments: Change the specified setting to the specified value.
@@ -82,7 +83,7 @@ public class ServerSettingsCommand {
                 try {
                    setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
                 } catch (IllegalArgumentException e){
-                    MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
+                    MessagesUtils.addReaction(message, "Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), EmojiEnum.X);
                     return;
                 }
 
@@ -90,11 +91,11 @@ public class ServerSettingsCommand {
                     SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
                     assert su != null; //FUCK YOU INTELLIJ, FUCK YOOOOUUUU (╯°□°）╯︵ ┻━┻
                     if(su.isLinked() && !Constants.adminUser.contains(message.getAuthor().getID())){
-                        MessagesUtils.sendError("You do not have a Twitch Account linked, type '!twitch' to get started with linking!", message.getChannel());
+                        MessagesUtils.addReaction(message, "You do not have a Twitch Account linked, type '!twitch' to get started with linking!", EmojiEnum.X);
                         return;
                     }
                     if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !Constants.adminUser.contains(message.getAuthor().getID())){
-                        MessagesUtils.sendError("You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact a Skuddbot Admin.)", message.getChannel());
+                        MessagesUtils.addReaction(message, "You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact a Skuddbot Admin.)", EmojiEnum.X);
                         return;
                     }
                 }
@@ -108,17 +109,19 @@ public class ServerSettingsCommand {
                     value = sb.toString().trim();
                 }
                 String result = null;
-                if(setting == ServerSettings.TWITCH_CHANNEL){
+                if(setting == ServerSettings.TWITCH_CHANNEL) {
                     server.setTwitch(value);
+                } else if (setting == ServerSettings.STREAM_LIVE && value.equalsIgnoreCase("false")){
+                    server.runAnalytics(message.getChannel());
+                    return;
                 } else {
-                    result = ServerManager.getServer(message.getGuild().getID()).setSetting(setting, value);
+                    result = ServerManager.getServer(message.getGuild().getID()).setSetting(setting, value, false);
                 }
 
-
                 if(result == null){
-                    MessagesUtils.sendSuccess(MessageFormat.format("Setting `{0}` has been updated to `{1}`!", setting.toString(), value), message.getChannel());
+                    MessagesUtils.addReaction(message, MessageFormat.format("Setting `{0}` has been updated to `{1}`!", setting.toString(), value), EmojiEnum.WHITE_CHECK_MARK);
                 } else {
-                    MessagesUtils.sendError(result, message.getChannel());
+                    MessagesUtils.addReaction(message, result, EmojiEnum.X);
                 }
 
             }

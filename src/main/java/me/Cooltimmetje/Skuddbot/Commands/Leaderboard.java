@@ -14,7 +14,7 @@ import java.util.TreeMap;
  * Show the XP leaderboard of the server.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3.01-ALPHA
+ * @version v0.4-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class Leaderboard {
@@ -27,7 +27,7 @@ public class Leaderboard {
     public static void run(IMessage message){
         message.getChannel().toggleTypingStatus();
         long startTime = System.currentTimeMillis();
-        ServerManager.getServer(message.getGuild().getID()).save();
+        ServerManager.getServer(message.getGuild().getID()).save(false);
         HashMap<Integer,SkuddUser> discord = MySqlManager.getTopDiscord(message.getGuild().getID());
         HashMap<Integer,SkuddUser> twitch = MySqlManager.getTopTwitch(message.getGuild().getID());
 

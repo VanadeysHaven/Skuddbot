@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.UserSettings;
+import me.Cooltimmetje.Skuddbot.Enums.UserStats;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
@@ -49,6 +50,12 @@ public class SkuddUser {
     //---- USER SETTINGS ----
     private int levelUpNotify;
     private boolean trackMe;
+    private boolean analyticsMention;
+
+    //---- USER STATS ----
+    private int xpStreak;
+    private int msgStreak;
+    private int wallStreak;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
@@ -65,7 +72,8 @@ public class SkuddUser {
         Logger.info(MessageFormat.format("[ProfileCreate][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : guild.getUserByID(id).getName() + " (ID: " + id + ")", guild.getName(), guild.getID(), Constants.PROFILES_IN_MEMORY));
 
         try {
-            setSettings("{\"level_up_notify\":0}");
+            setSettings("{}");
+            setStats("{}");
         } catch (ParseException e) {
             e.printStackTrace();
         } finally {
@@ -77,7 +85,7 @@ public class SkuddUser {
         }
     }
 
-    public SkuddUser(String id, String serverID, String name, int xp, String twitchUsername, String settings) {
+    public SkuddUser(String id, String serverID, String name, int xp, String twitchUsername, String settings, String stats) {
         this.id = id;
         this.name = name;
         this.serverID = serverID;
@@ -87,6 +95,7 @@ public class SkuddUser {
 
         try {
             setSettings(settings);
+            setStats(stats);
         } catch (ParseException e) {
             e.printStackTrace();
         } finally {
@@ -128,9 +137,9 @@ public class SkuddUser {
                 setLevel(level);
 
                 if(getLevelUpNotify() == 0){
-                    MessagesUtils.addReaction(message, MessageFormat.format("{0}, you leveled up! You are now **level {1}**! {2}", message.getAuthor().mention(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "), EmojiEnum.ARROW_UP.getEmoji());
+                    MessagesUtils.addReaction(message, MessageFormat.format("{0}, you leveled up! You are now **level {1}**! {2}", message.getAuthor().mention(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "), EmojiEnum.ARROW_UP);
                 } else if (getLevelUpNotify() == 1){
-                    MessagesUtils.sendPM(message.getAuthor(), MessageFormat.format(EmojiEnum.ARROW_UP.getEmoji() + " You leveled up in **{0}**! You are now **level {1}**! {2}", message.getGuild().getName(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "));
+                    MessagesUtils.sendPM(message.getAuthor(), MessageFormat.format(EmojiEnum.ARROW_UP + " You leveled up in **{0}**! You are now **level {1}**! {2}", message.getGuild().getName(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "));
                 }
             }
         }
@@ -248,6 +257,8 @@ public class SkuddUser {
                 return getLevelUpNotify()+"";
             case TRACK_ME:
                 return isTrackMe()+"";
+            case ANALYTICS_MENTION:
+                return isAnalyticsMention()+"";
         }
         return null;
     }
@@ -309,11 +320,15 @@ public class SkuddUser {
             case TRACK_ME:
                 this.trackMe = booleanValue;
                 return null;
+            case ANALYTICS_MENTION:
+                this.analyticsMention = booleanValue;
+                return null;
         }
     }
 
     /**
      * This puts all the settings in a JSON string to be saved in the database.
+     *
      * @return The JSON string.
      */
     @SuppressWarnings("unchecked")
@@ -326,4 +341,115 @@ public class SkuddUser {
 
         return obj.toString();
     }
+
+    /**
+     * Set the user stats to the appropriate values.
+     *
+     * @param stats The JSON string with stats.
+     */
+    public void setStats(String stats) throws ParseException {
+        JSONObject obj = (JSONObject) parser.parse(stats);
+        for(UserStats stat : UserStats.values()){
+            if(obj.containsKey(stat.getJsonReference())){
+                setStat(stat, String.valueOf(obj.get(stat.getJsonReference())));
+            } else {
+                setStat(stat, stat.getDefaultValue());
+            }
+        }
+    }
+
+    /**
+     * Changes the stat to the specified value.
+     *
+     * @param stat The stat that should be changed.
+     * @param value The value that should be set.
+     * @return When the value was changed successfully it returns 'null'. When a error occurred it returns what went wrong.
+     */
+    public String setStat(UserStats stat, String value){
+        double doubleValue = 0;
+        boolean booleanValue = false;
+        int intValue = 0;
+        boolean intUsed = false;
+
+        switch (stat.getType().toLowerCase()) {
+            case "double":
+                try {
+                    doubleValue = Double.parseDouble(value);
+                } catch (NumberFormatException e) {
+                    return "Value is not a Double.";
+                }
+                break;
+            case "integer":
+                try {
+                    intValue = Integer.parseInt(value);
+                    intUsed = true;
+                } catch (NumberFormatException e) {
+                    return "Value is not a Integer.";
+                }
+                break;
+            case "boolean":
+                booleanValue = Boolean.parseBoolean(value);
+                if (!booleanValue) {
+                    if (!value.equalsIgnoreCase("false")) {
+                        return "Value is not a boolean.";
+                    }
+                }
+            default:
+                if (value.equalsIgnoreCase("null")) {
+                    value = null;
+                }
+                break;
+        }
+
+        switch (stat){
+            default:
+                return null;
+            case XP_GAIN_STREAK:
+                this.xpStreak = intValue;
+                return null;
+            case CHAT_WALL_STREAK:
+                this.wallStreak = intValue;
+                return null;
+            case MESSAGES_POSTED_STREAK:
+                this.msgStreak = intValue;
+                return null;
+        }
+    }
+
+    /**
+     * Gets the value of the given stat.
+     *
+     * @param stat The stat value that we want.
+     * @return The value of the given stat.
+     */
+    public String getStat(UserStats stat){
+        switch (stat){
+            case MESSAGES_POSTED_STREAK:
+                return getMsgStreak()+"";
+            case CHAT_WALL_STREAK:
+                return getWallStreak()+"";
+            case XP_GAIN_STREAK:
+                return getXpStreak()+"";
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * This puts all the stats in a JSON string to be saved in the database.
+     *
+     * @return The JSON string.
+     */
+    @SuppressWarnings("unchecked")
+    public String jsonStats(){
+        JSONObject obj = new JSONObject();
+
+        for(UserStats stat : UserStats.values()){
+            obj.put(stat.getJsonReference(), getStat(stat));
+        }
+
+        return obj.toString();
+    }
+
+
 }

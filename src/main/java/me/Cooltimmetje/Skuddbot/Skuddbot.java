@@ -105,8 +105,9 @@ public class Skuddbot {
         }
         reconnect.set(false);
         try {
+            Main.getSkuddbotTwitch().leaveChannels();
             Main.stopTimer();
-            ServerManager.saveAll();
+            ServerManager.saveAll(false);
             Main.getSkuddbotTwitch().terminate();
             MySqlManager.disconnect();
             skuddbot.logout();

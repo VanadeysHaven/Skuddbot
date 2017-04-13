@@ -14,7 +14,8 @@ public enum EmojiEnum {
 
     WHITE_CHECK_MARK("✅"),
     ARROW_UP("⬆"),
-    WARNING("⚠");
+    WARNING("⚠"),
+    X("❌");
 
     private String emoji;
 

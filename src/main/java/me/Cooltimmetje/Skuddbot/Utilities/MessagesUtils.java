@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import org.json.simple.JSONObject;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -37,9 +38,9 @@ public class MessagesUtils {
      * @param emoji The emoji that we want to add.
      */
     @SuppressWarnings("unchecked")
-    public static void addReaction(IMessage message, String debug, String emoji){
+    public static void addReaction(IMessage message, String debug, EmojiEnum emoji){
         try {
-            message.addReaction(emoji);
+            message.addReaction(emoji.getEmoji());
         } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
             e.printStackTrace();
         }
@@ -48,7 +49,7 @@ public class MessagesUtils {
 
         obj.put("time", System.currentTimeMillis());
         obj.put("debug", debug);
-        obj.put("emoji", emoji);
+        obj.put("emoji", emoji.getEmoji());
 
         reactions.put(message, obj);
     }

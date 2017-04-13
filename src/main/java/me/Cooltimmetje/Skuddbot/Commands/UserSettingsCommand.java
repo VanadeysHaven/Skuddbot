@@ -86,7 +86,7 @@ public class UserSettingsCommand {
             String result = user.setSetting(setting, value);
 
             if(result == null){
-                MessagesUtils.addReaction(message, MessageFormat.format("Setting `{0}` has been updated to `{1}`!" + ((setting == UserSettings.TRACK_ME && user.isLinked()) ? "\n" + EmojiEnum.WARNING.getEmoji() + " Since you have Twitch account linked, this change also applies on Twitch." : ""), setting.toString(), value), EmojiEnum.WHITE_CHECK_MARK.getEmoji());
+                MessagesUtils.addReaction(message, MessageFormat.format("Setting `{0}` has been updated to `{1}`!" + ((setting == UserSettings.TRACK_ME && user.isLinked()) ? "\n" + EmojiEnum.WARNING.getEmoji() + " Since you have Twitch account linked, this change also applies on Twitch." : ""), setting.toString(), value), EmojiEnum.WHITE_CHECK_MARK);
             } else {
                 MessagesUtils.sendError(result, message.getChannel());
             }

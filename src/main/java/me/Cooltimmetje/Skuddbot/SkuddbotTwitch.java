@@ -10,7 +10,6 @@ import org.jibble.pircbot.PircBot;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
@@ -25,10 +24,9 @@ import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
 public class SkuddbotTwitch extends PircBot{
 
     private boolean terminated = false;
-    public static ArrayList<String> bannedUsers = new ArrayList<>();
     private static HashMap<String,Long> cooldown = new HashMap<>();
 
-    private SkuddbotTwitch() {
+    public SkuddbotTwitch() {
         this.setName(Constants.twitchBot);
         this.setLogin(Constants.twitchBot);
     }
@@ -73,9 +71,9 @@ public class SkuddbotTwitch extends PircBot{
             } else if (message.startsWith("!xpban") && (sender.equalsIgnoreCase("cooltimmetje") || sender.equalsIgnoreCase("jaschmedia"))) {
                 String[] args = message.split(" ");
                 if (args.length > 1) {
-                    if (!bannedUsers.contains(args[1].toLowerCase())) {
+                    if (!Constants.bannedUsers.contains(args[1].toLowerCase())) {
                         sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + args[1] + " is now globally banned from gaining XP. #rekt").trim());
-                        bannedUsers.add(args[1].toLowerCase());
+                        Constants.bannedUsers.add(args[1].toLowerCase());
                         MySqlManager.banUser(args[1].toLowerCase());
                     } else {
                         sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + args[1] + " is already globally banned from gaining XP.").trim());
@@ -122,7 +120,7 @@ public class SkuddbotTwitch extends PircBot{
                     cooldown.put(sender, System.currentTimeMillis());
                 }
             } else {
-                if (!bannedUsers.contains(sender)) {
+                if (!Constants.bannedUsers.contains(sender)) {
                     SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
                     if(user.isTrackMe()) {
                         Server server = ServerManager.getTwitch(channel.replace("#", " ").trim());
@@ -131,6 +129,9 @@ public class SkuddbotTwitch extends PircBot{
                     }
                 }
             }
+
+            Server server = ServerManager.getTwitch(channel.replace("#", " ").trim());
+            server.logMessage(sender, message, gain);
 
         } else if (channel.equals("#" + Constants.twitchBot)) {
             if (message.startsWith("!verify")) {
@@ -171,6 +172,12 @@ public class SkuddbotTwitch extends PircBot{
     public void joinChannels(){
         for(String string : ServerManager.twitchServers.keySet()){
             Main.getSkuddbotTwitch().joinChannel("#" + string);
+        }
+    }
+
+    public void leaveChannels(){
+        for(String string : ServerManager.twitchServers.keySet()){
+            Main.getSkuddbotTwitch().partChannel("#" + string);
         }
     }
 

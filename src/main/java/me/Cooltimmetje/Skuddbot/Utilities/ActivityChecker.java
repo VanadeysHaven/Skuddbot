@@ -59,6 +59,7 @@ public class ActivityChecker extends TimerTask {
         }
 
         MiscUtils.setPlaying();
+        ServerManager.saveAll(true);
 
         ArrayList<IMessage> temp = new ArrayList<>();
         for (IMessage message : MessagesUtils.reactions.keySet()){

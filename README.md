@@ -14,7 +14,6 @@ Skuddbot is still in (as I like to call it) `very-early-probally-wont-work-alpha
 - **XP System**
 - Item System
 - Currency
-- **Cleverbot**
 - *Dank Memes*
 - **Welcome/Goodbye Messages**
 - Customizeable Command System
