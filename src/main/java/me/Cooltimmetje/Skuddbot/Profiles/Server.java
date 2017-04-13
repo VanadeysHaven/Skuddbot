@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4-ALPHA
  * @since v0.2-ALPHA
  */
 
@@ -442,7 +442,7 @@ public class Server {
         String longestWallUser = "yermom";
 
 
-        try (BufferedReader br = new BufferedReader(new FileReader("chat-logs\\" + serverID + ".json"))){
+        try (BufferedReader br = new BufferedReader(new FileReader("chat-logs/" + serverID + ".json"))){
             while ((line = br.readLine()) != null){
                 JSONObject obj = (JSONObject) parser.parse(line);
                 String sender = (String) obj.get("sender");
@@ -689,18 +689,18 @@ public class Server {
         obj.put("riot_user", riot);
         obj.put("rewards", rewardJSON);
 
-        File directory = new File("analytic-log\\" + serverID);
+        File directory = new File("analytic-log/" + serverID);
         if(!directory.exists()){
             directory.mkdirs();
         }
-        try(FileWriter file = new FileWriter("analytic-log\\" + serverID  + "\\" + timestamp + ".json",true)){
+        try(FileWriter file = new FileWriter("analytic-log/" + serverID  + "/" + timestamp + ".json",true)){
             file.write(obj.toJSONString());
             file.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        File file = new File("chat-logs\\" + serverID + ".json");
+        File file = new File("chat-logs/" + serverID + ".json");
         file.delete();
     }
 
@@ -728,7 +728,7 @@ public class Server {
             obj.put("message", message);
             obj.put("xp", xpGain);
 
-            try(FileWriter file = new FileWriter("chat-logs\\" + serverID  + ".json",true)){
+            try(FileWriter file = new FileWriter("chat-logs/" + serverID  + ".json",true)){
                 file.write(obj.toJSONString() + "\n");
                 file.flush();
             } catch (IOException e) {
