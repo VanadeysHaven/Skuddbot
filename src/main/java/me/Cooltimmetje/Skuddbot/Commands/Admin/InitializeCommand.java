@@ -63,7 +63,7 @@ public class InitializeCommand {
                     exec.schedule(()->{
 
                         MessagesUtils.sendSuccess("I'm done! Have fun using Skuddbot!\n\n" +
-                                "The next thing you wanna do is configure Skuddbot's settings! Type `!settings`, you can always refer to the manual to get help! Type `!about` to find it!", message.getChannel());
+                                "The next thing you wanna do is configure Skuddbot's settings! Type `!serversettings`, you can always refer to the manual to get help! Type `!about` to find it!", message.getChannel());
                         server.clearProfiles();
                         MySqlManager.createServerTables(message.getGuild().getID());
                         server.setServerInitialized(true);

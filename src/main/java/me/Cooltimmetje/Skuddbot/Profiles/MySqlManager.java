@@ -532,7 +532,7 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "CREATE TABLE " + serverID + "_twitch (twitch_user VARCHAR(100),xp INT(11) DEFAULT 0 NOT NULL, settings VARCHAR(2048) NOT NULL DEFAULT '{}', userstats VARCHAR(2048) NOT NULL DEFAULT '{},' PRIMARY KEY (twitch_user));";
+        String query = "CREATE TABLE " + serverID + "_twitch (twitch_user VARCHAR(100),xp INT(11) DEFAULT 0 NOT NULL, settings VARCHAR(2048) NOT NULL DEFAULT '{}', userstats VARCHAR(2048) NOT NULL DEFAULT '{}', PRIMARY KEY (twitch_user));";
 
         try {
             c = hikari.getConnection();
