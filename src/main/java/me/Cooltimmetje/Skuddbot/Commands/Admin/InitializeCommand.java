@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * CMD: Initializes servers when the bot joins for the first time.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4-ALPHA
  * @since v0.2-ALPHA
  */
 public class InitializeCommand {

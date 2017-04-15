@@ -690,8 +690,8 @@ public class Server {
         obj.put("rewards", rewardJSON);
 
         File directory = new File("analytic-log/" + serverID);
-        if(!directory.getParentFile().exists()){
-            directory.getParentFile().mkdirs();
+        if(!directory.exists()){
+            directory.mkdirs();
         }
         try(FileWriter file = new FileWriter("analytic-log/" + serverID  + "/" + timestamp + ".json",true)){
             file.write(obj.toJSONString());
