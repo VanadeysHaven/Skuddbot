@@ -636,7 +636,7 @@ public class Server {
         }
         MessagesUtils.sendPlain("**SKUDDBOT ANALYTICS** | This is what the chat did this stream:\n\n" +
                 "The chat has started **" + riots + " riots!**\n" +
-                "Things we're said and **" + quotesAdded + " quotes were born**.\n" +
+                "Things were said and **" + quotesAdded + " quotes were born**.\n" +
                 "**" + users.size() + " users** have posted **" + messages + " messages** which gave them a total of **" + totalXp + " XP**. With a average of **" + averageXP + " XP per user**!\n" +
                 "**" + formatName(longestWallUser) + "** has made the longest chat wall this stream with **" + longestWallLength + " messages**" + (allowRewards ? " *(+1000 xp)*" : "") + "\n\n" +
                 "**TOP " + (msgAmount - 1) + " MESSAGES POSTED:**\n" + topMsg.toString() + "\n" +
