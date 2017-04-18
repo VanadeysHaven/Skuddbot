@@ -710,8 +710,8 @@ public class Server {
      * @param name The Twitch username we want formatted.
      */
     public String formatName(String name){
-        String formattedName = (ProfileManager.getTwitch(name, getTwitchChannel(), false).getId() != null ? Main.getInstance().getSkuddbot().getUserByID(ProfileManager.getTwitch(name, getTwitchChannel(), false).getId()).mention() : name);
-        return ProfileManager.getTwitch(name, getTwitchChannel(), false).isAnalyticsMention() ? formattedName : name;
+        String formattedName = (ProfileManager.getTwitch(name, getTwitchChannel(), true).isLinked() ? Main.getInstance().getSkuddbot().getUserByID(ProfileManager.getTwitch(name, getTwitchChannel(), false).getId()).mention() : name);
+        return ProfileManager.getTwitch(name, getTwitchChannel(), true).isAnalyticsMention() ? formattedName : name;
     }
 
     /**
