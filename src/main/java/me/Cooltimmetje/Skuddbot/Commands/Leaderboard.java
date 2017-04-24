@@ -55,6 +55,12 @@ public class Leaderboard {
                     name = "JuiceMedia";
                 }
             }
+            
+            if(user.getTwitchUsername() != null){
+                if(user.getTwitchUsername().equals("battlekiller2000")){
+                    name = "battlekiller2000";
+                }
+            }
 
             if(name.length() > lengthName){
                 lengthName = name.length();
