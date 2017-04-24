@@ -58,6 +58,7 @@
 * Several typo's have been addressed. I can English.
 * `!reverse` Twitch Chat cooldown now applies properly.
 * Fixed a instance where server settings would not save, server settings now save every 10 minutes too.
+* Fixed a bug where if the `ADMIN_ROLE` role wasn't found, the `!serversettings` command wouldn't work. (Fuck you Jess.)
 
 ## Removed
 * Cleverbot

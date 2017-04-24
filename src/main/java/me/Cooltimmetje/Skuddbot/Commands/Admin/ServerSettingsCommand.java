@@ -29,9 +29,18 @@ public class ServerSettingsCommand {
      *
      * @param message The message that this command got triggered off.
      */
-    public static void run(IMessage message){
+    public static void run(IMessage message) {
         Server server = ServerManager.getServer(message.getGuild().getID());
-        if ((server.getAdminRole() != null && message.getAuthor().getRolesForGuild(message.getGuild()).contains(message.getGuild().getRolesByName(server.getAdminRole()).get(0))) || message.getAuthor() == message.getGuild().getOwner() || Constants.adminUser.contains(message.getAuthor().getID())) {
+        boolean allowAccess = false;
+        if (server.getAdminRole() != null) {
+            if (message.getGuild().getRolesByName(server.getAdminRole()).size() == 1) {
+                allowAccess = message.getAuthor().getRolesForGuild(message.getGuild()).contains(message.getGuild().getRolesByName(server.getAdminRole()).get(0));
+            }
+        }
+        if (!allowAccess){
+            allowAccess = message.getAuthor() == message.getGuild().getOwner() || Constants.adminUser.contains(message.getAuthor().getID());
+        }
+        if (allowAccess) {
             if(message.getContent().split(" ").length == 1){ //No arguments: Show list of the settings.
                 StringBuilder sb = new StringBuilder();
 
@@ -81,7 +90,7 @@ public class ServerSettingsCommand {
 
                 ServerSettings setting = null;
                 try {
-                   setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
+                    setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
                 } catch (IllegalArgumentException e){
                     MessagesUtils.addReaction(message, "Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), EmojiEnum.X);
                     return;
