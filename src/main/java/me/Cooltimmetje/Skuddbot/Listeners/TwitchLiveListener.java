@@ -18,7 +18,7 @@ public class TwitchLiveListener {
 
     @EventSubscriber
     public void onAtEveryone(MentionEvent event){
-        if(event.getMessage().mentionsEveryone()){
+        if(event.getMessage().getContent().contains("just went live!")){
             if(event.getMessage().getAuthor().getID().equals("165140151121608704")){
                 if(ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel() != null){
                     Main.getSkuddbotTwitch().sendMessage("#" + ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel(), MiscUtils.getRandomMessage(DataTypes.ALIVE));

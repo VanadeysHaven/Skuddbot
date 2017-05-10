@@ -79,7 +79,7 @@ public class SkuddbotTwitch extends PircBot{
                         sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + args[1] + " is already globally banned from gaining XP.").trim());
                     }
                 }
-            } else if (message.startsWith("!flip")) {
+            } else if (message.startsWith("!flip ")) {
                 if (cooldown.containsKey(channel)) {
                     if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
                         sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
@@ -89,7 +89,7 @@ public class SkuddbotTwitch extends PircBot{
                     sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
                     cooldown.put(channel, System.currentTimeMillis());
                 }
-            } else if (message.startsWith("!reverse")) {
+            } else if (message.startsWith("!reverse ")) {
                 if (cooldown.containsKey(channel)) {
                     if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
                         sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());

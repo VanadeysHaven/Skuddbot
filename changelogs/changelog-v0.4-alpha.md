@@ -53,12 +53,15 @@
 * Added some warning suppression's because we want neat looking code.
 * Moved some constants to the server class and also removed some.
 * Min/Max values are now ignored when loading settings.
+* Changed how we detect streams going live. (Technically also a bug fix. - Thanks [Smooth_Knight](https://www.twitch.tv/smooth_knight)!)
+* Discord4J version bump.  2.7.0 -> 2.8.1
 
 ## Fixed
 * Several typo's have been addressed. I can English.
 * `!reverse` Twitch Chat cooldown now applies properly.
 * Fixed a instance where server settings would not save, server settings now save every 10 minutes too.
-* Fixed a bug where if the `ADMIN_ROLE` role wasn't found, the `!serversettings` command wouldn't work. (Fuck you Jess.)
+* Fixed a bug where if the `ADMIN_ROLE` role wasn't found, the `!serversettings` command wouldn't work. (Fuck you [Jess](https://www.twitch.tv/valkyrien27).)
+* Fixed a instance where the bot would cut off the first character when using `!flip` and `!reverse`.
 
 ## Removed
 * Cleverbot
