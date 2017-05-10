@@ -54,7 +54,6 @@
 * Moved some constants to the server class and also removed some.
 * Min/Max values are now ignored when loading settings.
 * Changed how we detect streams going live. (Technically also a bug fix. - Thanks [Smooth_Knight](https://www.twitch.tv/smooth_knight)!)
-* Discord4J version bump.  2.7.0 -> 2.8.1
 
 ## Fixed
 * Several typo's have been addressed. I can English.
