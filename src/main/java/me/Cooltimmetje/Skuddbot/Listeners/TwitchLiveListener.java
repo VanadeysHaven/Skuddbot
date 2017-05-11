@@ -6,34 +6,30 @@ import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.StatusChangeEvent;
 import sx.blah.discord.handle.obj.Status;
 
 /**
- * Created by Tim on 10/7/2016.
+ * Things to do with people going live on Twitch.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4-ALPHA
+ * @since v0.1-ALPHA
  */
 public class TwitchLiveListener {
-
-    @EventSubscriber
-    public void onAtEveryone(MentionEvent event){
-        if(event.getMessage().getContent().contains("just went live!")){
-            if(event.getMessage().getAuthor().getID().equals("165140151121608704")){
-                if(ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel() != null){
-                    Main.getSkuddbotTwitch().sendMessage("#" + ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel(), MiscUtils.getRandomMessage(DataTypes.ALIVE));
-
-                    ServerManager.getServer(event.getMessage().getGuild().getID()).setStreamLive(true);
-                }
-            }
-        }
-    }
 
     @EventSubscriber
     public void onMessage(MessageReceivedEvent event){
         if(event.getMessage().getAuthor().getID().equals("165140151121608704")){
             if(event.getMessage().getContent().contains("just went offline, here are their most recent stats.")){
                 ServerManager.getServer(event.getMessage().getGuild().getID()).runAnalytics(event.getMessage().getChannel());
+            } else if(event.getMessage().getContent().contains("just went live!")){
+                if(ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel() != null) {
+                    Main.getSkuddbotTwitch().sendMessage("#" + ServerManager.getServer(event.getMessage().getGuild().getID()).getTwitchChannel(), MiscUtils.getRandomMessage(DataTypes.ALIVE));
+
+                    ServerManager.getServer(event.getMessage().getGuild().getID()).setStreamLive(true);
+                }
             }
         }
     }
