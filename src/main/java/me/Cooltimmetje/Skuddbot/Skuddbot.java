@@ -1,6 +1,5 @@
 package me.Cooltimmetje.Skuddbot;
 
-import me.Cooltimmetje.Skuddbot.Cleverbot.MentionListener;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
@@ -23,7 +22,11 @@ import sx.blah.discord.util.DiscordException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by Tim on 8/2/2016.
+ * Holds the Skuddbot instance.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4-ALPHA-DEV
+ * @since v0.1-ALPHA
  */
 public class Skuddbot {
 
@@ -52,11 +55,11 @@ public class Skuddbot {
         if(!listenersReady){
 //            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
             MiscUtils.setPlaying();
-            skuddbot.getDispatcher().registerListener(new MentionListener());
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
+            skuddbot.getDispatcher().registerListener(new MessagesUtils());
             Main.getSkuddbotTwitch().joinChannels();
 
             listenersReady = true;
@@ -102,8 +105,9 @@ public class Skuddbot {
         }
         reconnect.set(false);
         try {
+            Main.getSkuddbotTwitch().leaveChannels();
             Main.stopTimer();
-            ServerManager.saveAll();
+            ServerManager.saveAll(false);
             Main.getSkuddbotTwitch().terminate();
             MySqlManager.disconnect();
             skuddbot.logout();

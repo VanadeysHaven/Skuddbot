@@ -1,28 +1,41 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
-import com.google.code.chatterbotapi.ChatterBotSession;
 import lombok.Getter;
 import lombok.Setter;
-import me.Cooltimmetje.Skuddbot.Enums.SettingsInfo;
+import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.TreeMap;
 
 /**
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4-ALPHA
  * @since v0.2-ALPHA
  */
 
 @Getter
 @Setter
 public class Server {
+
+    JSONParser parser = new JSONParser();
 
     private String serverID;
     private int minXP;
@@ -31,7 +44,6 @@ public class Server {
     private int maxXpTwitch;
     private int xpBase;
     private double xpMultiplier;
-    private String cleverbotChannel;
     private String twitchChannel;
     private String welcomeMessage;
     private String goodbyeMessage;
@@ -40,7 +52,9 @@ public class Server {
     private String roleOnJoin;
     private boolean vrMode;
     private boolean serverInitialized;
-    private ChatterBotSession session;
+    private boolean streamLive;
+    private boolean allowAnalytics;
+    private boolean allowRewards;
 
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
@@ -52,19 +66,22 @@ public class Server {
      */
     public Server(String serverID){
         this.serverID = serverID;
-        this.minXP = Constants.MIN_GAIN;
-        this.maxXP = Constants.MAX_GAIN;
-        this.minXpTwitch = Constants.MIN_GAIN_TWITCH;
-        this.maxXpTwitch = Constants.MAX_GAIN_TWITCH;
-        this.xpBase = Constants.BASE_LEVEL;
-        this.xpMultiplier = Constants.LEVEL_MULTIPLIER;
-        this.vrMode = Constants.VR_MODE;
+        this.minXP = 10;
+        this.maxXP = 15;
+        this.minXpTwitch = 10;
+        this.maxXpTwitch = 15;
+        this.xpBase = 1500;
+        this.xpMultiplier = 1.2;
+        this.vrMode = false;
         this.serverInitialized = false;
+        this.streamLive = false;
+        this.allowAnalytics = true;
+        this.allowRewards = true;
 
         ServerManager.servers.put(serverID, this);
 
         MessagesUtils.sendPlain("**Welcome to the fun, welcome to the revolution, welcome to Skuddbot.** :eyes:\n\nI see that this server is not yet in my database, therefore I'll need to initialize this server before I can be used on this server!\n" +
-                "In order to do so, please make sure I have a role that has the `ADMINISTRATOR` permission, then run `!initialize`. **NOTE:** This command requires you to also have the `ADMINISTRATOR` permission.",
+                        "In order to do so, please make sure I have a role that has the `ADMINISTRATOR` permission, then run `!initialize`. **NOTE:** This command requires you to also have the `ADMINISTRATOR` permission.",
                 Main.getInstance().getSkuddbot().getGuildByID(serverID).getChannelByID(serverID), false);
         Logger.info("[CreateServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
 
@@ -74,37 +91,15 @@ public class Server {
      * This is the constructor for existing servers loaded from the database.
      *
      * @param serverID The ID of the server.
-     * @param minXP The MIN_XP setting.
-     * @param maxXP The MAX_XP setting.
-     * @param minXpTwitch The XP_TWITCH_MIN setting.
-     * @param maxXpTwitch The XP_TWITCH_MAX setting.
-     * @param xpBase The XP_BASE setting.
-     * @param xpMultiplier The XP_MULTIPLIER setting.
-     * @param cleverbotChannel The CLEVERBOT_CHANEL setting.
-     * @param twitchChannel The TWITCH_CHANNEL setting.
-     * @param welcomeMessage The WELCOME_MESSAGE setting.
-     * @param goodbyeMessage The GOODBYE_MESSAGE setting.
-     * @param welcomeGoodbyeChannel The WELCOME_GOODBYE_CHAN setting.
-     * @param adminRole The ADMIN_ROLE setting.
-     * @param roleOnJoin The ROLE_ON_JOIN setting.
-     * @param vrMode The VR_MODE setting.
+     * @param settings The JSON settings string.
      */
-    public Server(String serverID, int minXP, int maxXP, int minXpTwitch, int maxXpTwitch, int xpBase, double xpMultiplier, String cleverbotChannel, String twitchChannel, String welcomeMessage, String goodbyeMessage, String welcomeGoodbyeChannel, String adminRole, String roleOnJoin, boolean vrMode) {
+    public Server(String serverID, String settings) {
         this.serverID = serverID;
-        this.minXP = minXP;
-        this.maxXP = maxXP;
-        this.minXpTwitch = minXpTwitch;
-        this.maxXpTwitch = maxXpTwitch;
-        this.xpBase = xpBase;
-        this.xpMultiplier = xpMultiplier;
-        this.cleverbotChannel = cleverbotChannel;
-        this.twitchChannel = twitchChannel;
-        this.welcomeMessage = welcomeMessage;
-        this.goodbyeMessage = goodbyeMessage;
-        this.adminRole = adminRole;
-        this.roleOnJoin = roleOnJoin;
-        this.welcomeGoodbyeChannel = welcomeGoodbyeChannel;
-        this.vrMode = vrMode;
+        try {
+            setSettings(settings);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         this.serverInitialized = true;
 
         ServerManager.servers.put(serverID, this);
@@ -117,22 +112,26 @@ public class Server {
 
     /**
      * Saves the server settings, and all profiles to the database.
+     *
+     * @param onlySettings If true, profiles will not be saved.
      */
-    public void save(){
-        if(serverInitialized){
+    public void save(boolean onlySettings){
+        if(serverInitialized) {
             MySqlManager.saveServer(this);
 
-            ArrayList<SkuddUser> saved = new ArrayList<>();
-            for (String s : discordProfiles.keySet()) {
-                discordProfiles.get(s).save();
-                if(discordProfiles.get(s).getTwitchUsername() != null){
-                    saved.add(discordProfiles.get(s));
+            if (!onlySettings) {
+                ArrayList<SkuddUser> saved = new ArrayList<>();
+                for (String s : discordProfiles.keySet()) {
+                    discordProfiles.get(s).save();
+                    if (discordProfiles.get(s).getTwitchUsername() != null) {
+                        saved.add(discordProfiles.get(s));
+                    }
                 }
+
+                twitchProfiles.keySet().stream().filter(s -> !saved.contains(twitchProfiles.get(s))).forEach(s -> twitchProfiles.get(s).save());
+
+                Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
             }
-
-            twitchProfiles.keySet().stream().filter(s -> !saved.contains(twitchProfiles.get(s))).forEach(s -> twitchProfiles.get(s).save());
-
-            Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
         }
     }
 
@@ -142,7 +141,7 @@ public class Server {
      * @param si The setting that should be returned.
      * @return The value of the setting in String form.
      */
-    public String getSetting(SettingsInfo si){
+    public String getSetting(ServerSettings si){
         switch (si){
             default:
                 return null;
@@ -150,16 +149,14 @@ public class Server {
                 return getMinXP() + "";
             case XP_MAX:
                 return getMaxXP() + "";
-            case XP_TWITCH_MIN:
+            case XP_MIN_TWITCH:
                 return getMinXpTwitch() + "";
-            case XP_TWITCH_MAX:
+            case XP_MAX_TWITCH:
                 return getMaxXpTwitch() + "";
             case XP_BASE:
                 return getXpBase() + "";
             case XP_MULTIPLIER:
                 return getXpMultiplier() + "";
-            case CLEVERBOT_CHANNEL:
-                return getCleverbotChannel();
             case TWITCH_CHANNEL:
                 return getTwitchChannel();
             case WELCOME_MESSAGE:
@@ -174,6 +171,29 @@ public class Server {
                 return getWelcomeGoodbyeChannel();
             case VR_MODE:
                 return isVrMode() + "";
+            case STREAM_LIVE:
+                return isStreamLive() + "";
+            case ALLOW_ANALYTICS:
+                return isAllowAnalytics() + "";
+            case ALLOW_REWARDS:
+                return isAllowRewards() + "";
+        }
+    }
+
+    /**
+     * Used to load all the settings into memory.
+     *
+     * @param settings The JSON setting string.
+     * @throws ParseException Get's thrown when the JSON string can't be parsed.
+     */
+    public void setSettings(String settings) throws ParseException{
+        JSONObject obj = (JSONObject) parser.parse(settings);
+        for(ServerSettings setting : ServerSettings.values()){
+            if(obj.containsKey(setting.getJsonReference())){
+                String output = setSetting(setting, String.valueOf(obj.get(setting.getJsonReference())), true);
+            } else {
+                setSetting(setting, setting.getDefaultValue(), true);
+            }
         }
     }
 
@@ -182,10 +202,11 @@ public class Server {
      *
      * @param si The setting that should be changed.
      * @param value The value that should be set.
+     * @param ignoreMinMax
      * @return When the value was changed succesfully it returns 'null'. When a error occured it returns what went wrong.
      */
     @SuppressWarnings("all") //Fuck you IntelliJ
-    public String setSetting(SettingsInfo si, String value){
+    public String setSetting(ServerSettings si, String value, boolean ignoreMinMax){
         double doubleValue = 0;
         boolean booleanValue = false;
         int intValue = 0;
@@ -211,7 +232,7 @@ public class Server {
                 booleanValue = Boolean.parseBoolean(value);
                 if (!booleanValue) {
                     if(!value.equalsIgnoreCase("false")){
-                           return "Value is not a boolean.";
+                        return "Value is not a boolean.";
                     }
                 }
             default:
@@ -229,26 +250,26 @@ public class Server {
             default:
                 return null;
             case XP_MIN:
-                if(!(intValue <= getMaxXP())){
+                if((!(intValue <= getMaxXP())) && !ignoreMinMax){
                     return intValue + " isn't smaller than or equal to your XP_MAX value (Which is " + getMaxXP() + ").";
                 }
                 setMinXP(intValue);
                 return null;
             case XP_MAX:
-                if(!(intValue >= getMinXP())){
+                if((!(intValue >= getMinXP())) && !ignoreMinMax){
                     return intValue + " isn't greater than or equal to your XP_MIN value (Which is " + getMinXP() + ").";
                 }
                 setMaxXP(intValue);
                 return null;
-            case XP_TWITCH_MIN:
-                if(!(intValue <= getMaxXpTwitch())){
-                    return intValue + " isn't smaller than or equal to your XP_TWITCH_MAX value (Which is " + getMaxXpTwitch() + ").";
+            case XP_MIN_TWITCH:
+                if((!(intValue <= getMaxXpTwitch())) && !ignoreMinMax){
+                    return intValue + " isn't smaller than or equal to your XP_MAX_TWITCH value (Which is " + getMaxXpTwitch() + ").";
                 }
                 setMinXpTwitch(intValue);
                 return null;
-            case XP_TWITCH_MAX:
-                if(!(intValue >= getMinXpTwitch())){
-                    return intValue + " isn't greater than or equal to your XP_TWITCH_MIN value (Which is " + getMinXpTwitch() + ").";
+            case XP_MAX_TWITCH:
+                if((!(intValue >= getMinXpTwitch())) && !ignoreMinMax){
+                    return intValue + " isn't greater than or equal to your XP_MIN_TWITCH value (Which is " + getMinXpTwitch() + ").";
                 }
                 setMaxXpTwitch(intValue);
                 return null;
@@ -260,9 +281,6 @@ public class Server {
                     return "XP_MULTIPLIER should always be greater than 1!";
                 }
                 setXpMultiplier(doubleValue);
-                return null;
-            case CLEVERBOT_CHANNEL:
-                setCleverbotChannel(value);
                 return null;
             case TWITCH_CHANNEL:
                 if(ServerManager.twitchServers.containsKey(value)){
@@ -287,6 +305,15 @@ public class Server {
                 return null;
             case VR_MODE:
                 setVrMode(booleanValue);
+                return null;
+            case STREAM_LIVE:
+                setStreamLive(booleanValue);
+                return null;
+            case ALLOW_ANALYTICS:
+                setAllowAnalytics(booleanValue);
+                return null;
+            case ALLOW_REWARDS:
+                setAllowRewards(booleanValue);
                 return null;
         }
     }
@@ -368,6 +395,345 @@ public class Server {
         if(this.twitchChannel != null) {
             ServerManager.twitchServers.put(this.twitchChannel, this);
             Main.getSkuddbotTwitch().join(this.twitchChannel);
+        }
+    }
+
+    /**
+     * This puts all the settings in a JSON string to be saved in the database.
+     *
+     * @return The JSON string.
+     */
+    @SuppressWarnings("unchecked")
+    public String jsonSettings() {
+        JSONObject obj = new JSONObject();
+
+        for(ServerSettings setting : ServerSettings.values()){
+            obj.put(setting.getJsonReference(), getSetting(setting));
+        }
+
+        return obj.toString();
+    }
+
+    /**
+     * Run analytics on the current chat log.
+     *
+     * @param channel The channel where the stream end command originated from, and where the analytics should be posted.
+     */
+    @SuppressWarnings("unchecked")
+    public void runAnalytics(IChannel channel){
+        setStreamLive(false);
+        if(!allowAnalytics){
+            return;
+        }
+
+        IMessage message = MessagesUtils.sendPlain(":hourglass_flowing_sand: Stream finished... *Compiling analytics...*", channel, false);
+        String line;
+        int quotesAdded = 0,riots = 0,totalXp = 0,messages = 0;
+        ArrayList<String> users = new ArrayList<>();
+        HashMap<String,Integer> xpGain = new HashMap<>();
+        HashMap<String,Integer> messagesSent = new HashMap<>();
+        HashMap<String,Integer> riotsStarted = new HashMap<>();
+        HashMap<String,Integer> rewards = new HashMap<>();
+
+        int currentWallLength = 0;
+        String currentWallUser = "yermom";
+
+        int longestWallLength = 0;
+        String longestWallUser = "yermom";
+
+
+        try (BufferedReader br = new BufferedReader(new FileReader("chat-logs/" + serverID + ".json"))){
+            while ((line = br.readLine()) != null){
+                JSONObject obj = (JSONObject) parser.parse(line);
+                String sender = (String) obj.get("sender");
+                String msg = (String) obj.get("message");
+                int xp = Integer.parseInt(String.valueOf(obj.get("xp")));
+
+                messages++;
+                totalXp += xp;
+                if(xpGain.containsKey(sender)){
+                    xpGain.put(sender, xpGain.get(sender) + xp);
+                } else {
+                    xpGain.put(sender, xp);
+                }
+                if(messagesSent.containsKey(sender)){
+                    messagesSent.put(sender, messagesSent.get(sender) + 1);
+                } else {
+                    messagesSent.put(sender, 1);
+                }
+                if (!users.contains(sender)) {
+                    users.add(sender);
+                }
+                if(currentWallUser.equals(sender)){
+                    currentWallLength++;
+                } else {
+                    if(longestWallLength < currentWallLength){
+                        longestWallLength = currentWallLength;
+                        longestWallUser = currentWallUser;
+                    }
+
+                    currentWallUser = sender;
+                    currentWallLength = 1;
+                }
+
+                if(msg.split(" ")[0].equalsIgnoreCase("!riot")){
+                    riots++;
+                    if(riotsStarted.containsKey(sender)){
+                        riotsStarted.put(sender, riotsStarted.get(sender) + 1);
+                    } else {
+                        riotsStarted.put(sender, 1);
+                    }
+                } else if (msg.toLowerCase().contains("--> succesfully added quote #")){
+                    quotesAdded++;
+                }
+            }
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+
+        StringBuilder topXp = new StringBuilder();
+        StringBuilder topMsg = new StringBuilder();
+        StringBuilder topRiots = new StringBuilder();
+
+        Logger.info("Compiling top 5's...");
+        TreeMap<Integer,List<String>> messagesSentTop = new TreeMap<>();
+        for(String s : messagesSent.keySet()){
+            if(messagesSentTop.containsKey(messagesSent.get(s))){
+                List<String> list = messagesSentTop.get(messagesSent.get(s));
+                list.add(s);
+                messagesSentTop.put(messagesSent.get(s), list);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(s);
+                messagesSentTop.put(messagesSent.get(s), list);
+            }
+        }
+        int msgAmount = 1;
+        for (int i : messagesSentTop.descendingKeySet()){
+            if(msgAmount == 6){
+                break;
+            }
+            int current = msgAmount;
+            for(String s : messagesSentTop.get(i)) {
+                if(msgAmount == 6){
+                    break;
+                }
+                if (!Constants.bannedUsers.contains(s)) {
+                    int reward = ((6-current) * 200);
+                    if(rewards.containsKey(s)){
+                        rewards.put(s, rewards.get(s) + reward);
+                    } else {
+                        rewards.put(s, reward);
+                    }
+                    if(allowRewards) {
+                        topMsg.append(current).append(". ").append(formatName(s)).append(" - ").append(i).append(" Messages *(+").append(reward).append(" XP)*\n");
+                    } else {
+                        topMsg.append(current).append(". ").append(formatName(s)).append(" - ").append(i).append(" Messages\n");
+                    }
+                    msgAmount++;
+                }
+            }
+        }
+
+        TreeMap<Integer,List<String>> xpGainTop = new TreeMap<>();
+        for(String s : xpGain.keySet()){
+            if(xpGainTop.containsKey(xpGain.get(s))){
+                List<String> list = xpGainTop.get(xpGain.get(s));
+                list.add(s);
+                xpGainTop.put(xpGain.get(s), list);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(s);
+                xpGainTop.put(xpGain.get(s), list);
+            }
+        }
+        int xpAmount = 1;
+        for (int i : xpGainTop.descendingKeySet()){
+            if(xpAmount == 6){
+                break;
+            }
+            int current = xpAmount;
+            for(String s : xpGainTop.get(i)) {
+                if(xpAmount == 6){
+                    break;
+                }
+                if (!Constants.bannedUsers.contains(s)) {
+                    int reward = ((6-current) * 200);
+                    if(rewards.containsKey(s)){
+                        rewards.put(s, rewards.get(s) + reward);
+                    } else {
+                        rewards.put(s, reward);
+                    }
+                    if(allowRewards){
+                        topXp.append(current).append(". ").append(formatName(s)).append(" - ").append(i).append(" XP *(+").append(reward).append(" XP)*\n");
+                    } else {
+                        topXp.append(current).append(". ").append(formatName(s)).append(" - ").append(i).append(" XP\n");
+                    }
+
+                    xpAmount++;
+                }
+            }
+        }
+
+        TreeMap<Integer,List<String>> riotStartedTop = new TreeMap<>();
+        for(String s : riotsStarted.keySet()){
+            if(riotStartedTop.containsKey(riotsStarted.get(s))){
+                List<String> list = riotStartedTop.get(riotsStarted.get(s));
+                list.add(s);
+                riotStartedTop.put(riotsStarted.get(s), list);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(s);
+                riotStartedTop.put(riotsStarted.get(s), list);
+            }
+        }
+        int riotAmount = 1;
+        for (int i : riotStartedTop.descendingKeySet()){
+            if(riotAmount == 6){
+                break;
+            }
+            int current = riotAmount;
+            for(String s : riotStartedTop.get(i)) {
+                if(riotAmount == 6){
+                    break;
+                }
+                if (!Constants.bannedUsers.contains(s)) {
+                    int reward = ((6-current) * 200);
+                    if(rewards.containsKey(s)){
+                        rewards.put(s, rewards.get(s) + reward);
+                    } else {
+                        rewards.put(s, reward);
+                    }
+                    if(allowRewards){
+                        topRiots.append(current).append(". ").append(formatName(s)).append(" - ").append(i).append(" riots *(+").append(reward).append(" XP)*\n");
+                    } else {
+                        topRiots.append(current).append(". ").append(formatName(s)).append(" - ").append(i).append(" riots\n");
+                    }
+                    riotAmount++;
+                }
+            }
+        }
+
+        double averageXP = (double)Math.round(((double)totalXp / (double)users.size()) * 100d) / 100d;
+
+        if(rewards.containsKey(longestWallUser)){
+            rewards.put(longestWallUser, rewards.get(longestWallUser) + 1000);
+        } else {
+            rewards.put(longestWallUser, 1000);
+        }
+
+        if(allowRewards) {
+            for (String s : rewards.keySet()) {
+                ProfileManager.getTwitch(s, getTwitchChannel(), true).setXp(ProfileManager.getTwitch(s, getTwitchChannel(), true).getXp() + rewards.get(s));
+            }
+        }
+
+        try {
+            assert message != null;
+            message.delete();
+        } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
+            e.printStackTrace();
+        }
+        MessagesUtils.sendPlain("**SKUDDBOT ANALYTICS** | This is what the chat did this stream:\n\n" +
+                "The chat has started **" + riots + " riots!**\n" +
+                "Things were said and **" + quotesAdded + " quotes were born**.\n" +
+                "**" + users.size() + " users** have posted **" + messages + " messages** which gave them a total of **" + totalXp + " XP**. With a average of **" + averageXP + " XP per user**!\n" +
+                "**" + formatName(longestWallUser) + "** has made the longest chat wall this stream with **" + longestWallLength + " messages**" + (allowRewards ? " *(+1000 xp)*" : "") + "\n\n" +
+                "**TOP " + (msgAmount - 1) + " MESSAGES POSTED:**\n" + topMsg.toString() + "\n" +
+                "**TOP " + (xpAmount - 1) + " XP GAIN:**\n" + topXp.toString() + "\n" +
+                "**TOP " + (riotAmount - 1) + " RIOTS STARTED:**\n" + topRiots.toString(), channel, false);
+
+        JSONObject obj = new JSONObject();
+        long timestamp = System.currentTimeMillis();
+        obj.put("timestamp", timestamp);
+        obj.put("riots", riots);
+        obj.put("quotes_added", quotesAdded);
+        obj.put("unique_users", users.size());
+        obj.put("messages", messages);
+        obj.put("total_xp", totalXp);
+        obj.put("average_xp", averageXP);
+        obj.put("longest_wall_user", longestWallUser);
+        obj.put("longest_wall_length", longestWallLength);
+        obj.put("rewards_given", allowRewards);
+
+        JSONArray msg = new JSONArray();
+        for(String s : messagesSent.keySet()){
+            JSONObject obj1 = new JSONObject();
+            obj1.put("user", s);
+            obj1.put("message_amount", messagesSent.get(s));
+            msg.add(obj1);
+        }
+        JSONArray xp = new JSONArray();
+        for(String s : xpGain.keySet()){
+            JSONObject obj1 = new JSONObject();
+            obj1.put("user", s);
+            obj1.put("xp_amount", xpGain.get(s));
+            xp.add(obj1);
+        }
+        JSONArray riot = new JSONArray();
+        for(String s : riotsStarted.keySet()){
+            JSONObject obj1 = new JSONObject();
+            obj1.put("user", s);
+            obj1.put("riots", riotsStarted.get(s));
+            riot.add(obj1);
+        }
+        JSONArray rewardJSON = new JSONArray();
+        for(String s : rewards.keySet()){
+            JSONObject obj1 = new JSONObject();
+            obj1.put("user", s);
+            obj1.put("reward", riotsStarted.get(s));
+            rewardJSON.add(obj1);
+        }
+        obj.put("message_user", msg);
+        obj.put("xp_user", xp);
+        obj.put("riot_user", riot);
+        obj.put("rewards", rewardJSON);
+
+        File directory = new File("analytic-log/" + serverID);
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
+        try(FileWriter file = new FileWriter("analytic-log/" + serverID  + "/" + timestamp + ".json",true)){
+            file.write(obj.toJSONString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        File file = new File("chat-logs/" + serverID + ".json");
+        file.delete();
+    }
+
+    /**
+     * Format a Twitch username to a mention if applicable.
+     *
+     * @param name The Twitch username we want formatted.
+     */
+    public String formatName(String name){
+        String formattedName = (ProfileManager.getTwitch(name, getTwitchChannel(), true).isLinked() ? Main.getInstance().getSkuddbot().getUserByID(ProfileManager.getTwitch(name, getTwitchChannel(), false).getId()).mention() : name);
+        return ProfileManager.getTwitch(name, getTwitchChannel(), true).isAnalyticsMention() ? formattedName : name;
+    }
+
+    /**
+     * Logs a message to the log for analytics.
+     *
+     * @param sender The user that sent the message.
+     * @param message The message that the user sent.
+     * @param xpGain The amount of XP that the user gained.
+     */
+    public void logMessage(String sender, String message, int xpGain){
+        if(allowAnalytics && streamLive && ProfileManager.getTwitchServer(sender, serverID).isTrackMe()){
+            JSONObject obj = new JSONObject();
+            obj.put("sender", sender);
+            obj.put("message", message);
+            obj.put("xp", xpGain);
+
+            try(FileWriter file = new FileWriter("chat-logs/" + serverID  + ".json",true)){
+                file.write(obj.toJSONString() + "\n");
+                file.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

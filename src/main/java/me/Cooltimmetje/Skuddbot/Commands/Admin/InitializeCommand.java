@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * CMD: Initializes servers when the bot joins for the first time.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4-ALPHA
  * @since v0.2-ALPHA
  */
 public class InitializeCommand {
@@ -63,7 +63,7 @@ public class InitializeCommand {
                     exec.schedule(()->{
 
                         MessagesUtils.sendSuccess("I'm done! Have fun using Skuddbot!\n\n" +
-                                "The next thing you wanna do is configure Skuddbot's settings! Type `!settings`, you can always refer to the manual to get help! Type `!about` to find it!", message.getChannel());
+                                "The next thing you wanna do is configure Skuddbot's settings! Type `!serversettings`, you can always refer to the manual to get help! Type `!about` to find it!", message.getChannel());
                         server.clearProfiles();
                         MySqlManager.createServerTables(message.getGuild().getID());
                         server.setServerInitialized(true);

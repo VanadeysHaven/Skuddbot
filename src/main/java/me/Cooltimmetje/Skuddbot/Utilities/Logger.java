@@ -11,7 +11,6 @@ public class Logger {
 
 
     public static void info(String string){
-
         log.info(string);
     }
 

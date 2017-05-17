@@ -14,12 +14,11 @@ Skuddbot is still in (as I like to call it) `very-early-probally-wont-work-alpha
 - **XP System**
 - Item System
 - Currency
-- **Cleverbot**
 - *Dank Memes*
 - **Welcome/Goodbye Messages**
 - Customizeable Command System
 - **Database saving**
-- *Twitch Chat tracking* (2/3 phases complete)
+- **Twitch Chat tracking**
 - **Multi-Server capabilities.**
 
 > Items marked in **bold** are ready, *italics* are currently under developement, normal text is planned (but not confirmed).

@@ -1,6 +1,5 @@
 package me.Cooltimmetje.Skuddbot;
 
-import me.Cooltimmetje.Skuddbot.Cleverbot.CleverbotManager;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.ActivityChecker;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -19,7 +18,6 @@ import java.util.Timer;
 public class Main {
 
     private static Skuddbot skuddbot;
-    private static CleverbotManager cleverskudd;
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static SkuddbotTwitch skuddbotTwitch;
     private static Timer timer = new Timer();
@@ -57,7 +55,6 @@ public class Main {
         } catch (DiscordException e) {
             e.printStackTrace();
         }
-        cleverskudd = new CleverbotManager();
 
         timer.schedule(new ActivityChecker(), Constants.INACTIVE_DELAY, Constants.INACTIVE_DELAY);
         Constants.STARTUP_TIME = System.currentTimeMillis();
@@ -70,10 +67,6 @@ public class Main {
 
     public static void stopTimer(){
         timer.cancel();
-    }
-
-    public static CleverbotManager getCleverskudd(){
-        return cleverskudd;
     }
 
     public static SkuddbotTwitch getSkuddbotTwitch(){

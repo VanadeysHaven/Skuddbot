@@ -20,7 +20,7 @@ import java.util.List;
  * CMD: Imports XP form other bots (Like Meme6)
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class ImportCommand {
@@ -50,7 +50,7 @@ public class ImportCommand {
                     }
 
                 }
-                ServerManager.getServer(message.getGuild().getID()).save();
+                ServerManager.getServer(message.getGuild().getID()).save(false);
                 MessagesUtils.sendSuccess("Done! Imported " + imported + " users!", message.getChannel());
             }
         } else {
