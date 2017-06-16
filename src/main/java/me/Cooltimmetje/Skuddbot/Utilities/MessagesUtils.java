@@ -5,7 +5,7 @@ import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import org.json.simple.JSONObject;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.ReactionAddEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * This class is used for message sending, there is a separate class for this so that I don't have try-catches all over my code. Keep it nice and tidy. SeemsGood
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class MessagesUtils {

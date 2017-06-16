@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 
@@ -82,8 +82,8 @@ public class Server {
 
         MessagesUtils.sendPlain("**Welcome to the fun, welcome to the revolution, welcome to Skuddbot.** :eyes:\n\nI see that this server is not yet in my database, therefore I'll need to initialize this server before I can be used on this server!\n" +
                         "In order to do so, please make sure I have a role that has the `ADMINISTRATOR` permission, then run `!initialize`. **NOTE:** This command requires you to also have the `ADMINISTRATOR` permission.",
-                Main.getInstance().getSkuddbot().getGuildByID(serverID).getChannelByID(serverID), false);
-        Logger.info("[CreateServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
+                Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getChannelByID(Long.parseLong(serverID)), false);
+        Logger.info("[CreateServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
 
     }
 
@@ -107,7 +107,7 @@ public class Server {
             ServerManager.twitchServers.put(twitchChannel, this);
         }
 
-        Logger.info("[LoadServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
+        Logger.info("[LoadServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
     }
 
     /**
@@ -130,7 +130,7 @@ public class Server {
 
                 twitchProfiles.keySet().stream().filter(s -> !saved.contains(twitchProfiles.get(s))).forEach(s -> twitchProfiles.get(s).save());
 
-                Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(serverID).getName() + " (ID: " + serverID + ")");
+                Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
             }
         }
     }
@@ -208,6 +208,7 @@ public class Server {
     @SuppressWarnings("all") //Fuck you IntelliJ
     public String setSetting(ServerSettings si, String value, boolean ignoreMinMax){
         double doubleValue = 0;
+        long longValue = 0;
         boolean booleanValue = false;
         int intValue = 0;
         boolean intUsed = false;
@@ -234,6 +235,13 @@ public class Server {
                     if(!value.equalsIgnoreCase("false")){
                         return "Value is not a boolean.";
                     }
+                }
+                break;
+            case "long":
+                try {
+                    longValue = Long.parseLong(value);
+                } catch (NumberFormatException e){
+                    return "Value is not a Long.";
                 }
             default:
                 if(value.equalsIgnoreCase("null")){
@@ -710,7 +718,7 @@ public class Server {
      * @param name The Twitch username we want formatted.
      */
     public String formatName(String name){
-        String formattedName = (ProfileManager.getTwitch(name, getTwitchChannel(), true).isLinked() ? Main.getInstance().getSkuddbot().getUserByID(ProfileManager.getTwitch(name, getTwitchChannel(), false).getId()).mention() : name);
+        String formattedName = (ProfileManager.getTwitch(name, getTwitchChannel(), true).isLinked() ? Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(ProfileManager.getTwitch(name, getTwitchChannel(), false).getId())).mention() : name);
         return ProfileManager.getTwitch(name, getTwitchChannel(), true).isAnalyticsMention() ? formattedName : name;
     }
 

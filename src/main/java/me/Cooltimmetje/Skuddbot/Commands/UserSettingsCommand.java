@@ -14,7 +14,7 @@ import java.text.MessageFormat;
  * This is for users to edit their personal settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.4-ALPHA-DEV
  */
 public class UserSettingsCommand {
@@ -27,12 +27,12 @@ public class UserSettingsCommand {
     @SuppressWarnings("ConstantConditions")
     public static void run(IMessage message) {
         String[] args = message.getContent().split(" ");
-        SkuddUser user = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
+        SkuddUser user = ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), true);
 
         if(args.length == 1){ //No arguments: Show Settings.
             StringBuilder sb = new StringBuilder();
 
-            sb.append(MessageFormat.format("User Settings for **{0}#{1}** | ID: `{2}`\n\n```\n", message.getAuthor().getName(), message.getAuthor().getDiscriminator(), message.getAuthor().getID()));
+            sb.append(MessageFormat.format("User Settings for **{0}#{1}** | ID: `{2}`\n\n```\n", message.getAuthor().getName(), message.getAuthor().getDiscriminator(), message.getAuthor().getStringID()));
 
             int longest = 0;
 
@@ -66,7 +66,7 @@ public class UserSettingsCommand {
                                 "Value Type:    {4}\n" +
                                 "```\n" +
                                 "To alter the value type `!usersettings {5} <value>`.",
-                        setting.toString(), setting.getDescription(), ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true).getSetting(setting),
+                        setting.toString(), setting.getDescription(), ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), true).getSetting(setting),
                         setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel(), false);
             } catch (IllegalArgumentException e){
                 MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());

@@ -16,7 +16,7 @@ import java.util.List;
  * This class shows info about the user that ran the command or that has been specified.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3.01-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.3-ALPHA
  */
 public class UserInfo {
@@ -26,8 +26,8 @@ public class UserInfo {
         if (!message.getMentions().isEmpty()) {
             user = message.getMentions().get(0);
         } else if (message.getContent().split(" ").length > 1){
-            if(Main.getInstance().getSkuddbot().getUserByID(message.getContent().split(" ")[1]) != null){
-                user = Main.getInstance().getSkuddbot().getUserByID(message.getContent().split(" ")[1]);
+            if(Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(message.getContent().split(" ")[1])) != null){
+                user = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(message.getContent().split(" ")[1]));
             }
         }
 
@@ -35,15 +35,15 @@ public class UserInfo {
 
         embed.withAuthorIcon(user.getAvatarURL()).withAuthorName(user.getName() + "#" + user.getDiscriminator()).withThumbnail(user.getAvatarURL());
 
-        if (Constants.awesomeUser.contains(user.getID())) {
-            if (Constants.adminUser.contains(user.getID())) {
+        if (Constants.awesomeUser.contains(user.getStringID())) {
+            if (Constants.adminUser.contains(user.getStringID())) {
                 embed.withColor(255,0,0).withDesc("Skuddbot Admin");
             } else {
                 embed.withColor(218,165,32).withDesc("Awesome!");
             }
         }
 
-        switch (user.getID()){
+        switch (user.getStringID()){
             case "214049996163645441":
                 embed.withColor(255,105,180).withDesc("Glitter queen! - Skuddbot Artist");
                 break;
@@ -64,7 +64,7 @@ public class UserInfo {
                 break;
         }
 
-        embed.appendField("__User ID:__", user.getID(), false);
+        embed.appendField("__User ID:__", user.getStringID(), false);
         StringBuilder sb = new StringBuilder();
         List<IRole> roles = user.getRolesForGuild(message.getGuild());
         for(IRole role : roles){
@@ -72,7 +72,7 @@ public class UserInfo {
         }
         String rolesString = sb.toString();
         rolesString = rolesString.substring(0, rolesString.length() - 2);
-        embed.appendField("__Server Nickname:__", user.getNicknameForGuild(message.getGuild()).isPresent() ? user.getNicknameForGuild(message.getGuild()).get().replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere") : "No Nickname", true);
+        embed.appendField("__Server Nickname:__", user.getNicknameForGuild(message.getGuild()) == null ? "No Nickname" : user.getNicknameForGuild(message.getGuild()).replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"), true);
         embed.appendField("__Roles:__", rolesString, true);
 
         embed.withFooterText("All this data is obtained through the public Discord API | Skuddbot " + Constants.config.get("version"));

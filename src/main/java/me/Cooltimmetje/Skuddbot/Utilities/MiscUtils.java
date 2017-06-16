@@ -2,7 +2,6 @@ package me.Cooltimmetje.Skuddbot.Utilities;
 
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Main;
-import sx.blah.discord.handle.obj.Status;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,7 +12,7 @@ import java.util.Random;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3.01-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -131,22 +130,22 @@ public class MiscUtils {
 
             //Birthdays
             case "21/10":
-                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY TIMMY!"));
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY TIMMY!");
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
             case "18/03":
-                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY RAY!"));
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY RAY!");
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
             case "30/07":
-                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY MELSH!"));
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY MELSH!");
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
             case "03/10":
-                Main.getInstance().getSkuddbot().changeStatus(Status.game("HAPPY BIRTHDAY JESSICA!"));
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY JESSICA!");
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
@@ -155,19 +154,19 @@ public class MiscUtils {
             case "24/12":
             case "25/12":
             case "26/12":
-                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_CHRISTMAS)));
+                Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_CHRISTMAS));
                 Constants.CURRENT_EVENT = "It's Christmas time!";
                 Constants.EVENT_ACTIVE = true;
                 break;
             case "01/01":
-                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR)));
+                Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR));
                 Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
                 Constants.EVENT_ACTIVE = true;
                 break;
 
             //Default
             default:
-                Main.getInstance().getSkuddbot().changeStatus(Status.game(MiscUtils.getRandomMessage(DataTypes.PLAYING)));
+                Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING));
                 Constants.EVENT_ACTIVE = false;
                 break;
         }

@@ -1,12 +1,10 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AdminManager;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AwesomeManager;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.ChangeAvatar;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 import java.io.IOException;
 
@@ -14,7 +12,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class CommandManager {
@@ -100,6 +98,9 @@ public class CommandManager {
                     break;
                 case "!usersettings":
                     UserSettingsCommand.run(event.getMessage());
+                    break;
+                case "o7":
+                    SaluteCommand.run(event.getMessage());
                     break;
             }
         } else {

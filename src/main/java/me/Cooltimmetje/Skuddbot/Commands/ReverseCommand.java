@@ -8,7 +8,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This will reverse the input.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.3-ALPHA
  */
 public class ReverseCommand {
@@ -22,8 +22,11 @@ public class ReverseCommand {
             for(int i=1; i < args.length; i++) {
                 if (message.getMentions().size() != 0) {
                     if (message.getMentions().get(mentionCount).mention().replace("<@!", "<@").equals(args[i].replace("<@!", "<@"))) {
-                        sb.append("@").append(message.getMentions().get(mentionCount).getNicknameForGuild(message.getGuild()).isPresent() ?
-                                message.getMentions().get(mentionCount).getNicknameForGuild(message.getGuild()).get() : message.getMentions().get(mentionCount).getName()).append(" ");
+                        if(message.getMentions().get(mentionCount).getNicknameForGuild(message.getGuild()) != null){
+                            sb.append("@").append(message.getMentions().get(mentionCount).getNicknameForGuild(message.getGuild()));
+                        } else {
+                            sb.append("@").append(message.getMentions().get(mentionCount).getName());
+                        }
                         mentionCount++;
                     } else {
                         sb.append(args[i]).append(" ");

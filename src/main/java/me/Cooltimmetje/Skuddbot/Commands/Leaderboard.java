@@ -14,7 +14,7 @@ import java.util.TreeMap;
  * Show the XP leaderboard of the server.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class Leaderboard {
@@ -27,9 +27,9 @@ public class Leaderboard {
     public static void run(IMessage message){
         message.getChannel().toggleTypingStatus();
         long startTime = System.currentTimeMillis();
-        ServerManager.getServer(message.getGuild().getID()).save(false);
-        HashMap<Integer,SkuddUser> discord = MySqlManager.getTopDiscord(message.getGuild().getID());
-        HashMap<Integer,SkuddUser> twitch = MySqlManager.getTopTwitch(message.getGuild().getID());
+        ServerManager.getServer(message.getGuild().getStringID()).save(false);
+        HashMap<Integer,SkuddUser> discord = MySqlManager.getTopDiscord(message.getGuild().getStringID());
+        HashMap<Integer,SkuddUser> twitch = MySqlManager.getTopTwitch(message.getGuild().getStringID());
 
         TreeMap<Integer,SkuddUser> top = new TreeMap<>(); //topkek
         for(int i : discord.keySet()){
@@ -46,9 +46,12 @@ public class Leaderboard {
 
         for(int i2 : top.descendingKeySet()){
             SkuddUser user = top.get(i2);
-            String name = user.getId() == null ? user.getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() :
-                    (Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).isPresent() ?
-                            Main.getInstance().getSkuddbot().getUserByID(user.getId()).getNicknameForGuild(message.getGuild()).get() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+            String name = user.getId() == null ? user.getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() :
+                    (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getNicknameForGuild(message.getGuild())));
+
+            if(name == null){
+                name = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName();
+            }
 
             if(user.getTwitchUsername() != null){
                 if(user.getTwitchUsername().equals("jaschmedia")){

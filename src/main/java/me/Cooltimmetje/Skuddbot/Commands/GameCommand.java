@@ -7,13 +7,12 @@ import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.Status;
 
 /**
  * This command changes the playing status of Skuddbot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class GameCommand {
@@ -28,7 +27,7 @@ public class GameCommand {
         IChannel channel = message.getChannel(); //Channel to send the confirmation message to
         IUser user = message.getAuthor(); //User that sent the message - Used to check the permissions.
 
-        if(!Constants.awesomeUser.contains(user.getID())){ //Actual permission check
+        if(!Constants.awesomeUser.contains(user.getStringID())){ //Actual permission check
             Logger.info(user.getName() + " attempted to do something they don't have permission for.");
         } else {
             if(Constants.EVENT_ACTIVE){
@@ -41,7 +40,7 @@ public class GameCommand {
                         sb.append(args[i]).append(" ");
                     }
                     String input = sb.toString().trim();
-                    Main.getInstance().getSkuddbot().changeStatus(Status.game(input.substring(0, Math.min(input.length(), 128)))); //Set the playing status.
+                    Main.getInstance().getSkuddbot().changePlayingText(input.substring(0, Math.min(input.length(), 128))); //Set the playing status.
                     if(input.length() > 128) { //Check limit - See if we need to display the warning.
                         MessagesUtils.sendSuccess("Game set to: `" + input.substring(0, Math.min(input.length(), 128)) + "`\n " +
                                 ":warning: Your message exceeded the __128 character limit__, therefore we have trimmed it down to that limit.", channel);
