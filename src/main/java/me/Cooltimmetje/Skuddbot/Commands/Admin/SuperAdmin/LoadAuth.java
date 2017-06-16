@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Commands.Admin;
+package me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin;
 
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
@@ -11,7 +11,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class is used for reloading the list of authorized servers that can use Skuddbot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class LoadAuth {
@@ -22,7 +22,7 @@ public class LoadAuth {
      * @param message Message that the command got triggered off.
      */
     public static void run(IMessage message){
-        if (message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
+        if (message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)){
             CreateServerListener.authorized.clear();
             MySqlManager.loadAuth();
             MessagesUtils.sendSuccess("Authorized Servers reloaded.", message.getChannel());

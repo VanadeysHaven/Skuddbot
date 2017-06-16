@@ -12,13 +12,13 @@ import sx.blah.discord.util.RateLimitException;
  * This allows the avatar of the bot to be changed!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA
+ * @version v0.4.0.1-ALPHA-DEV
  * @since v0.3-ALPHA
  */
 public class ChangeAvatar {
 
     public static void run(IMessage message){
-        if(Constants.adminUser.contains(message.getAuthor().getID())){
+        if(Constants.adminUser.contains(message.getAuthor().getStringID())){
             String[] args = message.getContent().split(" ");
 
             if(args.length > 1){

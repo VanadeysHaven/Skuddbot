@@ -14,9 +14,8 @@ import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.DisconnectedEvent;
-import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.util.DiscordException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Holds the Skuddbot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class Skuddbot {
@@ -69,24 +68,10 @@ public class Skuddbot {
     }
 
     @EventSubscriber
-    public void onDisconnect(DisconnectedEvent event){
-//        CompletableFuture.runAsync(() -> {
-//            if(reconnect.get()) {
-//                Logger.info("Attempting to reconnect bot...");
-//                try {
-//                    login();
-//                } catch (DiscordException e) {
-//                    Logger.warn("Well rip.", e);
-//                }
-//            }
-//        });
-    }
-
-    @EventSubscriber
     public void onMention(MentionEvent event){
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
-                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || event.getMessage().getAuthor().getID().equals(Constants.JASCH_OVERRIDE)) {
+                if (event.getMessage().getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE) || event.getMessage().getAuthor().getStringID().equals(Constants.JASCH_OVERRIDE)) {
                     MessagesUtils.sendSuccess("Well, okay then...\n`Shutting down...`", event.getMessage().getChannel());
 
                     terminate(false);

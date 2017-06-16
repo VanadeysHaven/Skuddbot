@@ -20,7 +20,7 @@ import java.util.HashMap;
  * This class handles everything to do with the database, and contains all operations we can run on the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class MySqlManager {
@@ -240,12 +240,12 @@ public class MySqlManager {
             ps = c.prepareStatement(create);
 
             ps.setString(1, user.getId());
-            ps.setString(2, (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+            ps.setString(2, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
             ps.setInt(3, user.getXp());
             ps.setString(4, user.getTwitchUsername());
             ps.setString(5, user.jsonSettings());
             ps.setString(6, user.jsonStats());
-            ps.setString(7, (Main.getInstance().getSkuddbot().getUserByID(user.getId()) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(user.getId()).getName()));
+            ps.setString(7, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
             ps.setInt(8, user.getXp());
             ps.setString(9, user.getTwitchUsername());
             ps.setString(10, user.jsonSettings());
@@ -579,8 +579,8 @@ public class MySqlManager {
                 JSONObject obj = new JSONObject();
                 obj.put("id", rs.getString("discord_id"));
                 obj.put("name", rs.getString("discord_username"));
-                obj.put("discrim", Main.getInstance().getSkuddbot().getUserByID(rs.getString("discord_id")).getDiscriminator());
-                obj.put("avatar_url", Main.getInstance().getSkuddbot().getUserByID(rs.getString("discord_id")).getAvatarURL());
+                obj.put("discrim", Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(rs.getString("discord_id"))).getDiscriminator());
+                obj.put("avatar_url", Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(rs.getString("discord_id"))).getAvatarURL());
                 obj.put("xp", rs.getInt("xp"));
                 obj.put("twitch_username", rs.getString("twitch_username"));
 
@@ -862,7 +862,7 @@ public class MySqlManager {
             ps = c.prepareStatement(query);
 
             ps.setString(1, id);
-            ps.setString(2, Main.getInstance().getSkuddbot().getUserByID(id).getName());
+            ps.setString(2, Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id)).getName());
 
             ps.execute();
         } catch (SQLException e){

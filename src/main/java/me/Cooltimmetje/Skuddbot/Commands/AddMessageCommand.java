@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * Allows awesome users to add stuff to the pool of messages!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.3-ALPHA-DEV
  */
 public class AddMessageCommand {
@@ -22,7 +22,7 @@ public class AddMessageCommand {
      * @param message The message that triggered this command.
      */
     public static void run(IMessage message){
-        if(Constants.awesomeUser.contains(message.getAuthor().getID())){
+        if(Constants.awesomeUser.contains(message.getAuthor().getStringID())){
             String[] args = message.getContent().split(" ");
             if(args.length > 2){
                 DataTypes dataType;
@@ -52,7 +52,7 @@ public class AddMessageCommand {
                                 "For your convenience: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel(), false);
                 } else {
                     MessagesUtils.sendSuccess("Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", message.getChannel());
-                    MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getID());
+                    MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getStringID());
                     Constants.awesomeStrings.put(trimmed, dataType);
                 }
             } else {

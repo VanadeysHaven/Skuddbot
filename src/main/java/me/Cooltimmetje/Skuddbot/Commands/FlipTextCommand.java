@@ -12,7 +12,7 @@ import java.util.Objects;
  * (╯°□°）╯︵ uoıʇɐʇuǝɯnɔop pǝǝu ʇ,usǝop sıɥʇ
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class FlipTextCommand {
@@ -27,11 +27,10 @@ public class FlipTextCommand {
                 if (message.getMentions().size() != 0) {
                     if (message.getMentions().get(mentionCount).mention().replace("<@!", "<@").equals(args[i].replace("<@!", "<@"))) {
                         IUser user = message.getMentions().get(mentionCount);
-                        if(Objects.equals(user.getID(), Main.getInstance().getSkuddbot().getOurUser().getID())){
+                        if(Objects.equals(user.getStringID(), Main.getInstance().getSkuddbot().getOurUser().getStringID())){
                             user = message.getAuthor();
                         }
-                        sb.append("@").append(user.getNicknameForGuild(message.getGuild()).isPresent() ?
-                                user.getNicknameForGuild(message.getGuild()).get() : user.getName()).append(" ");
+                        sb.append("@").append(user.getDisplayName(message.getGuild()));
                         mentionCount++;
                     } else {
                         sb.append(args[i]).append(" ");

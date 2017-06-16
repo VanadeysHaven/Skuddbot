@@ -11,7 +11,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class shows the user their XP and levels.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class XpCommand {
@@ -27,13 +27,13 @@ public class XpCommand {
         String[] args = message.getContent().split(" ");
         if (args.length > 1) {
             if (message.getMentions().size() >= 1) {
-                su = ProfileManager.getDiscord(message.getMentions().get(0).getID(), message.getGuild().getID(), false);
+                su = ProfileManager.getDiscord(message.getMentions().get(0).getStringID(), message.getGuild().getStringID(), false);
             } else {
-                su = ProfileManager.getTwitch(args[1].toLowerCase(), ServerManager.getServer(message.getGuild().getID()).getTwitchChannel(), false);
+                su = ProfileManager.getTwitch(args[1].toLowerCase(), ServerManager.getServer(message.getGuild().getStringID()).getTwitchChannel(), false);
             }
         }
         if (su == null) {
-            su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), false);
+            su = ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), false);
             mention = true;
         }
 
@@ -42,7 +42,7 @@ public class XpCommand {
             return;
         }
 
-        String name = (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(su.getId()).getDisplayName(message.getGuild()) : su.getTwitchUsername()));
+        String name = (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(su.getId())).getDisplayName(message.getGuild()) : su.getTwitchUsername()));
 
         if(su.getTwitchUsername() != null){
             if(su.getTwitchUsername().equals("jaschmedia")){
