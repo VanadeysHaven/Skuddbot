@@ -52,8 +52,7 @@ public class Skuddbot {
     @EventSubscriber
     public void onReady(ReadyEvent event){
         if(!listenersReady){
-//            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
-            MiscUtils.setPlaying();
+            MiscUtils.setPlaying(true);
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());

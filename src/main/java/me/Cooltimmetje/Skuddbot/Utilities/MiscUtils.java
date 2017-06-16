@@ -121,7 +121,12 @@ public class MiscUtils {
         return selectedMessage;
     }
 
-    public static void setPlaying(){
+    public static void setPlaying(boolean startup){
+        if(startup) {
+            Main.getInstance().getSkuddbot().changePlayingText(Constants.config.get("version") + " | " + Constants.config.get("branch") + " > " + Constants.config.get("deployed_from"));
+            Constants.CURRENT_EVENT = "The bot has just started up, give it a min, alright?";
+            Constants.EVENT_ACTIVE = true;
+        }
         DateFormat dateFormat = new SimpleDateFormat("dd/MM");
         Calendar cal = Calendar.getInstance();
         String date = dateFormat.format(cal.getTime());
