@@ -38,11 +38,11 @@ public class TwitchLiveListener {
     public void onStatusChange(PresenceUpdateEvent event){
         if(event.getOldPresence().getStatus() != StatusType.STREAMING) {
             if (event.getUser().getStringID().equals("131382094457733120")) { //Melsh
-                if(event.getNewPresence().getStatus() != StatusType.STREAMING) {
+                if(event.getNewPresence().getStatus() == StatusType.STREAMING) {
                     MessagesUtils.sendPlain("@here melsh87 just went live! Go check them out and show them some love! https://www.twitch.tv/melsh87", Main.getInstance().getSkuddbot().getChannelByID(157855484395782144L), true);
                 }
             } else if (event.getUser().getStringID().equals("147295556979523584")) { //Ray
-                if(event.getNewPresence().getStatus() != StatusType.STREAMING) {
+                if(event.getNewPresence().getStatus() == StatusType.STREAMING) {
                     MessagesUtils.sendPlain("@here rayskudda just went live! Go check them out and show them some love! https://www.twitch.tv/rayskudda", Main.getInstance().getSkuddbot().getChannelByID(231813505961951232L), true);
                 }
             }
