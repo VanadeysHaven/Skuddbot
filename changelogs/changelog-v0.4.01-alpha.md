@@ -8,3 +8,4 @@
 ## Changed
 * Updated Discord4J to 2.8.1 from 2.7.0
 * Some Server Settings have gotten some additional checks to comply with the new Discord4J.
+* When the bot boots it shows the version, branch and commit in the playing status for the first 10 minutes. Status will also be locked to that for that time frame.
