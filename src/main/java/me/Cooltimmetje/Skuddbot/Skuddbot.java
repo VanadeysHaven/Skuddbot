@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Holds the Skuddbot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.01-ALPHA
  * @since v0.1-ALPHA
  */
 public class Skuddbot {
@@ -62,7 +62,15 @@ public class Skuddbot {
 
             listenersReady = true;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> terminate(true)));
-            MessagesUtils.sendPlain(":robot: Startup sequence complete!", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
+            MessagesUtils.sendPlain(":robot: Startup sequence complete!\n\n" +
+                            "**Status:**\n```\n" +
+                            "> Discord | Connected | Logged in as: " + this.getSkuddbot().getOurUser().getName() + "#" + this.getSkuddbot().getOurUser().getDiscriminator() + " / ID: " + this.getSkuddbot().getOurUser().getStringID() + "\n" +
+                            "> Twitch  | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[3] + "\n" +
+                            "> MySQL   | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[1] + "\n```\n" +
+                            "**Build:**\n```\n" +
+                            "> Built:   " + Constants.config.get("built_on") + " | Deployed: " + Constants.config.get("deployed_on") + "\n" +
+                            "> Version: " + Constants.config.get("version") + " | " + Constants.config.get("branch") + " > " + Constants.config.get("deployed_from") + "\n```",
+                    Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
         }
     }
 

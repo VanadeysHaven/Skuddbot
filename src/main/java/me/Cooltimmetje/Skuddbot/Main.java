@@ -12,7 +12,11 @@ import java.io.IOException;
 import java.util.Timer;
 
 /**
- * Created by Tim on 8/1/2016.
+ * This is the bot instance.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4.01-ALPHA
+ * @since v0.1-ALPHA
  */
 
 public class Main {
@@ -23,6 +27,7 @@ public class Main {
     private static Timer timer = new Timer();
 
     public static void main(String[] args){
+        Constants.STARTUP_ARGUMENTS = args;
 
         if(args.length < 5){
             throw new IllegalArgumentException("I need a Discord Token, Mysql Username, Mysql Password, Twitch Username and Twitch Token.");
