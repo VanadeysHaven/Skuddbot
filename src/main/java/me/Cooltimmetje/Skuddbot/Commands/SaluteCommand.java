@@ -21,7 +21,11 @@ public class SaluteCommand {
         IGuild guild = message.getGuild();
         List<IEmoji> emojis = guild.getEmojis();
 
-        MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
+        if((message.getAuthor().getLongID() == 91949596737011712L) && (guild.getLongID() == 157774629975490561L)){
+            MessagesUtils.sendPlain(guild.getEmojiByID(293018187665244160L).toString() + "7", message.getChannel(), false);
+        } else {
+            MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
+        }
     }
 
 }
