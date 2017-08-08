@@ -202,7 +202,7 @@ public class Server {
      *
      * @param si The setting that should be changed.
      * @param value The value that should be set.
-     * @param ignoreMinMax
+     * @param ignoreMinMax This will be true upon loading, because otherwise we'll be running into issues and errors.
      * @return When the value was changed succesfully it returns 'null'. When a error occured it returns what went wrong.
      */
     @SuppressWarnings("all") //Fuck you IntelliJ
@@ -716,6 +716,7 @@ public class Server {
      * Format a Twitch username to a mention if applicable.
      *
      * @param name The Twitch username we want formatted.
+     * @return The username or mention.
      */
     public String formatName(String name){
         String formattedName = (ProfileManager.getTwitch(name, getTwitchChannel(), true).isLinked() ? Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(ProfileManager.getTwitch(name, getTwitchChannel(), false).getId())).mention() : name);

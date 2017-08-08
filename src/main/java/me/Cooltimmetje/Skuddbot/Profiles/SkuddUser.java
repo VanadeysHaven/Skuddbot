@@ -235,6 +235,7 @@ public class SkuddUser {
      * Set the user settings to the appropriate values.
      *
      * @param settings The JSON string with settings.
+     * @throws ParseException If the parsing fails, this gets thrown.
      */
     public void setSettings(String settings) throws ParseException{
         JSONObject obj = (JSONObject) parser.parse(settings);
@@ -348,6 +349,7 @@ public class SkuddUser {
      * Set the user stats to the appropriate values.
      *
      * @param stats The JSON string with stats.
+     * @throws ParseException If the parsing fails, this gets thrown.
      */
     public void setStats(String stats) throws ParseException {
         JSONObject obj = (JSONObject) parser.parse(stats);

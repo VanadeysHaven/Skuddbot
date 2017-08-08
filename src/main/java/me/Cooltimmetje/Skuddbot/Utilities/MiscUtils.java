@@ -12,7 +12,7 @@ import java.util.Random;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.01-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -160,6 +160,13 @@ public class MiscUtils {
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
+            case "08/08":
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY IAIN!");
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+
+
 
             //Seasonal events
             case "24/12":
