@@ -10,6 +10,8 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.handle.obj.StatusType;
 
+import java.util.HashMap;
+
 /**
  * Things to do with people going live on Twitch.
  *
@@ -18,6 +20,8 @@ import sx.blah.discord.handle.obj.StatusType;
  * @since v0.1-ALPHA
  */
 public class TwitchLiveListener {
+
+    private HashMap<String,Long> cooldown = new HashMap<>();
 
     @EventSubscriber
     public void onMessage(MessageReceivedEvent event){
@@ -36,17 +40,23 @@ public class TwitchLiveListener {
 
     @EventSubscriber
     public void onStatusChange(PresenceUpdateEvent event){
-        if(event.getOldPresence().getStatus() != StatusType.STREAMING) {
-            if (event.getUser().getStringID().equals("131382094457733120")) { //Melsh
-                if(event.getNewPresence().getStatus() == StatusType.STREAMING) {
-                    MessagesUtils.sendPlain("@here melsh87 just went live! Go check them out and show them some love! https://www.twitch.tv/melsh87", Main.getInstance().getSkuddbot().getChannelByID(157855484395782144L), true);
-                }
-            } else if (event.getUser().getStringID().equals("147295556979523584")) { //Ray
-                if(event.getNewPresence().getStatus() == StatusType.STREAMING) {
-                    MessagesUtils.sendPlain("@here rayskudda just went live! Go check them out and show them some love! https://www.twitch.tv/rayskudda", Main.getInstance().getSkuddbot().getChannelByID(231813505961951232L), true);
-                }
+        if(cooldown.containsKey(event.getUser().getStringID())){
+            if((System.currentTimeMillis() - cooldown.get(event.getUser().getStringID()) < (4*60*60*1000))){
+                return;
             }
         }
+
+        if (event.getUser().getStringID().equals("131382094457733120")) { //Melsh
+            if(event.getNewPresence().getStatus() == StatusType.STREAMING) {
+                MessagesUtils.sendPlain("@here melsh87 just went live! Go check them out and show them some love! https://www.twitch.tv/melsh87", Main.getInstance().getSkuddbot().getChannelByID(157855484395782144L), true);
+            }
+        } else if (event.getUser().getStringID().equals("147295556979523584")) { //Ray
+            if(event.getNewPresence().getStatus() == StatusType.STREAMING) {
+                MessagesUtils.sendPlain("@here rayskudda just went live! Go check them out and show them some love! https://www.twitch.tv/rayskudda", Main.getInstance().getSkuddbot().getChannelByID(231813505961951232L), true);
+            }
+        }
+
+        cooldown.put(event.getUser().getStringID(), System.currentTimeMillis());
     }
 
 }
