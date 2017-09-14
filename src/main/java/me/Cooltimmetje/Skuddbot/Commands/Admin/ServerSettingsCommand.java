@@ -71,7 +71,7 @@ public class ServerSettingsCommand {
             } else if (message.getContent().split(" ").length == 2){ //1 argument: Show the setting that got specified in more detail.
 
                 try {
-                    ServerSettings setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
+                    ServerSettings setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase().replace('-','_'));
                     MessagesUtils.sendPlain(MessageFormat.format("```\n" +
                                     "Setting:       {0}\n" +
                                     "Description:   {1}\n" +
@@ -90,7 +90,7 @@ public class ServerSettingsCommand {
 
                 ServerSettings setting = null;
                 try {
-                    setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
+                    setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase().replace('-','_'));
                 } catch (IllegalArgumentException e){
                     MessagesUtils.addReaction(message, "Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), EmojiEnum.X);
                     return;

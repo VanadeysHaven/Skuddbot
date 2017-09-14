@@ -57,7 +57,7 @@ public class UserSettingsCommand {
         } else if (args.length == 2){ //1 Argument: Show details.
 
             try {
-                UserSettings setting = UserSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
+                UserSettings setting = UserSettings.valueOf(message.getContent().split(" ")[1].toUpperCase().replace('-','_'));
                 MessagesUtils.sendPlain(MessageFormat.format("```\n" +
                                 "Setting:       {0}\n" +
                                 "Description:   {1}\n" +
@@ -76,7 +76,7 @@ public class UserSettingsCommand {
 
             UserSettings setting = null;
             try {
-                setting = UserSettings.valueOf(args[1].toUpperCase());
+                setting = UserSettings.valueOf(args[1].toUpperCase().replace('-','_'));
             } catch (IllegalArgumentException e){
                 MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
                 return;
