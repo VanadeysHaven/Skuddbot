@@ -90,15 +90,7 @@ public class SkuddbotTwitch extends PircBot{
                     cooldown.put(channel, System.currentTimeMillis());
                 }
             } else if (message.startsWith("!reverse ")) {
-                if (cooldown.containsKey(channel)) {
-                    if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
-                        sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
-                        cooldown.put(channel, System.currentTimeMillis());
-                    }
-                } else {
-                    sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim())).trim());
-                    cooldown.put(channel, System.currentTimeMillis());
-                }
+                reverseCommand(message, channel, sender);
             } else if (message.startsWith("!toggletracking")){
                 if(cooldown.containsKey(sender)){
                     if((System.currentTimeMillis() - cooldown.get(sender)) > 30000) {
@@ -153,6 +145,44 @@ public class SkuddbotTwitch extends PircBot{
         }
 
         Logger.info(MessageFormat.format("Twitch Message: {0} - {1}: {2} - XP: +{3}", channel, sender, message, gain));
+    }
+
+    private void reverseCommand(String message, String channel, String sender) {
+        String[] args = message.split(" ");
+        if(args.length > 1) {
+            if(args[1].equalsIgnoreCase("-whitelist")) {
+                if (sender.equalsIgnoreCase("cooltimmetje")) {
+                    if (args.length > 3) {
+                        if (args[2].equalsIgnoreCase("add")) {
+                            if(!Constants.whitelistedCommands.contains(args[3].toLowerCase())){
+                                Constants.whitelistedCommands.add(args[3].toLowerCase());
+                                MySqlManager.addWhitelistCommand(args[3].toLowerCase());
+
+                                sendMessage(channel, "\"" + args[3].toLowerCase() + "\" has been whitelisted.");
+                                return;
+                            }
+                        } else if (args[2].equalsIgnoreCase("remove")) {
+                            if(Constants.whitelistedCommands.contains(args[3].toLowerCase())){
+                                Constants.whitelistedCommands.remove(args[3].toLowerCase());
+                                MySqlManager.removeWhitelistedCommand(args[3].toLowerCase());
+
+                                sendMessage(channel, "\"" + args[3].toLowerCase() + "\" has been un-whitelisted.");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (cooldown.containsKey(channel)) {
+            if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
+                sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim(), true)).trim());
+                cooldown.put(channel, System.currentTimeMillis());
+            }
+        } else {
+            sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim(), true)).trim());
+            cooldown.put(channel, System.currentTimeMillis());
+        }
     }
 
 

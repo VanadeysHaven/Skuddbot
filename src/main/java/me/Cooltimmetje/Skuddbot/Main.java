@@ -54,6 +54,7 @@ public class Main {
         MySqlManager.loadAdmin();
         MySqlManager.loadAwesomeUsers();
         MySqlManager.loadAwesomeData();
+        MySqlManager.loadWhitelistedCommands();
         log.info("All systems operational. Ready to connect to Discord.");
         try {
             skuddbot.login();

@@ -1145,7 +1145,7 @@ public class MySqlManager {
         Connection c = null;
         PreparedStatement ps = null;
 
-        String query = "DELETE FROM admin_users WHERE id=?;;";
+        String query = "DELETE FROM admin_users WHERE id=?;";
 
         try {
             c = hikari.getConnection();
@@ -1219,5 +1219,125 @@ public class MySqlManager {
         }
     }
 
+    /**
+     * Adds a whitelisted command to the database.
+     *
+     * @param command The command that needs to be whitelisted.
+     */
+    public static void addWhitelistCommand(String command){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO whitelisted_commands VALUES(?);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, command);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes a whitelisted command from the database.
+     *
+     * @param command The command that needs to be un-whitelisted.
+     */
+    public static void removeWhitelistedCommand(String command){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "DELETE FROM whitelisted_commands WHERE command=?;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, command);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * This loads all whitelisted commands from the database and adds them to the ArrayList.
+     */
+    public static void loadWhitelistedCommands(){
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM admin_users;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                Constants.whitelistedCommands.add(rs.getString(1));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }

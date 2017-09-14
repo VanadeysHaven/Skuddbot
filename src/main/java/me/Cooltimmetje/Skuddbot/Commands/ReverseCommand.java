@@ -40,7 +40,7 @@ public class ReverseCommand {
             input = "You didn't input any text D:";
         }
 
-        MessagesUtils.sendPlain(MiscUtils.reverse(input), message.getChannel(), false);
+        MessagesUtils.sendPlain(MiscUtils.reverse(input, false), message.getChannel(), false);
     }
 
 }
