@@ -14,9 +14,8 @@ import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.DisconnectedEvent;
-import sx.blah.discord.handle.impl.events.MentionEvent;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
 import sx.blah.discord.util.DiscordException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Holds the Skuddbot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA
  * @since v0.1-ALPHA
  */
 public class Skuddbot {
@@ -53,8 +52,7 @@ public class Skuddbot {
     @EventSubscriber
     public void onReady(ReadyEvent event){
         if(!listenersReady){
-//            event.getClient().changeStatus(Status.game("Revolutionary and fun!"));
-            MiscUtils.setPlaying();
+            MiscUtils.setPlaying(true);
             skuddbot.getDispatcher().registerListener(new CommandManager());
             skuddbot.getDispatcher().registerListener(new XPGiver());
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());
@@ -64,29 +62,23 @@ public class Skuddbot {
 
             listenersReady = true;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> terminate(true)));
-            MessagesUtils.sendPlain(":robot: Startup sequence complete!", Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
+            MessagesUtils.sendPlain(":robot: Startup sequence complete!\n\n" +
+                            "**Status:**\n```\n" +
+                            "> Discord | Connected | Logged in as: " + this.getSkuddbot().getOurUser().getName() + "#" + this.getSkuddbot().getOurUser().getDiscriminator() + " / ID: " + this.getSkuddbot().getOurUser().getStringID() + "\n" +
+                            "> Twitch  | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[3] + "\n" +
+                            "> MySQL   | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[1] + "\n```\n" +
+                            "**Build:**\n```\n" +
+                            "> Built:   " + Constants.config.get("built_on") + " | Deployed: " + Constants.config.get("deployed_on") + "\n" +
+                            "> Version: " + Constants.config.get("version") + " | " + Constants.config.get("branch") + " > " + Constants.config.get("deployed_from") + "\n```",
+                    Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
         }
-    }
-
-    @EventSubscriber
-    public void onDisconnect(DisconnectedEvent event){
-//        CompletableFuture.runAsync(() -> {
-//            if(reconnect.get()) {
-//                Logger.info("Attempting to reconnect bot...");
-//                try {
-//                    login();
-//                } catch (DiscordException e) {
-//                    Logger.warn("Well rip.", e);
-//                }
-//            }
-//        });
     }
 
     @EventSubscriber
     public void onMention(MentionEvent event){
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
-                if (event.getMessage().getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || event.getMessage().getAuthor().getID().equals(Constants.JASCH_OVERRIDE)) {
+                if (event.getMessage().getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE) || event.getMessage().getAuthor().getStringID().equals(Constants.JASCH_OVERRIDE)) {
                     MessagesUtils.sendSuccess("Well, okay then...\n`Shutting down...`", event.getMessage().getChannel());
 
                     terminate(false);

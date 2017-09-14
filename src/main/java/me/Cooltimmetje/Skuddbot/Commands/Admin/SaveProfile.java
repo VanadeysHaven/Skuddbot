@@ -14,7 +14,7 @@ import java.text.MessageFormat;
  * This class is used to save profiles and other stuff to the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 
@@ -29,27 +29,27 @@ public class SaveProfile {
     public static void run(IMessage message){
         long startTime = System.currentTimeMillis();
 
-        if(message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)){
             if(message.getMentions().isEmpty()){
                 if(message.getContent().split(" ").length > 1){
                     if(message.getContent().split(" ")[1].equalsIgnoreCase("-all")){
                         ServerManager.saveAll(false);
                         MessagesUtils.sendSuccess("All profiles saved! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getChannel());
                     } else if (message.getContent().split(" ")[1].equalsIgnoreCase("-loadtop")) {
-                        MySqlManager.getTopDiscord(message.getGuild().getID());
-                        MySqlManager.getTopTwitch(message.getGuild().getID());
-                        MessagesUtils.sendSuccess(MessageFormat.format("Successfully loaded the top 10 for both Discord and Twitch into memory! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getAuthor().getName(),message.getAuthor().getID()), message.getChannel());
+                        MySqlManager.getTopDiscord(message.getGuild().getStringID());
+                        MySqlManager.getTopTwitch(message.getGuild().getStringID());
+                        MessagesUtils.sendSuccess(MessageFormat.format("Successfully loaded the top 10 for both Discord and Twitch into memory! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getAuthor().getName(),message.getAuthor().getStringID()), message.getChannel());
                     } else if (message.getContent().split(" ")[1].equalsIgnoreCase("-saveservers")) {
                         ServerManager.saveAll(false);
-                        MessagesUtils.sendSuccess(MessageFormat.format("Saved all servers! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getAuthor().getName(),message.getAuthor().getID()), message.getChannel());
+                        MessagesUtils.sendSuccess(MessageFormat.format("Saved all servers! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getAuthor().getName(),message.getAuthor().getStringID()), message.getChannel());
                     } else {
-                        MySqlManager.saveProfile(ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true));
-                        MessagesUtils.sendSuccess(MessageFormat.format("Saved profile for user **{0}** with id `{1}`! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getAuthor().getName(),message.getAuthor().getID()), message.getChannel());
+                        MySqlManager.saveProfile(ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), true));
+                        MessagesUtils.sendSuccess(MessageFormat.format("Saved profile for user **{0}** with id `{1}`! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getAuthor().getName(),message.getAuthor().getStringID()), message.getChannel());
                     }
                 }
             } else {
-                MySqlManager.saveProfile(ProfileManager.getDiscord(message.getMentions().get(0).getID(), message.getGuild().getID(), true));
-                MessagesUtils.sendSuccess(MessageFormat.format("Saved profile for user **{0}** with id `{1}`! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getMentions().get(0).getName(),message.getMentions().get(0).getID()), message.getChannel());
+                MySqlManager.saveProfile(ProfileManager.getDiscord(message.getMentions().get(0).getStringID(), message.getGuild().getStringID(), true));
+                MessagesUtils.sendSuccess(MessageFormat.format("Saved profile for user **{0}** with id `{1}`! (" + (System.currentTimeMillis() - startTime) + " ms)", message.getMentions().get(0).getName(),message.getMentions().get(0).getStringID()), message.getChannel());
             }
         } else {
             Logger.info(message.getAuthor().getName() + " attempted to do something they don't have permission for.");

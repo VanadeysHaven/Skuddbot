@@ -18,7 +18,7 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class ServerSettingsCommand {
@@ -30,7 +30,7 @@ public class ServerSettingsCommand {
      * @param message The message that this command got triggered off.
      */
     public static void run(IMessage message) {
-        Server server = ServerManager.getServer(message.getGuild().getID());
+        Server server = ServerManager.getServer(message.getGuild().getStringID());
         boolean allowAccess = false;
         if (server.getAdminRole() != null) {
             if (message.getGuild().getRolesByName(server.getAdminRole()).size() == 1) {
@@ -38,13 +38,13 @@ public class ServerSettingsCommand {
             }
         }
         if (!allowAccess){
-            allowAccess = message.getAuthor() == message.getGuild().getOwner() || Constants.adminUser.contains(message.getAuthor().getID());
+            allowAccess = message.getAuthor() == message.getGuild().getOwner() || Constants.adminUser.contains(message.getAuthor().getStringID());
         }
         if (allowAccess) {
             if(message.getContent().split(" ").length == 1){ //No arguments: Show list of the settings.
                 StringBuilder sb = new StringBuilder();
 
-                sb.append(MessageFormat.format("Server Settings for **{0}** | ID: `{1}`\n\n```", message.getGuild().getName(), message.getGuild().getID()));
+                sb.append(MessageFormat.format("Server Settings for **{0}** | ID: `{1}`\n\n```", message.getGuild().getName(), message.getGuild().getStringID()));
 
                 int longest = 0;
 
@@ -80,7 +80,7 @@ public class ServerSettingsCommand {
                                     "Value Type:    {4}\n" +
                                     "```\n" +
                                     "To alter the value type `!serversettings {5} <value>`.",
-                            setting.toString(), setting.getDescription(), ServerManager.getServer(message.getGuild().getID()).getSetting(setting),
+                            setting.toString(), setting.getDescription(), ServerManager.getServer(message.getGuild().getStringID()).getSetting(setting),
                             setting.getDefaultValue(), setting.getType(), setting.toString()), message.getChannel(), false);
                 } catch (IllegalArgumentException e){
                     MessagesUtils.addReaction(message, "Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), EmojiEnum.X);
@@ -97,13 +97,13 @@ public class ServerSettingsCommand {
                 }
 
                 if(setting == ServerSettings.TWITCH_CHANNEL && !message.getContent().split(" ")[2].equalsIgnoreCase("null")){
-                    SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getID(), message.getGuild().getID(), true);
+                    SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), true);
                     assert su != null; //FUCK YOU INTELLIJ, FUCK YOOOOUUUU (╯°□°）╯︵ ┻━┻
-                    if(su.isLinked() && !Constants.adminUser.contains(message.getAuthor().getID())){
+                    if(su.isLinked() && !Constants.adminUser.contains(message.getAuthor().getStringID())){
                         MessagesUtils.addReaction(message, "You do not have a Twitch Account linked, type '!twitch' to get started with linking!", EmojiEnum.X);
                         return;
                     }
-                    if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !Constants.adminUser.contains(message.getAuthor().getID())){
+                    if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !Constants.adminUser.contains(message.getAuthor().getStringID())){
                         MessagesUtils.addReaction(message, "You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact a Skuddbot Admin.)", EmojiEnum.X);
                         return;
                     }
@@ -124,7 +124,7 @@ public class ServerSettingsCommand {
                     server.runAnalytics(message.getChannel());
                     return;
                 } else {
-                    result = ServerManager.getServer(message.getGuild().getID()).setSetting(setting, value, false);
+                    result = ServerManager.getServer(message.getGuild().getStringID()).setSetting(setting, value, false);
                 }
 
                 if(result == null){

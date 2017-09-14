@@ -10,14 +10,15 @@ import java.util.HashMap;
  * This will class holds lots of data, mostly global data.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA
  * @since v0.1-ALPHA
  */
 public class Constants {
 
     public static String TIMMY_OVERRIDE = "76593288865394688";
     public static String JASCH_OVERRIDE = "148376320726794240";
-    public static String LOG_CHANNEL = "274542577880006656";
+    public static long LOG_CHANNEL = 274542577880006656L;
+    public static String[] STARTUP_ARGUMENTS;
     public static String twitchBot;
     public static String twitchOauth;
 

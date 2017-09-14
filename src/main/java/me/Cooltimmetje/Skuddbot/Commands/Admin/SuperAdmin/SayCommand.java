@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Commands.Admin;
+package me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin;
 
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -12,7 +12,7 @@ import java.util.HashMap;
  * http://thecodinglove.com/post/153951828532/git-push-origin-master-force
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class SayCommand {
@@ -28,13 +28,13 @@ public class SayCommand {
      * @param message MEMES?!
      */
     public static void setChannel(IMessage message){
-        if(message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getID().equals(Constants.JASCH_OVERRIDE)){
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getStringID().equals(Constants.JASCH_OVERRIDE)){
             String[] args = message.getContent().split(" ");
             if (args.length > 1) {
-                IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(args[1]);
+                IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(Long.parseLong(args[1]));
                 if(channel != null){
-                    channels.put(message.getAuthor().getID(), channel.getID());
-                    MessagesUtils.sendSuccess("Channel set to " + channel.mention() + " in **" + channel.getGuild().getName() + "** `(ID: " + channel.getGuild().getID() + ")`!\n" +
+                    channels.put(message.getAuthor().getStringID(), channel.getStringID());
+                    MessagesUtils.sendSuccess("Channel set to " + channel.mention() + " in **" + channel.getGuild().getName() + "** `(ID: " + channel.getGuild().getStringID() + ")`!\n" +
                             "You may now send messages to that channel using the `!say` command in PM.", message.getChannel());
                 } else {
                     MessagesUtils.sendError("Well... that channel doesn't exist, or I'm not in that server!", message.getChannel());
@@ -51,10 +51,10 @@ public class SayCommand {
      * @param message SPICY MEMES!
      */
     public static void sayMessage(IMessage message){
-        if(message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getID().equals(Constants.JASCH_OVERRIDE)){
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getStringID().equals(Constants.JASCH_OVERRIDE)){
             String[] args = message.getContent().split(" ");
             if (args.length > 1) {
-                IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(channels.get(message.getAuthor().getID()));
+                IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(Long.parseLong(channels.get(message.getAuthor().getStringID())));
                 if(channel != null){
                     StringBuilder sb = new StringBuilder();
                     for(int i=1; i<args.length; i++){
@@ -63,7 +63,7 @@ public class SayCommand {
                     MessagesUtils.sendPlain(sb.toString().trim(), channel, true);
                     MessagesUtils.sendSuccess(":mailbox_with_mail: " + channel.mention(), message.getChannel());
                 } else {
-                    MessagesUtils.sendError("The channel that you set isn't a thingy anymore O.o (ID: " + channels.get(message.getAuthor().getID()) + ")", message.getChannel());
+                    MessagesUtils.sendError("The channel that you set isn't a thingy anymore O.o (ID: " + channels.get(message.getAuthor().getStringID()) + ")", message.getChannel());
                 }
             } else {
                 MessagesUtils.sendError("Err... what would you like to say?", message.getChannel());

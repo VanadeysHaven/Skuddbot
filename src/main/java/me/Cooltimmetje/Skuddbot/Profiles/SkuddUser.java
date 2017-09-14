@@ -28,7 +28,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 @Getter
@@ -59,7 +59,7 @@ public class SkuddUser {
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
-        this.name = (id != null ? Main.getInstance().getSkuddbot().getUserByID(id).getName() : null);
+        this.name = (id != null ? Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id)).getName() : null);
         this.serverID = serverID;
         this.xp = 0;
         this.level = 1;
@@ -67,9 +67,9 @@ public class SkuddUser {
         this.inactive = false;
 
         Constants.PROFILES_IN_MEMORY++;
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(serverID);
+        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
         boolean isTwitch = id == null;
-        Logger.info(MessageFormat.format("[ProfileCreate][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : guild.getUserByID(id).getName() + " (ID: " + id + ")", guild.getName(), guild.getID(), Constants.PROFILES_IN_MEMORY));
+        Logger.info(MessageFormat.format("[ProfileCreate][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : guild.getUserByID(Long.parseLong(id)).getName() + " (ID: " + id + ")", guild.getName(), guild.getStringID(), Constants.PROFILES_IN_MEMORY));
 
         try {
             setSettings("{}");
@@ -104,9 +104,9 @@ public class SkuddUser {
             }
 
             Constants.PROFILES_IN_MEMORY++;
-            IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(serverID);
+            IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
             boolean isTwitch = id == null;
-            Logger.info(MessageFormat.format("[ProfileLoad][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(id) == null ? name : guild.getUserByID(id).getName()) + " (ID: " + id + ")", guild.getName(), guild.getID(), Constants.PROFILES_IN_MEMORY));
+            Logger.info(MessageFormat.format("[ProfileLoad][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(id)) == null ? name : guild.getUserByID(Long.parseLong(id)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getStringID(), Constants.PROFILES_IN_MEMORY));
 
             try{
                 setRoles();
@@ -160,9 +160,11 @@ public class SkuddUser {
             needed = (int) (server.getXpBase() * Math.pow(server.getXpMultiplier(), level - 1));
         }
 
-        String nameUser = (id == null ? getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(getId()) == null ? name : (Main.getInstance().getSkuddbot().getUserByID(getId()).getNicknameForGuild(Main.getInstance().getSkuddbot().getGuildByID(getServerID())).isPresent() ?
-                Main.getInstance().getSkuddbot().getUserByID(getId()).getNicknameForGuild(Main.getInstance().getSkuddbot().getGuildByID(getServerID())).get() : Main.getInstance().getSkuddbot().getUserByID(getId()).getName())));
+        String nameUser = (id == null ? getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(getId())) == null ? name : (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(getId())).getNicknameForGuild(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(getServerID()))))));
 
+        if(nameUser == null){
+            nameUser = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(getId())).getName();
+        }
         if(this.getTwitchUsername() != null){
             if(this.getTwitchUsername().equals("jaschmedia")){
                 nameUser = "JuiceMedia";
@@ -177,8 +179,8 @@ public class SkuddUser {
 
     public void save(){
         boolean isTwitch = id == null;
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(serverID);
-        Logger.info(MessageFormat.format("[ProfileSave][" + (isTwitch ? "Twitch" : "Discord") + "] User: {0} | Server: {1} (ID: {2})", isTwitch ? twitchUsername : (guild.getUserByID(id) == null ? name : guild.getUserByID(id).getName()) + " (ID: " + id + ")", guild.getName(), guild.getID()));
+        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
+        Logger.info(MessageFormat.format("[ProfileSave][" + (isTwitch ? "Twitch" : "Discord") + "] User: {0} | Server: {1} (ID: {2})", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(id)) == null ? name : guild.getUserByID(Long.parseLong(id)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getStringID()));
 
         if(isTwitch){
             MySqlManager.saveTwitch(this);
@@ -188,9 +190,9 @@ public class SkuddUser {
     }
 
     public void setRoles(){
-        if(id != null && twitchUsername != null && Main.getInstance().getSkuddbot().getUserByID(id) != null){
-            IUser user = Main.getInstance().getSkuddbot().getUserByID(id);
-            IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(serverID);
+        if(id != null && twitchUsername != null && Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(serverID)) != null){
+            IUser user = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(serverID));
+            IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
             List<IRole> roleList = user.getRolesForGuild(guild);
 
             roleList.add(guild.getRolesByName("Linked").get(0));
@@ -215,9 +217,9 @@ public class SkuddUser {
         }
 
         Constants.PROFILES_IN_MEMORY--;
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(serverID);
+        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
         boolean isTwitch = id == null;
-        Logger.info(MessageFormat.format("[ProfileUnload][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(id) == null ? name : guild.getUserByID(id).getName()) + " (ID: " + id + ")", guild.getName(), guild.getID(), Constants.PROFILES_IN_MEMORY));
+        Logger.info(MessageFormat.format("[ProfileUnload][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(serverID)) == null ? name : guild.getUserByID(Long.parseLong(serverID)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getStringID(), Constants.PROFILES_IN_MEMORY));
     }
 
     /**
@@ -233,6 +235,7 @@ public class SkuddUser {
      * Set the user settings to the appropriate values.
      *
      * @param settings The JSON string with settings.
+     * @throws ParseException If the parsing fails, this gets thrown.
      */
     public void setSettings(String settings) throws ParseException{
         JSONObject obj = (JSONObject) parser.parse(settings);
@@ -346,6 +349,7 @@ public class SkuddUser {
      * Set the user stats to the appropriate values.
      *
      * @param stats The JSON string with stats.
+     * @throws ParseException If the parsing fails, this gets thrown.
      */
     public void setStats(String stats) throws ParseException {
         JSONObject obj = (JSONObject) parser.parse(stats);

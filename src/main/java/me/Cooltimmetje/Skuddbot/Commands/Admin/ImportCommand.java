@@ -20,13 +20,13 @@ import java.util.List;
  * CMD: Imports XP form other bots (Like Meme6)
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class ImportCommand {
 
     public static void run(IMessage message) throws IOException {
-        if (message.getAuthor().getID().equals(Constants.TIMMY_OVERRIDE)){
+        if (message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)){
             File file = new File("/skuddbot/import.txt");
             int imported = 0;
 
@@ -38,19 +38,19 @@ public class ImportCommand {
                 while ((line = br.readLine()) != null) {
 
                     String[] args = line.split(",");
-                    List<IUser> list = Main.getInstance().getSkuddbot().getGuildByID(message.getGuild().getID()).getUsersByName(args[0]);
+                    List<IUser> list = Main.getInstance().getSkuddbot().getGuildByID(message.getGuild().getLongID()).getUsersByName(args[0]);
                     if(list.size() > 0){
                         user = list.get(0);
                     }
                     if(user != null){
                         xp = Integer.parseInt(args[1]);
-                        SkuddUser su = ProfileManager.getDiscord(user.getID(), message.getGuild().getID(), true);
+                        SkuddUser su = ProfileManager.getDiscord(user.getStringID(), message.getGuild().getStringID(), true);
                         su.setXp(su.getXp() + xp);
                         imported++;
                     }
 
                 }
-                ServerManager.getServer(message.getGuild().getID()).save(false);
+                ServerManager.getServer(message.getGuild().getStringID()).save(false);
                 MessagesUtils.sendSuccess("Done! Imported " + imported + " users!", message.getChannel());
             }
         } else {

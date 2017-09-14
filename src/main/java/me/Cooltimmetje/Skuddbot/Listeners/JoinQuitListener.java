@@ -6,8 +6,8 @@ import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.UserJoinEvent;
-import sx.blah.discord.handle.impl.events.UserLeaveEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IUser;
@@ -18,20 +18,24 @@ import sx.blah.discord.util.RateLimitException;
 import java.util.List;
 
 /**
- * Created by Tim on 8/18/2016.
+ * Stuff to handle when a user joins/leaves
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4.01-ALPHA-DEV
+ * @since v0.1-ALPHA-DEV
  */
 public class JoinQuitListener {
 
     @EventSubscriber
     public void onJoin(UserJoinEvent event){
-        Server server = ServerManager.getServer(event.getGuild().getID());
+        Server server = ServerManager.getServer(event.getGuild().getStringID());
         if(server.getWelcomeMessage() != null) {
-            MessagesUtils.sendPlain(ServerManager.getServer(event.getGuild().getID()).getWelcomeMessage().replace("$user", event.getUser().mention()).replace("$guild", event.getGuild().getName()).replace("$nl","\n"),
-                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(server.getWelcomeGoodbyeChannel()) : event.getGuild().getChannelByID(event.getGuild().getID()), false);
+            MessagesUtils.sendPlain(ServerManager.getServer(event.getGuild().getStringID()).getWelcomeMessage().replace("$user", event.getUser().mention()).replace("$guild", event.getGuild().getName()).replace("$nl","\n"),
+                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(Long.parseLong(server.getWelcomeGoodbyeChannel())) : event.getGuild().getChannelByID(event.getGuild().getLongID()), false);
         }
         if(server.getRoleOnJoin() != null){
-                IUser user = Main.getInstance().getSkuddbot().getUserByID(event.getUser().getID());
-                IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(server.getServerID());
+                IUser user = Main.getInstance().getSkuddbot().getUserByID(event.getUser().getLongID());
+                IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(server.getServerID()));
                 List<IRole> roleList = user.getRolesForGuild(guild);
 
                 roleList.add(guild.getRolesByName(server.getRoleOnJoin()).get(0));
@@ -47,10 +51,10 @@ public class JoinQuitListener {
 
     @EventSubscriber
     public void onLeave(UserLeaveEvent event){
-        Server server = ServerManager.getServer(event.getGuild().getID());
+        Server server = ServerManager.getServer(event.getGuild().getStringID());
         if(server.getGoodbyeMessage() != null) {
             MessagesUtils.sendPlain(server.getGoodbyeMessage().replace("$user", event.getUser().getName()).replace("$guild", event.getGuild().getName()).replace("$nl","\n"),
-                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(server.getWelcomeGoodbyeChannel()) : event.getGuild().getChannelByID(event.getGuild().getID()), false);
+                    server.getWelcomeGoodbyeChannel() != null ? event.getGuild().getChannelByID(Long.parseLong(server.getWelcomeGoodbyeChannel())) : event.getGuild().getChannelByID(event.getGuild().getLongID()), false);
         }
     }
 

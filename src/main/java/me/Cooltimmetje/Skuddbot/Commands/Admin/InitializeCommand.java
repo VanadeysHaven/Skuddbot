@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * CMD: Initializes servers when the bot joins for the first time.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA
+ * @version v0.4.01-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class InitializeCommand {
@@ -38,7 +38,7 @@ public class InitializeCommand {
             }
         }
         if(!hasAdmin){
-            hasAdmin = (message.getAuthor() == message.getGuild().getOwner()) || (Constants.adminUser.contains(message.getAuthor().getID()));
+            hasAdmin = (message.getAuthor() == message.getGuild().getOwner()) || (Constants.adminUser.contains(message.getAuthor().getStringID()));
         }
         boolean weHaveAdmin = false;
         List<IRole> ourRoles = Main.getInstance().getSkuddbot().getOurUser().getRolesForGuild(message.getGuild());
@@ -53,19 +53,19 @@ public class InitializeCommand {
 
         if(hasAdmin){
             if(weHaveAdmin){
-                Server server = ServerManager.getServer(message.getGuild().getID());
+                Server server = ServerManager.getServer(message.getGuild().getStringID());
                 if(!server.isServerInitialized()){
                     MessagesUtils.sendSuccess("Allright, I'll initialize this server for you. This process can take up to 2 minutes, but should be finished in about 15 seconds, please be patient either way. I'll report back here when I'm ready.", message.getChannel());
 
                     int eta = MiscUtils.randomInt(10,30);
-                    Logger.info(MessageFormat.format("Initializing {0} (ID: {1}) - ETA: {2} seconds",message.getGuild().getName(),message.getGuild().getID(),eta));
+                    Logger.info(MessageFormat.format("Initializing {0} (ID: {1}) - ETA: {2} seconds",message.getGuild().getName(),message.getGuild().getStringID(),eta));
                     ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
                     exec.schedule(()->{
 
                         MessagesUtils.sendSuccess("I'm done! Have fun using Skuddbot!\n\n" +
                                 "The next thing you wanna do is configure Skuddbot's settings! Type `!serversettings`, you can always refer to the manual to get help! Type `!about` to find it!", message.getChannel());
                         server.clearProfiles();
-                        MySqlManager.createServerTables(message.getGuild().getID());
+                        MySqlManager.createServerTables(message.getGuild().getStringID());
                         server.setServerInitialized(true);
                     }, eta, TimeUnit.SECONDS);
                 }
