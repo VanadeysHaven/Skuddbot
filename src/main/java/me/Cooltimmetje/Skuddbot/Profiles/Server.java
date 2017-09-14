@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 
@@ -46,7 +46,9 @@ public class Server {
     private double xpMultiplier;
     private String twitchChannel;
     private String welcomeMessage;
+    private String welcomeMsgAttach;
     private String goodbyeMessage;
+    private String goodbyeMsgAttach;
     private String welcomeGoodbyeChannel;
     private String adminRole;
     private String roleOnJoin;
@@ -161,8 +163,12 @@ public class Server {
                 return getTwitchChannel();
             case WELCOME_MESSAGE:
                 return getWelcomeMessage();
+            case WELCOME_MSG_ATTACH:
+                return getWelcomeMsgAttach();
             case GOODBYE_MESSAGE:
                 return getGoodbyeMessage();
+            case GOODBYE_MSG_ATTACH:
+                return getGoodbyeMsgAttach();
             case ADMIN_ROLE:
                 return getAdminRole();
             case ROLE_ON_JOIN:
@@ -299,9 +305,14 @@ public class Server {
             case WELCOME_MESSAGE:
                 setWelcomeMessage(value);
                 return null;
+            case WELCOME_MSG_ATTACH:
+                setWelcomeMsgAttach(value);
+                return null;
             case GOODBYE_MESSAGE:
                 setGoodbyeMessage(value);
                 return null;
+            case GOODBYE_MSG_ATTACH:
+                setGoodbyeMsgAttach(value);
             case ADMIN_ROLE:
                 setAdminRole(value);
                 return null;

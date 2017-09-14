@@ -18,7 +18,7 @@ import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
  * Everything Twitch happens here!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class SkuddbotTwitch extends PircBot{

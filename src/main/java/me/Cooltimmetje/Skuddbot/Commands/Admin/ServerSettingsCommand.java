@@ -18,7 +18,7 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class ServerSettingsCommand {

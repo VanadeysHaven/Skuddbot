@@ -12,7 +12,7 @@ import java.util.Random;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {

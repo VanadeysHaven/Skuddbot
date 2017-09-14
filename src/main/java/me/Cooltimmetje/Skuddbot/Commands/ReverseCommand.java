@@ -8,7 +8,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This will reverse the input.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.3-ALPHA
  */
 public class ReverseCommand {

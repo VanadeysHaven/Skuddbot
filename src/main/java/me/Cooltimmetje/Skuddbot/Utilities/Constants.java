@@ -10,7 +10,7 @@ import java.util.HashMap;
  * This will class holds lots of data, mostly global data.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.1-ALPHA
  */
 public class Constants {

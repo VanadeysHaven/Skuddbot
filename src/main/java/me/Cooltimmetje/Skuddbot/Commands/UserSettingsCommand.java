@@ -14,7 +14,7 @@ import java.text.MessageFormat;
  * This is for users to edit their personal settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.4-ALPHA-DEV
  */
 public class UserSettingsCommand {

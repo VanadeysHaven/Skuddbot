@@ -20,7 +20,7 @@ import java.util.HashMap;
  * This class handles everything to do with the database, and contains all operations we can run on the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class MySqlManager {
