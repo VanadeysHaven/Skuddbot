@@ -72,7 +72,7 @@ public class UserSettingsCommand {
                 MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
             }
 
-        } else if (args.length >= 3){
+        } else if (args.length >= 3){ //2 arguments: change value
 
             UserSettings setting = null;
             try {

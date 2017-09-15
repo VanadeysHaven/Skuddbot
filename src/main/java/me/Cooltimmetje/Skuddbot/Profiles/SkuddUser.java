@@ -28,7 +28,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 @Getter
@@ -51,6 +51,7 @@ public class SkuddUser {
     private int levelUpNotify;
     private boolean trackMe;
     private boolean analyticsMention;
+    private boolean xpPrivate;
 
     //---- USER STATS ----
     private int xpStreak;
@@ -262,6 +263,8 @@ public class SkuddUser {
                 return isTrackMe()+"";
             case ANALYTICS_MENTION:
                 return isAnalyticsMention()+"";
+            case XP_PRIVATE:
+                return isXpPrivate()+"";
         }
         return null;
     }
@@ -325,6 +328,9 @@ public class SkuddUser {
                 return null;
             case ANALYTICS_MENTION:
                 this.analyticsMention = booleanValue;
+                return null;
+            case XP_PRIVATE:
+                this.xpPrivate = booleanValue;
                 return null;
         }
     }
