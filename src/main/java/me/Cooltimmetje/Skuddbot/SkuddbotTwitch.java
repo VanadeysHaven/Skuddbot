@@ -66,7 +66,7 @@ public class SkuddbotTwitch extends PircBot{
         int gain = 0;
         if (twitchServers.containsKey(channel.replace("#", " ").trim())) {
 
-            if (message.startsWith("!riot") || message.startsWith("(╯°□°）╯︵ ┻━┻")) {
+            if (message.toLowerCase().startsWith("!riot") || message.startsWith("(╯°□°）╯︵ ┻━┻")) {
                 sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ ┻━┻").trim());
             } else if (message.startsWith("!xpban") && (sender.equalsIgnoreCase("cooltimmetje") || sender.equalsIgnoreCase("jaschmedia"))) {
                 String[] args = message.split(" ");
