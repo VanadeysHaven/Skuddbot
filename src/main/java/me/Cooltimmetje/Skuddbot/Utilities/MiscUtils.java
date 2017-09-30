@@ -135,23 +135,8 @@ public class MiscUtils {
         switch (date) {
 
             //Birthdays
-            case "21/10":
-                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY TIMMY!");
-                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
-                Constants.EVENT_ACTIVE = true;
-                break;
             case "18/03":
                 Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY RAY!");
-                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
-                Constants.EVENT_ACTIVE = true;
-                break;
-            case "30/07":
-                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY MELSH!");
-                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
-                Constants.EVENT_ACTIVE = true;
-                break;
-            case "03/10":
-                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY JESSICA!");
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
@@ -160,13 +145,31 @@ public class MiscUtils {
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
+            case "30/07":
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY MELSH!");
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
             case "08/08":
                 Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY IAIN!");
                 Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                 Constants.EVENT_ACTIVE = true;
                 break;
-
-
+            case "01/10":
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY TGM!");
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+            case "03/10":
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY JESSICA!");
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
+            case "21/10":
+                Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY TIMMY!");
+                Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                Constants.EVENT_ACTIVE = true;
+                break;
 
             //Seasonal events
             case "24/12":
