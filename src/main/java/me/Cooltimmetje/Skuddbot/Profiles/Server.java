@@ -68,19 +68,15 @@ public class Server {
      */
     public Server(String serverID){
         this.serverID = serverID;
-        this.minXP = 10;
-        this.maxXP = 15;
-        this.minXpTwitch = 10;
-        this.maxXpTwitch = 15;
-        this.xpBase = 1500;
-        this.xpMultiplier = 1.2;
-        this.vrMode = false;
         this.serverInitialized = false;
-        this.streamLive = false;
-        this.allowAnalytics = true;
-        this.allowRewards = true;
 
         ServerManager.servers.put(serverID, this);
+
+        try {
+            setSettings("{}");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         MessagesUtils.sendPlain("**Welcome to the fun, welcome to the revolution, welcome to Skuddbot.** :eyes:\n\nI see that this server is not yet in my database, therefore I'll need to initialize this server before I can be used on this server!\n" +
                         "In order to do so, please make sure I have a role that has the `ADMINISTRATOR` permission, then run `!initialize`. **NOTE:** This command requires you to also have the `ADMINISTRATOR` permission.",
@@ -427,7 +423,11 @@ public class Server {
         JSONObject obj = new JSONObject();
 
         for(ServerSettings setting : ServerSettings.values()){
-            obj.put(setting.getJsonReference(), getSetting(setting));
+            if(getSetting(setting) != null) {
+                if (!getSetting(setting).equals(setting.getDefaultValue())) {
+                    obj.put(setting.getJsonReference(), getSetting(setting));
+                }
+            }
         }
 
         return obj.toString();

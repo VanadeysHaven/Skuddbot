@@ -345,7 +345,12 @@ public class SkuddUser {
         JSONObject obj = new JSONObject();
 
         for(UserSettings setting : UserSettings.values()){
-            obj.put(setting.getJsonReference(), getSetting(setting));
+            if(getSetting(setting) != null){
+                if(!getSetting(setting).equals(setting.getDefaultValue())){
+                    obj.put(setting.getJsonReference(), getSetting(setting));
+                }
+            }
+
         }
 
         return obj.toString();
@@ -455,7 +460,11 @@ public class SkuddUser {
         JSONObject obj = new JSONObject();
 
         for(UserStats stat : UserStats.values()){
-            obj.put(stat.getJsonReference(), getStat(stat));
+            if(getStat(stat) != null){
+                if(!getStat(stat).equals(stat.getDefaultValue())){
+                    obj.put(stat.getJsonReference(), getStat(stat));
+                }
+            }
         }
 
         return obj.toString();
