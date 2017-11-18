@@ -729,6 +729,42 @@ public class MySqlManager {
         }
     }
 
+    public static void saveGlobal(String entry, String value){
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO global_config VALUES(?,?) ON DUPLICATE KEY UPDATE value=?";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, entry);
+            ps.setString(2, value);
+            ps.setString(3, value);
+
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+
     public static void loadAuth(){
         Connection c = null;
         PreparedStatement ps = null;
