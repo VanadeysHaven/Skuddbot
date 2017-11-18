@@ -14,7 +14,7 @@ import java.text.MessageFormat;
  * This is for users to edit their personal settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.4-ALPHA-DEV
  */
 public class UserSettingsCommand {
@@ -57,7 +57,7 @@ public class UserSettingsCommand {
         } else if (args.length == 2){ //1 Argument: Show details.
 
             try {
-                UserSettings setting = UserSettings.valueOf(message.getContent().split(" ")[1].toUpperCase());
+                UserSettings setting = UserSettings.valueOf(message.getContent().split(" ")[1].toUpperCase().replace('-','_'));
                 MessagesUtils.sendPlain(MessageFormat.format("```\n" +
                                 "Setting:       {0}\n" +
                                 "Description:   {1}\n" +
@@ -72,11 +72,11 @@ public class UserSettingsCommand {
                 MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
             }
 
-        } else if (args.length >= 3){
+        } else if (args.length >= 3){ //2 arguments: change value
 
             UserSettings setting = null;
             try {
-                setting = UserSettings.valueOf(args[1].toUpperCase());
+                setting = UserSettings.valueOf(args[1].toUpperCase().replace('-','_'));
             } catch (IllegalArgumentException e){
                 MessagesUtils.sendError("Unknown setting: " + message.getContent().split(" ")[1].toUpperCase(), message.getChannel());
                 return;

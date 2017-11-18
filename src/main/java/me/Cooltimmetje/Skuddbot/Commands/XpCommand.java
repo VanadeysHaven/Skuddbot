@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -11,7 +12,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class shows the user their XP and levels.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 public class XpCommand {
@@ -31,15 +32,21 @@ public class XpCommand {
             } else {
                 su = ProfileManager.getTwitch(args[1].toLowerCase(), ServerManager.getServer(message.getGuild().getStringID()).getTwitchChannel(), false);
             }
-        }
-        if (su == null) {
-            su = ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), false);
-            mention = true;
-        }
 
-        if(su == null){
-            MessagesUtils.sendError("It seems you haven't been chatting. So you don't have any XP :(", message.getChannel());
-            return;
+            if (su == null) {
+                MessagesUtils.addReaction(message, "The user you defined has no XP or doesn't exist.", EmojiEnum.X);
+                return;
+            }
+            if(su.isXpPrivate()){
+                MessagesUtils.addReaction(message, "This user has set their XP to private.", EmojiEnum.X);
+                return;
+            }
+        } else {
+            su = ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), false);
+            if(su == null){
+                MessagesUtils.addReaction(message ,"It seems you haven't been chatting. So you don't have any XP :(", EmojiEnum.X);
+                return;
+            }
         }
 
         String name = (mention ? message.getAuthor().mention() : (su.getId() != null ? Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(su.getId())).getDisplayName(message.getGuild()) : su.getTwitchUsername()));
