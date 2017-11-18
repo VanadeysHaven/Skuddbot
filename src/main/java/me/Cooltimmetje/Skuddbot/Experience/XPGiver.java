@@ -21,9 +21,9 @@ public class XPGiver {
     @SuppressWarnings("all") //FUCK OFF
     public void onMessage(MessageReceivedEvent event){
         if(!event.getMessage().getContent().startsWith("!") && !event.getMessage().getAuthor().isBot() && !event.getMessage().getChannel().isPrivate()){
-            SkuddUser user = ProfileManager.getDiscord(event.getMessage().getAuthor().getStringID(), event.getMessage().getGuild().getStringID(), true);
+            SkuddUser user = ProfileManager.getDiscord(event.getMessage().getAuthor().getID(), event.getMessage().getGuild().getID(), true);
             if(user.isTrackMe()) {
-                Server server = ServerManager.getServer(event.getMessage().getGuild().getStringID());
+                Server server = ServerManager.getServer(event.getMessage().getGuild().getID());
                 int xpAwarded = MiscUtils.randomInt(server.getMinXP(), server.getMaxXP());
                 user.setXp(user.getXp() + xpAwarded);
                 user.calcXP(false, event.getMessage());
