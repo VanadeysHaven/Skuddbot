@@ -1,3 +1,5 @@
+**BE AWARE: THE MASTER BRANCH IS DEAD, USE [TEMP-MASTER](https://github.com/Cooltimmetje/Skuddbot/tree/temp-master) FOR NOW**
+
 # Skuddbot
 ![Skuddbot](http://i.imgur.com/FPFThi5.png)
 
