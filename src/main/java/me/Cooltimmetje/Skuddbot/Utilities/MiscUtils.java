@@ -175,6 +175,12 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
+                case "02/12":
+                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY LOCKSTAR!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
+
 
                 //Seasonal events
                 case "24/12":
