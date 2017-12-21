@@ -1,6 +1,5 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
-import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IEmoji;
@@ -13,7 +12,8 @@ import java.util.List;
  * Panic command, just for lockstar...
  *
  * @author jasch
- * @version I DON'T KNOW WHAT VERSION THIS IS!
+ * @version v0.4.1-ALPHA
+ * @since v0.4.1-ALPHA
  */
 public class PanicCommand {
     public static void run(IMessage message){
