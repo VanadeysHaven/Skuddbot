@@ -15,7 +15,7 @@ import java.util.Random;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA
+ * @version v0.4.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -182,6 +182,11 @@ public class MiscUtils {
                     break;
                 case "03/12":
                     Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY MEERY!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
+                case "06/12":
+                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY BLACKHOLENIXON!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
