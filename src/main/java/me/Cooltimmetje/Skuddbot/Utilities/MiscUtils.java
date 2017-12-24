@@ -44,6 +44,16 @@ public class MiscUtils {
         return sb.toString();
     }
 
+    public static String randomStringWithChars(int len){
+        final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvqxyz`~!@#$%^&*()-_+=/*[]{};:\"'?.,<>";
+        Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder( len );
+        for( int i = 0; i < len; i++ )
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
+    }
+
     public static String formatTime(long time) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd'd' HH'h' mm'm' ss'm'");
         return sdf.format(time - (3600 * 24 * 1000));
