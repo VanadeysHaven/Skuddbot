@@ -24,20 +24,15 @@ public class SaluteCommand {
 
         if (message.getAuthor().getLongID() == 91949596737011712L) {
             MessagesUtils.sendPlain(Main.getInstance().getSkuddbot().getGuildByID(233573247021481995L).getEmojiByID(292331476362723328L).toString() + "7", message.getChannel(), false);
-        } else if (message.getAuthor().getLongID() == 289424682770497536L){
-            int chance = MiscUtils.randomInt(0,100);
-                if(chance <= 5){
-                    if(MiscUtils.randomInt(0,1) == 1){
-                        MessagesUtils.sendPlain("Error encountered, please remain calm and wait for staff. Please do not contact staff, they already have been informed.", message.getChannel(), false);
-                    } else {
-                        MessagesUtils.sendPlain(MiscUtils.randomStringWithChars(MiscUtils.randomInt(10,200)), message.getChannel(), false);
-                    }
-                } else {
-                    MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
-            }
         } else {
-            MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
+            int chance = MiscUtils.randomInt(0, 100);
+            if (chance <= 5) {
+                MessagesUtils.sendPlain(MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 200)), message.getChannel(), false);
+            } else {
+                MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
+            }
         }
     }
 
 }
+

@@ -9,6 +9,7 @@ import sx.blah.discord.util.Image;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -202,6 +203,12 @@ public class MiscUtils {
                     break;
 
                 //Seasonal events
+                case "01/01":
+                    Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR));
+                    Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
+
                 case "24/12":
                 case "25/12":
                 case "26/12":
@@ -209,9 +216,24 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's Christmas time!";
                     Constants.EVENT_ACTIVE = true;
                     break;
-                case "01/01":
-                    Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR));
-                    Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
+
+                case "31/12":
+                    int SECONDS_IN_A_DAY = 24 * 60 * 60;
+                    Calendar thatDay = Calendar.getInstance();
+                    thatDay.setTime(new Date(0)); /* reset */
+                    thatDay.set(Calendar.DAY_OF_MONTH,1);
+                    thatDay.set(Calendar.MONTH,0); // 0-11 so 1 less
+                    thatDay.set(Calendar.YEAR, 2018);
+
+                    Calendar today = Calendar.getInstance();
+                    long diff =  thatDay.getTimeInMillis() - today.getTimeInMillis();
+                    long diffSec = diff / 1000;
+
+                    long secondsDay = diffSec % SECONDS_IN_A_DAY;
+                    long hours = (secondsDay / 3600); // % 24 not needed
+
+                    Main.getInstance().getSkuddbot().changePlayingText(hours + " hours remain...");
+                    Constants.CURRENT_EVENT = "The countdown has begun...";
                     Constants.EVENT_ACTIVE = true;
                     break;
 
