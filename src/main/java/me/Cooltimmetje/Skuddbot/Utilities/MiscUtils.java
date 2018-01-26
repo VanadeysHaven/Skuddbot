@@ -223,7 +223,7 @@ public class MiscUtils {
                     thatDay.setTime(new Date(0)); /* reset */
                     thatDay.set(Calendar.DAY_OF_MONTH,1);
                     thatDay.set(Calendar.MONTH,0); // 0-11 so 1 less
-                    thatDay.set(Calendar.YEAR, 2018);
+                    thatDay.set(Calendar.YEAR, 2019);
 
                     Calendar today = Calendar.getInstance();
                     long diff =  thatDay.getTimeInMillis() - today.getTimeInMillis();

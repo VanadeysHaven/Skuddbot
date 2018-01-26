@@ -12,7 +12,7 @@ import sx.blah.discord.handle.obj.IUser;
  * This command changes the playing status of Skuddbot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class GameCommand {
