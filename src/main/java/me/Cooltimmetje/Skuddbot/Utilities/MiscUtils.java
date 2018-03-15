@@ -246,7 +246,9 @@ public class MiscUtils {
         }
 
         Avatars avatar = Avatars.DEFAULT;
-        if((dates[0] >= 1) && (dates[0] <= 26) && (dates[1] == 12)){
+        if(Constants.CURRENT_EVENT.contains("HAPPY BIRTHDAY")){
+            avatar = Avatars.PARTY;
+        } else if((dates[0] >= 1) && (dates[0] <= 26) && (dates[1] == 12)){
             avatar = Avatars.CHRISTMAS;
         } else if (Main.getInstance().getSkuddbot().getOurUser().getStringID().equals("224553721210732544")){
             avatar = Avatars.WIP;

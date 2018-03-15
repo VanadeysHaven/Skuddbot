@@ -315,7 +315,7 @@ public class Server {
                 setVrMode(booleanValue);
                 return null;
             case STREAM_LIVE:
-                setStreamLive(booleanValue);
+                setStreamLive(false);
                 return null;
             case ALLOW_ANALYTICS:
                 setAllowAnalytics(booleanValue);
