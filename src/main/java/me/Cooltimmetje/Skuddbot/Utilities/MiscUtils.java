@@ -156,6 +156,11 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
+                case "21/03":
+                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY EMBERS!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
                 case "21/06":
                     Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY BATTLEKILLER!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
@@ -246,7 +251,7 @@ public class MiscUtils {
         }
 
         Avatars avatar = Avatars.DEFAULT;
-        if(Constants.CURRENT_EVENT.contains("HAPPY BIRTHDAY")){
+        if(Constants.CURRENT_EVENT.contains("HAPPY BIRTHDAY") && Constants.EVENT_ACTIVE){
             avatar = Avatars.PARTY;
         } else if((dates[0] >= 1) && (dates[0] <= 26) && (dates[1] == 12)){
             avatar = Avatars.CHRISTMAS;
