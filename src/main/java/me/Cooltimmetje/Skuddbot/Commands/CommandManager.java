@@ -102,6 +102,9 @@ public class CommandManager {
                 case "o7":
                     SaluteCommand.run(event.getMessage());
                     break;
+                case "!panic":
+                    PanicCommand.run(event.getMessage());
+                    break;
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {

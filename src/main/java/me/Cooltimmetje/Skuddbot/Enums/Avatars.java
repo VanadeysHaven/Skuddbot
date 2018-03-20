@@ -12,9 +12,10 @@ import lombok.Getter;
 @Getter
 public enum Avatars {
 
-    DEFAULT("https://i.imgur.com/v1vlVru.png"),
-    CHRISTMAS("https://i.imgur.com/fc0ORQx.png"),
-    WIP("http://i.imgur.com/HTZy6Ve.png");
+    DEFAULT   ("https://i.imgur.com/v1vlVru.png"),
+    CHRISTMAS ("https://i.imgur.com/fc0ORQx.png"),
+    WIP       ("https://i.imgur.com/HTZy6Ve.png"),
+    PARTY     ("https://i.imgur.com/9VAQN5L.png");
 
     String url;
 

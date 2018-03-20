@@ -9,13 +9,14 @@ import sx.blah.discord.util.Image;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 /**
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA
+ * @version v0.4.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -36,6 +37,16 @@ public class MiscUtils {
 
     public static String randomString(int len){
         final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder( len );
+        for( int i = 0; i < len; i++ )
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        return sb.toString();
+    }
+
+    public static String randomStringWithChars(int len){
+        final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvqxyz`~!@#$%^&*()-_+=/*[]{};:\"'?.,<>";
         Random rnd = new Random();
 
         StringBuilder sb = new StringBuilder( len );
@@ -158,6 +169,11 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
+                case "21/03":
+                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY EMBERS!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
                 case "21/06":
                     Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY BATTLEKILLER!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
@@ -188,8 +204,29 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
+                case "02/12":
+                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY LOCKSTAR!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
+                case "03/12":
+                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY MEERY!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
+                case "06/12":
+                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY BLACKHOLENIXON!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
 
                 //Seasonal events
+                case "01/01":
+                    Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR));
+                    Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
+
                 case "24/12":
                 case "25/12":
                 case "26/12":
@@ -197,9 +234,24 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's Christmas time!";
                     Constants.EVENT_ACTIVE = true;
                     break;
-                case "01/01":
-                    Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR));
-                    Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
+
+                case "31/12":
+                    int SECONDS_IN_A_DAY = 24 * 60 * 60;
+                    Calendar thatDay = Calendar.getInstance();
+                    thatDay.setTime(new Date(0)); /* reset */
+                    thatDay.set(Calendar.DAY_OF_MONTH,1);
+                    thatDay.set(Calendar.MONTH,0); // 0-11 so 1 less
+                    thatDay.set(Calendar.YEAR, 2019);
+
+                    Calendar today = Calendar.getInstance();
+                    long diff =  thatDay.getTimeInMillis() - today.getTimeInMillis();
+                    long diffSec = diff / 1000;
+
+                    long secondsDay = diffSec % SECONDS_IN_A_DAY;
+                    long hours = (secondsDay / 3600); // % 24 not needed
+
+                    Main.getInstance().getSkuddbot().changePlayingText(hours + " hours remain...");
+                    Constants.CURRENT_EVENT = "The countdown has begun...";
                     Constants.EVENT_ACTIVE = true;
                     break;
 
@@ -212,7 +264,9 @@ public class MiscUtils {
         }
 
         Avatars avatar = Avatars.DEFAULT;
-        if((dates[0] >= 1) && (dates[0] <= 26) && (dates[1] == 12)){
+        if(Constants.CURRENT_EVENT.contains("HAPPY BIRTHDAY") && Constants.EVENT_ACTIVE){
+            avatar = Avatars.PARTY;
+        } else if((dates[0] >= 1) && (dates[0] <= 26) && (dates[1] == 12)){
             avatar = Avatars.CHRISTMAS;
         } else if (Main.getInstance().getSkuddbot().getOurUser().getStringID().equals("224553721210732544")){
             avatar = Avatars.WIP;

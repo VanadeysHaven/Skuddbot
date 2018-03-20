@@ -25,12 +25,12 @@ public class TwitchLiveListener {
     public void onMessage(MessageReceivedEvent event){
         if(event.getMessage().getAuthor().getStringID().equals("165140151121608704")){
             if(event.getMessage().getContent().contains("just went offline, here are their most recent stats.")){
-                ServerManager.getServer(event.getMessage().getGuild().getStringID()).runAnalytics(event.getMessage().getChannel());
+//                ServerManager.getServer(event.getMessage().getGuild().getStringID()).runAnalytics(event.getMessage().getChannel());
             } else if(event.getMessage().getContent().contains("just went live!")) {
                 if (ServerManager.getServer(event.getMessage().getGuild().getStringID()).getTwitchChannel() != null) {
                     Main.getSkuddbotTwitch().sendMessage("#" + ServerManager.getServer(event.getMessage().getGuild().getStringID()).getTwitchChannel(), MiscUtils.getRandomMessage(DataTypes.ALIVE));
 
-                    ServerManager.getServer(event.getMessage().getGuild().getStringID()).setStreamLive(true);
+//                    ServerManager.getServer(event.getMessage().getGuild().getStringID()).setStreamLive(true);
                 }
 
                 if (event.getMessage().getGuild().getStringID().equals("198483566026424321")) { //Melsh
