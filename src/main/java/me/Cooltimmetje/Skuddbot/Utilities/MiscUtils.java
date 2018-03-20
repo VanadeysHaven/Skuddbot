@@ -108,8 +108,21 @@ public class MiscUtils {
         return sb.toString();
     }
 
-    public static String reverse(String input){
-        return new StringBuilder(input).reverse().toString();
+    /**
+     * Reverses any given string, will add a ZWS when it's not whitelisted and the origin is Twitch.
+     *
+     * @param input The string we want reversed
+     * @param twitch If the string originates from Twitch
+     * @return The reversed string with a ZWS when applicable.
+     */
+    public static String reverse(String input, boolean twitch){
+        String reversed = new StringBuilder(input).reverse().toString();
+
+        if(!Constants.whitelistedCommands.contains(reversed.split(" ")[0])){
+            reversed = "\u200B" + reversed;
+        }
+
+        return reversed;
     }
 
     /**

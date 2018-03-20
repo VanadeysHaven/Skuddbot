@@ -15,7 +15,7 @@ import java.util.Timer;
  * This is the bot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -54,6 +54,7 @@ public class Main {
         MySqlManager.loadAdmin();
         MySqlManager.loadAwesomeUsers();
         MySqlManager.loadAwesomeData();
+        MySqlManager.loadWhitelistedCommands();
         log.info("All systems operational. Ready to connect to Discord.");
         try {
             skuddbot.login();

@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 
@@ -46,7 +46,9 @@ public class Server {
     private double xpMultiplier;
     private String twitchChannel;
     private String welcomeMessage;
+    private String welcomeMsgAttach;
     private String goodbyeMessage;
+    private String goodbyeMsgAttach;
     private String welcomeGoodbyeChannel;
     private String adminRole;
     private String roleOnJoin;
@@ -66,19 +68,15 @@ public class Server {
      */
     public Server(String serverID){
         this.serverID = serverID;
-        this.minXP = 10;
-        this.maxXP = 15;
-        this.minXpTwitch = 10;
-        this.maxXpTwitch = 15;
-        this.xpBase = 1500;
-        this.xpMultiplier = 1.2;
-        this.vrMode = false;
         this.serverInitialized = false;
-        this.streamLive = false;
-        this.allowAnalytics = true;
-        this.allowRewards = true;
 
         ServerManager.servers.put(serverID, this);
+
+        try {
+            setSettings("{}");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         MessagesUtils.sendPlain("**Welcome to the fun, welcome to the revolution, welcome to Skuddbot.** :eyes:\n\nI see that this server is not yet in my database, therefore I'll need to initialize this server before I can be used on this server!\n" +
                         "In order to do so, please make sure I have a role that has the `ADMINISTRATOR` permission, then run `!initialize`. **NOTE:** This command requires you to also have the `ADMINISTRATOR` permission.",
@@ -161,8 +159,12 @@ public class Server {
                 return getTwitchChannel();
             case WELCOME_MESSAGE:
                 return getWelcomeMessage();
+            case WELCOME_MSG_ATTACH:
+                return getWelcomeMsgAttach();
             case GOODBYE_MESSAGE:
                 return getGoodbyeMessage();
+            case GOODBYE_MSG_ATTACH:
+                return getGoodbyeMsgAttach();
             case ADMIN_ROLE:
                 return getAdminRole();
             case ROLE_ON_JOIN:
@@ -299,9 +301,14 @@ public class Server {
             case WELCOME_MESSAGE:
                 setWelcomeMessage(value);
                 return null;
+            case WELCOME_MSG_ATTACH:
+                setWelcomeMsgAttach(value);
+                return null;
             case GOODBYE_MESSAGE:
                 setGoodbyeMessage(value);
                 return null;
+            case GOODBYE_MSG_ATTACH:
+                setGoodbyeMsgAttach(value);
             case ADMIN_ROLE:
                 setAdminRole(value);
                 return null;
@@ -416,7 +423,11 @@ public class Server {
         JSONObject obj = new JSONObject();
 
         for(ServerSettings setting : ServerSettings.values()){
-            obj.put(setting.getJsonReference(), getSetting(setting));
+            if(getSetting(setting) != null) {
+                if (!getSetting(setting).equals(setting.getDefaultValue())) {
+                    obj.put(setting.getJsonReference(), getSetting(setting));
+                }
+            }
         }
 
         return obj.toString();

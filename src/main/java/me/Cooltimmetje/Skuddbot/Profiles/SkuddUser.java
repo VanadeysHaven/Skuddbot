@@ -28,7 +28,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.1-ALPHA
  */
 @Getter
@@ -51,6 +51,7 @@ public class SkuddUser {
     private int levelUpNotify;
     private boolean trackMe;
     private boolean analyticsMention;
+    private boolean xpPrivate;
 
     //---- USER STATS ----
     private int xpStreak;
@@ -262,6 +263,8 @@ public class SkuddUser {
                 return isTrackMe()+"";
             case ANALYTICS_MENTION:
                 return isAnalyticsMention()+"";
+            case XP_PRIVATE:
+                return isXpPrivate()+"";
         }
         return null;
     }
@@ -326,6 +329,9 @@ public class SkuddUser {
             case ANALYTICS_MENTION:
                 this.analyticsMention = booleanValue;
                 return null;
+            case XP_PRIVATE:
+                this.xpPrivate = booleanValue;
+                return null;
         }
     }
 
@@ -339,7 +345,12 @@ public class SkuddUser {
         JSONObject obj = new JSONObject();
 
         for(UserSettings setting : UserSettings.values()){
-            obj.put(setting.getJsonReference(), getSetting(setting));
+            if(getSetting(setting) != null){
+                if(!getSetting(setting).equals(setting.getDefaultValue())){
+                    obj.put(setting.getJsonReference(), getSetting(setting));
+                }
+            }
+
         }
 
         return obj.toString();
@@ -449,7 +460,11 @@ public class SkuddUser {
         JSONObject obj = new JSONObject();
 
         for(UserStats stat : UserStats.values()){
-            obj.put(stat.getJsonReference(), getStat(stat));
+            if(getStat(stat) != null){
+                if(!getStat(stat).equals(stat.getDefaultValue())){
+                    obj.put(stat.getJsonReference(), getStat(stat));
+                }
+            }
         }
 
         return obj.toString();

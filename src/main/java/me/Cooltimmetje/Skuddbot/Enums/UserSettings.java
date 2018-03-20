@@ -6,15 +6,16 @@ import lombok.Getter;
  * Holds the info for User Settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.5-ALPHA-DEV
  * @since v0.4-ALPHA-DEV
  */
 @Getter
 public enum UserSettings {
 
-    LEVEL_UP_NOTIFY  ("level_up_notify",   "This defines how level up's will be announced for you, please see the manual what settings you can put here.", "0",    "Integer"),
-    TRACK_ME         ("track_me",          "Defines if the bot will track you, think about XP and Analytics. Turning off PAUSES progress.",                "true", "Boolean"),
-    ANALYTICS_MENTION("analytics_mention", "Defines if the bot will mention you when you are on the analytics leaderboard!.",                              "true", "Boolean");
+    LEVEL_UP_NOTIFY  ("level_up_notify",   "This defines how level up's will be announced for you, please see the manual what settings you can put here.",                    "0",     "Integer"),
+    TRACK_ME         ("track_me",          "Defines if the bot will track you, think about XP and Analytics. Turning off PAUSES progress.",                                   "true",  "Boolean"),
+    ANALYTICS_MENTION("analytics_mention", "Defines if the bot will mention you when you are on the analytics leaderboard!.",                                                 "true",  "Boolean"),
+    XP_PRIVATE       ("xp_private",        "This setting will turn off other users being able to see your xp using the !xp command, you will still show on the leaderboard.", "false", "Boolean");
 
     private String jsonReference;
     private String description;

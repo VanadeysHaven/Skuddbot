@@ -10,7 +10,7 @@ import java.util.HashMap;
  * This will class holds lots of data, mostly global data.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.1-ALPHA
  */
 public class Constants {
@@ -33,6 +33,7 @@ public class Constants {
 
     public static HashMap<String,SkuddUser> verifyCodes = new HashMap<>();
     public static HashMap<String,String> config = new HashMap<>();
+    public static ArrayList<String> whitelistedCommands = new ArrayList<>();
 
     public static ArrayList<String> awesomeUser = new ArrayList<>();
     public static HashMap<String,String> awesomePing = new HashMap<>();
