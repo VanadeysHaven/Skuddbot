@@ -18,4 +18,5 @@
 #### Twitch Issues
 * A security issue, if the bot was modded people could ban other people, using the `!reverse` command, without the need of being a mod themselves.
   * `!reverse` now uses a whitelist of commands that may be triggered by the bot via reversing text.
+  * Commands that are not whitelisted may still be reversed, but won't trigger other bots.
 * `!riot` is no longer case sensitive.
