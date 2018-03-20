@@ -6,7 +6,7 @@ import lombok.Getter;
  * Holds the info for User Settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA-DEV
+ * @version v0.4.2-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter

@@ -15,7 +15,7 @@ import java.util.Timer;
  * This is the bot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA
+ * @version v0.4.2-ALPHA
  * @since v0.1-ALPHA
  */
 

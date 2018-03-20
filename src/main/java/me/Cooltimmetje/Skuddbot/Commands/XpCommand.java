@@ -12,7 +12,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class shows the user their XP and levels.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA-DEV
+ * @version v0.4.2-ALPHA
  * @since v0.1-ALPHA
  */
 public class XpCommand {

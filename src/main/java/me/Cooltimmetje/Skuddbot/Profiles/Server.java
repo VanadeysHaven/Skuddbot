@@ -27,7 +27,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA-DEV
+ * @version v0.4.2-ALPHA
  * @since v0.2-ALPHA
  */
 

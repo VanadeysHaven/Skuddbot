@@ -23,7 +23,7 @@ import java.util.List;
  * Stuff to handle when a user joins/leaves
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA-DEV
+ * @version v0.4.2-ALPHA
  * @since v0.1-ALPHA-DEV
  */
 public class JoinQuitListener {

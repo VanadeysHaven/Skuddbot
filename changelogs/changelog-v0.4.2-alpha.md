@@ -1,4 +1,4 @@
-# The CMDR Update (v0.5-ALPHA)
+# The update we've been waiting for... (v0.4.2-ALPHA)
 
 ## Added
 * You can now attach images to welcome and goodbye messages!
@@ -8,7 +8,7 @@
 
 ## Changed
 * Dashes (`-`) are now allowed to be used in `!usersettings` and `!serversettings`.
-* Discord4J updated: `2.8.3` -> `2.8.4`
+* Discord4J updated: `2.8.3` -> `2.9.2`
 * Welcome and goodbye messages are now embeds.
 * Restructured the `!xp` command in the backend.
   * This comes with increased clarity when a error occurs.

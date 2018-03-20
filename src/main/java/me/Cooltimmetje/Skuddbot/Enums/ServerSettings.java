@@ -6,7 +6,7 @@ import lombok.Getter;
  * This holds the information for Server Settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA-DEV
+ * @version v0.4.2-ALPHA
  * @since v0.2-ALPHA
  */
 @Getter
@@ -27,7 +27,7 @@ public enum ServerSettings {
     ADMIN_ROLE           ("admin_role",           "This role will be able to use the Admin commands of Skuddbot! (See manual)",                                                 "NULL",  "String (of: Discord Role)",        ServerSettingsCats.DISCORD),
     ROLE_ON_JOIN         ("role_on_join",         "This role will be assigned to people that join the server. (See manual)",                                                    "NULL",  "String (of: Discord Role)",        ServerSettingsCats.DISCORD),
     VR_MODE              ("vr_mode",              "This mode is for VR streamers, it'll put a exclamation mark and a space in front of messages in Twitch Chat.",               "false", "Boolean",                          ServerSettingsCats.TWITCH),
-    STREAM_LIVE          ("stream_live",          "If set to true, the bot logs the chat for use in analytics. You should not need to change this at all if you have MuxyBot.", "false", "Boolean",                          ServerSettingsCats.TWITCH),
+    STREAM_LIVE          ("stream_live",          "If set to true, the bot logs the chat for use in analytics. You should not need to change this at all if you have MuxyBot.", "false", "Boolean",                          ServerSettingsCats.ANALYTICS),
     ALLOW_ANALYTICS      ("allow_analytics",      "This setting defines if analytics are enabled. Automatic analytics require MuxyBot.",                                        "true",  "Boolean",                          ServerSettingsCats.ANALYTICS),
     ALLOW_REWARDS        ("allow_rewards",        "This setting defines if people will gain rewards from analytics. (See manual)",                                              "true",  "Boolean",                          ServerSettingsCats.ANALYTICS);
 
