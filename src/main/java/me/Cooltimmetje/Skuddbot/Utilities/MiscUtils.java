@@ -16,7 +16,7 @@ import java.util.Random;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.1-ALPHA
+ * @version v0.4.2-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -268,6 +268,8 @@ public class MiscUtils {
             avatar = Avatars.PARTY;
         } else if((dates[0] >= 1) && (dates[0] <= 26) && (dates[1] == 12)){
             avatar = Avatars.CHRISTMAS;
+        } else if ((dates[0] == 1) && (dates[1] == 4)){
+            avatar = Avatars.MEME;
         } else if (Main.getInstance().getSkuddbot().getOurUser().getStringID().equals("224553721210732544")){
             avatar = Avatars.WIP;
         }
