@@ -13,6 +13,8 @@ import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +40,6 @@ public class ChallengeCommand {
     public static HashMap<IUser, IUser> outstandingChallenges = new HashMap<>();
 
     public static void run(IMessage message) {
-
         if(cooldowns.containsKey(message.getAuthor().getStringID())){
             if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getStringID())) < (cooldown * 1000)){
                 MessagesUtils.addReaction(message, "Hold on there, " + message.getAuthor().mention() + ", you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND);
@@ -51,20 +52,41 @@ public class ChallengeCommand {
             return;
         }
 
+        if(message.getMentions().get(0) == message.getAuthor()){
+            MessagesUtils.addReaction(message, "You can't challenge yourself.", EmojiEnum.X);
+            return;
+        }
+
+        if(message.getMentions().get(0) == Main.getInstance().getSkuddbot().getOurUser()){
+            MessagesUtils.addReaction(message, "You can't challenge me!", EmojiEnum.X);
+            return;
+        }
+
         if(outstandingChallenges.get(message.getMentions().get(0)) == message.getAuthor()){ //Challenge was accepted
             ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
             IUser challengerOne = message.getMentions().get(0);
             IUser challengerTwo = message.getAuthor();
             IChannel channel = message.getChannel();
 
-            Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(challengerOne.getStringID()))).delete();
-            Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(challengerOne.getStringID()))).delete();
-            message.delete();
-            //TODO: The deletion of messages causes delays in the bot processing the command. Find a fix for this.
+//            Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(challengerOne.getStringID()))).delete();
+//            Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(challengerOne.getStringID()))).delete();
+//            message.delete();
+//
+//            ArrayList<IMessage> deleteMessages = new ArrayList<>(Arrays.asList(
+//                    Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(challengerOne.getStringID()))),
+//                    Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(challengerOne.getStringID()))),
+//                    message));
 
-            senderMessage.remove(challengerOne.getStringID());
-            botMessage.remove(challengerOne.getStringID());
-            outstandingChallenges.remove(challengerOne);
+            exec.schedule(() -> {
+                channel.bulkDelete(new ArrayList<>(Arrays.asList(
+                        Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(challengerOne.getStringID()))),
+                        Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(challengerOne.getStringID()))),
+                        message)));
+
+                senderMessage.remove(challengerOne.getStringID());
+                botMessage.remove(challengerOne.getStringID());
+                outstandingChallenges.remove(challengerOne);
+            },10, TimeUnit.MILLISECONDS);
 
             cooldowns.put(challengerOne.getStringID(), System.currentTimeMillis());
             cooldowns.put(challengerTwo.getStringID(), System.currentTimeMillis());
@@ -86,18 +108,19 @@ public class ChallengeCommand {
                 } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                     e.printStackTrace();
                 }
-            }, 3, TimeUnit.SECONDS);
+            }, 5, TimeUnit.SECONDS);
             assert messageBot != null;
-            exec.schedule(messageBot::delete, 10, TimeUnit.SECONDS);
+//            exec.schedule(messageBot::delete, 10, TimeUnit.SECONDS);
         } else { //Challenge was not accepted.
             if(senderMessage.containsKey(message.getAuthor().getStringID())) {
-                Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(message.getAuthor().getStringID()))).delete();
-                Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(message.getAuthor().getStringID()))).delete();
+                message.getChannel().bulkDelete(new ArrayList<>(Arrays.asList(
+                        Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(message.getAuthor().getStringID()))),
+                        Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(message.getAuthor().getStringID())))
+                )));
             }
             outstandingChallenges.put(message.getAuthor(), message.getMentions().get(0));
 
             senderMessage.put(message.getAuthor().getStringID(), message.getStringID());
-
 
             IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + message.getAuthor().getDisplayName(message.getGuild()) + "** has challenged **" + message.getMentions().get(0).getDisplayName(message.getGuild()) + "** to a fight! " +
                     "To accept type `!challenge @" + message.getAuthor().getName()  + "#" + message.getAuthor().getDiscriminator() + "`!", message.getChannel(), false);
