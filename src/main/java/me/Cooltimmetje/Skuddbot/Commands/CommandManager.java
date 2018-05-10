@@ -105,6 +105,10 @@ public class CommandManager {
                 case "!panic":
                     PanicCommand.run(event.getMessage());
                     break;
+                case "!challenge":
+                    ChallengeCommand.run(event.getMessage());
+                    break;
+
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {

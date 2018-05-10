@@ -15,7 +15,10 @@ public enum EmojiEnum {
     WHITE_CHECK_MARK("✅"),
     ARROW_UP("⬆"),
     WARNING("⚠"),
-    X("❌");
+    X("❌"),
+    HOURGLASS_FLOWING_SAND("⏳"),
+    CROSSED_SWORDS("⚔");
+
 
     private String emoji;
 
