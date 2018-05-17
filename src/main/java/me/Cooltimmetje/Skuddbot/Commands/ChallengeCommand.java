@@ -4,6 +4,7 @@ import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IChannel;
@@ -68,15 +69,6 @@ public class ChallengeCommand {
             IUser challengerTwo = message.getAuthor();
             IChannel channel = message.getChannel();
 
-//            Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(challengerOne.getStringID()))).delete();
-//            Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(challengerOne.getStringID()))).delete();
-//            message.delete();
-//
-//            ArrayList<IMessage> deleteMessages = new ArrayList<>(Arrays.asList(
-//                    Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(challengerOne.getStringID()))),
-//                    Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(challengerOne.getStringID()))),
-//                    message));
-
             exec.schedule(() -> {
                 channel.bulkDelete(new ArrayList<>(Arrays.asList(
                         Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(challengerOne.getStringID()))),
@@ -91,7 +83,16 @@ public class ChallengeCommand {
             cooldowns.put(challengerOne.getStringID(), System.currentTimeMillis());
             cooldowns.put(challengerTwo.getStringID(), System.currentTimeMillis());
 
-            IUser winner/*winner chicken dinner*/ = (MiscUtils.randomInt(1,2) == 1) ? challengerOne : challengerTwo;
+            IUser preWinner = (MiscUtils.randomInt(1,2) == 1) ? challengerOne : challengerTwo;
+            if(Constants.rigged.contains(challengerOne.getStringID())){
+                preWinner = challengerOne;
+                Constants.rigged.remove(challengerOne.getStringID());
+            }
+            if(Constants.rigged.contains(challengerTwo.getStringID())){
+                preWinner = challengerTwo;
+                Constants.rigged.remove(challengerTwo.getStringID());
+            }
+            final IUser winner = preWinner;
 
             IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + challengerOne.getDisplayName(channel.getGuild()) + "** and **" +
                     challengerTwo.getDisplayName(channel.getGuild()) + "** go head to head in the Rayscooter arena, who will win? 3... 2... 1... **FIGHT!**", channel, false);

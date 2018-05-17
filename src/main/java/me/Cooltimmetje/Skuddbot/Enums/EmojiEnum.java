@@ -17,7 +17,8 @@ public enum EmojiEnum {
     WARNING("⚠"),
     X("❌"),
     HOURGLASS_FLOWING_SAND("⏳"),
-    CROSSED_SWORDS("⚔");
+    CROSSED_SWORDS("⚔"),
+    EYES("\uD83D\uDC40");
 
 
     private String emoji;

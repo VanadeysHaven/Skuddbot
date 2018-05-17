@@ -1,10 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AdminManager;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.AwesomeManager;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.LoadAuth;
-import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.SayCommand;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -141,6 +138,9 @@ public class CommandManager {
                     break;
                 case "!reverse":
                     ReverseCommand.run(event.getMessage());
+                    break;
+                case "!rigit":
+                    RiggedCommand.run(event.getMessage());
                     break;
             }
         }
