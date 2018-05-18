@@ -105,6 +105,9 @@ public class CommandManager {
                 case "!challenge":
                     ChallengeCommand.run(event.getMessage());
                     break;
+                case "!clearcooldowns":
+                    ClearCooldownCommand.run(event.getMessage());
+                    break;
 
             }
         } else {

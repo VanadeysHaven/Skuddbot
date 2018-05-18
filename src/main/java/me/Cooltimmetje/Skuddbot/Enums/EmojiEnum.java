@@ -6,7 +6,7 @@ import lombok.Getter;
  * This is to easily recall emoji's without going out and copying them.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.3-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
@@ -19,7 +19,6 @@ public enum EmojiEnum {
     HOURGLASS_FLOWING_SAND("⏳"),
     CROSSED_SWORDS("⚔"),
     EYES("\uD83D\uDC40");
-
 
     private String emoji;
 
