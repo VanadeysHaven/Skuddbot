@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin;
 
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * http://thecodinglove.com/post/153951828532/git-push-origin-master-force
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.31-ALPHA-DEV
  * @since v0.2-ALPHA
  */
 public class SayCommand {
@@ -34,13 +35,13 @@ public class SayCommand {
                 IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(Long.parseLong(args[1]));
                 if(channel != null){
                     channels.put(message.getAuthor().getStringID(), channel.getStringID());
-                    MessagesUtils.sendSuccess("Channel set to " + channel.mention() + " in **" + channel.getGuild().getName() + "** `(ID: " + channel.getGuild().getStringID() + ")`!\n" +
-                            "You may now send messages to that channel using the `!say` command in PM.", message.getChannel());
+                    MessagesUtils.addReaction(message,"Channel set to " + channel.mention() + " in **" + channel.getGuild().getName() + "** `(ID: " + channel.getGuild().getStringID() + ")`!\n" +
+                            "You may now send messages to that channel using the `!say` command in PM.", EmojiEnum.WHITE_CHECK_MARK);
                 } else {
-                    MessagesUtils.sendError("Well... that channel doesn't exist, or I'm not in that server!", message.getChannel());
+                    MessagesUtils.addReaction(message,"Well... that channel doesn't exist, or I'm not in that server!", EmojiEnum.X);
                 }
             } else {
-                MessagesUtils.sendError("You cunt... I need a fucking channel to do this... <.<", message.getChannel());
+                MessagesUtils.addReaction(message,"You cunt... I need a fucking channel to do this... <.<", EmojiEnum.X);
             }
         }
     }
@@ -61,12 +62,12 @@ public class SayCommand {
                         sb.append(args[i]).append(" ");
                     }
                     MessagesUtils.sendPlain(sb.toString().trim(), channel, true);
-                    MessagesUtils.sendSuccess(":mailbox_with_mail: " + channel.mention(), message.getChannel());
+                    MessagesUtils.addReaction(message,":mailbox_with_mail: " + channel.mention(), EmojiEnum.MAILBOX_WITH_MAIL);
                 } else {
-                    MessagesUtils.sendError("The channel that you set isn't a thingy anymore O.o (ID: " + channels.get(message.getAuthor().getStringID()) + ")", message.getChannel());
+                    MessagesUtils.addReaction(message,"The channel that you set doesn't a exist anymore O.o (ID: " + channels.get(message.getAuthor().getStringID()) + ")", EmojiEnum.X);
                 }
             } else {
-                MessagesUtils.sendError("Err... what would you like to say?", message.getChannel());
+                MessagesUtils.addReaction(message,"Err... what would you like to say?", EmojiEnum.X);
             }
         }
     }

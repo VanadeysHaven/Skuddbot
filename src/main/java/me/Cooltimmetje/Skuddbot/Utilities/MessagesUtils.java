@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * This class is used for message sending, there is a separate class for this so that I don't have try-catches all over my code. Keep it nice and tidy. SeemsGood
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
 public class MessagesUtils {
@@ -34,13 +35,13 @@ public class MessagesUtils {
     /**
      * This adds a reaction to the specified message with the specified emoji. The debug string get's saved to recall later and will be posted upon reaction from the original author with the same emoji.
      * @param message The message that we want to add the reaction to.
-     * @param debug The message that will be saved. (Debug String)
+     * @param debug The message that will be saved. (Debug String, not mandatory)
      * @param emoji The emoji that we want to add.
      */
     @SuppressWarnings("unchecked")
     public static void addReaction(IMessage message, String debug, EmojiEnum emoji){
         try {
-            message.addReaction(emoji.getEmoji());
+            message.addReaction(EmojiManager.getForAlias(emoji.getAlias()));
         } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
             e.printStackTrace();
         }
@@ -62,10 +63,12 @@ public class MessagesUtils {
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
         if(reactions.containsKey(event.getMessage())){ //Check if the message is actually eligible for a "debug" string.
-            if(event.getReaction().getClientReacted()){ //Check if the bot reacted the same.
+            if(event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())){ //Check if the bot reacted the same.
                 if(event.getReaction().getUserReacted(event.getMessage().getAuthor())){ //Check if the original author reacted.
                     JSONObject obj = reactions.get(event.getMessage()); //Save it for sake of code tidyness.
-                    sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false); //Post the message.
+                    if(obj.get("debug") != null){ //Check if there's a debug string.
+                        sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false); //Post the message.
+                    }
 
                     reactions.remove(event.getMessage()); //Remove it from the HashMap as we no longer need it there.
                 }

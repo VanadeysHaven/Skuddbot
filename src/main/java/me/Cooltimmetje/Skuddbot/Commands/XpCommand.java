@@ -5,8 +5,11 @@ import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IMessage;
+
+import java.text.MessageFormat;
 
 /**
  * This class shows the user their XP and levels.
@@ -58,7 +61,9 @@ public class XpCommand {
         }
 
         int[] stats = su.calcXP(!mention, message);
-        MessagesUtils.sendPlain("**" + name + " | Level: " + stats[3] + " | Level progress: " + stats[0] + "/" + stats[2] + " (" + (int) (((double) stats[0] / (double) stats[2]) * 100) + "%) | Total XP: " + stats[1] + "**", message.getChannel(), false);
+        int progress = (int) (((double) stats[0] / (double) stats[2]) * 100);
+        MessagesUtils.sendPlain(MessageFormat.format("{0} **{1} | Level: {2} | Level progress: {3}/{4} ({5}%) | Total XP: {6}**",
+                EmojiHelper.getEmoji("xp_icon"), name, stats[3]+"", stats[0]+"", stats[2]+"", progress+"", stats[1]+""), message.getChannel(), false);
     }
 
 }

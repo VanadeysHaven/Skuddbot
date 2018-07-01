@@ -4,6 +4,7 @@ import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
@@ -14,10 +15,10 @@ import java.util.TreeMap;
  * Show the XP leaderboard of the server.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.31-ALPHA-DEV
  * @since v0.1-ALPHA
  */
-public class Leaderboard {
+public class LeaderboardCommand {
 
     /**
      * CMD: Show the XP leaderboard of the current server.
@@ -92,7 +93,7 @@ public class Leaderboard {
         String leaderboard = sb.toString();
         boolean displayLinkInfo = leaderboard.contains("(not linked)");
 
-        MessagesUtils.sendPlain("**XP Leaderboard** | **" + message.getGuild().getName() + "**\n\n```\n" + leaderboard + "```\n" + (displayLinkInfo ? "**PRO-TIP:** You might have more XP if you are marked as \"not linked\", type `!twitch` to get started with linking your accounts! It's really easy to do, promise, and you'll get a nice tasty 1000xp free! Woo!\n" : "") + "Generated in `" + (System.currentTimeMillis() - startTime) + " ms`", message.getChannel(), false);
+        MessagesUtils.sendPlain(EmojiHelper.getEmoji("xp_icon") + "** Leaderboard** | **" + message.getGuild().getName() + "**\n\n```\n" + leaderboard + "```\n" + (displayLinkInfo ? "**PRO-TIP:** You might have more XP if you are marked as \"not linked\", type `!twitch` to get started with linking your accounts! It's really easy to do, promise, and you'll get a nice tasty 1000xp free! Woo!\n" : "") + "Generated in `" + (System.currentTimeMillis() - startTime) + " ms`", message.getChannel(), false);
 }
 
 }

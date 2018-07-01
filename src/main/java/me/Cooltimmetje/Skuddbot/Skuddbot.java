@@ -1,16 +1,14 @@
 package me.Cooltimmetje.Skuddbot;
 
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Listeners.JoinQuitListener;
 import me.Cooltimmetje.Skuddbot.Listeners.TwitchLiveListener;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
-import me.Cooltimmetje.Skuddbot.Utilities.Constants;
-import me.Cooltimmetje.Skuddbot.Utilities.Logger;
-import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.*;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -24,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Holds the Skuddbot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
 public class Skuddbot {
@@ -59,6 +57,7 @@ public class Skuddbot {
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
             skuddbot.getDispatcher().registerListener(new MessagesUtils());
             Main.getSkuddbotTwitch().joinChannels();
+            EmojiHelper.loadEmoji();
 
             listenersReady = true;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> terminate(true)));
@@ -79,11 +78,11 @@ public class Skuddbot {
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
                 if (event.getMessage().getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE) || event.getMessage().getAuthor().getStringID().equals(Constants.JASCH_OVERRIDE)) {
-                    MessagesUtils.sendSuccess("Well, okay then...\n`Shutting down...`", event.getMessage().getChannel());
+                    MessagesUtils.addReaction(event.getMessage(),null, EmojiEnum.WHITE_CHECK_MARK);
 
                     terminate(false);
                 } else {
-                    MessagesUtils.sendError("Ur not timmy >=(", event.getMessage().getChannel());
+                    MessagesUtils.addReaction(event.getMessage(),"Ur not timmy >=(", EmojiEnum.X);
                 }
             }
         }

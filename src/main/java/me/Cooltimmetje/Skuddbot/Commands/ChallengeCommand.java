@@ -1,10 +1,12 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import com.vdurmont.emoji.Emoji;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IChannel;
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * This allows people to challenge each other. Winner is picked at random.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.3-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.4.3-ALPHA
  */
 
@@ -100,7 +102,7 @@ public class ChallengeCommand {
             exec.schedule(() -> {
                 try {
                     IMessage messageResult = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " The crowd goes wild but suddenly a scream of victory sounds! **" + winner.getDisplayName(channel.getGuild()) + "** has won the fight!\n\n" +
-                            winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + " XP*", channel, false);
+                            winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + EmojiHelper.getEmoji("xp_icon") + "*", channel, false);
 
                     SkuddUser user = ProfileManager.getDiscord(winner.getStringID(), message.getGuild().getStringID(), true);
 

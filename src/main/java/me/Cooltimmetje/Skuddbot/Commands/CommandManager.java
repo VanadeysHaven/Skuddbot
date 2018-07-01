@@ -1,7 +1,9 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import com.vdurmont.emoji.Emoji;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -39,13 +41,10 @@ public class CommandManager {
                     TwitchLinkCommand.run(event.getMessage());
                     break;
                 case "!xplb":
-                    Leaderboard.run(event.getMessage());
+                    LeaderboardCommand.run(event.getMessage());
                     break;
-                case "!initialize":
-                    InitializeCommand.run(event.getMessage());
-                    break;
-                case "!dumpdata":
-                    DumpData.run(event.getMessage());
+                case "!serverinfo":
+                    ServerInfoCommand.run(event.getMessage());
                     break;
                 case "!serversettings":
                     ServerSettingsCommand.run(event.getMessage());
@@ -108,7 +107,6 @@ public class CommandManager {
                 case "!clearcooldowns":
                     ClearCooldownCommand.run(event.getMessage());
                     break;
-
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {

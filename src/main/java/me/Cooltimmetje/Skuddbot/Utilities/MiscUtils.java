@@ -4,6 +4,8 @@ import me.Cooltimmetje.Skuddbot.Enums.Avatars;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
+import sx.blah.discord.handle.obj.ActivityType;
+import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.Image;
 
 import java.text.DateFormat;
@@ -16,7 +18,7 @@ import java.util.Random;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -157,7 +159,7 @@ public class MiscUtils {
         int[] dates = {Integer.parseInt(strings[0]), Integer.parseInt(strings[1])};
 
         if(startup) {
-            Main.getInstance().getSkuddbot().changePlayingText(Constants.config.get("version") + " | " + Constants.config.get("branch") + " > " + Constants.config.get("deployed_from"));
+            Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,Constants.config.get("version") + " | " + Constants.config.get("branch") + " > " + Constants.config.get("deployed_from"));
             Constants.CURRENT_EVENT = "The bot has just started up, give it a min, alright?";
             Constants.EVENT_ACTIVE = true;
         } else {
@@ -165,64 +167,64 @@ public class MiscUtils {
             switch (date) {
                 //Birthdays
                 case "18/03":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY RAY!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY RAY!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "21/03":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY EMBERS!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY EMBERS!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "21/06":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY BATTLEKILLER!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY BATTLEKILLER!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "30/07":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY MELSH!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY MELSH!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "08/08":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY IAIN!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY IAIN!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "01/10":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY TGM!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY TGM!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "03/10":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY JESSICA!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY JESSICA!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "21/10":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY TIMMY!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY TIMMY!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "02/12":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY LOCKSTAR!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY LOCKSTAR!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "03/12":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY MEERY!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY MEERY!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
                 case "06/12":
-                    Main.getInstance().getSkuddbot().changePlayingText("HAPPY BIRTHDAY BLACKHOLENIXON!");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY BLACKHOLENIXON!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
 
                 //Seasonal events
                 case "01/01":
-                    Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR));
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,MiscUtils.getRandomMessage(DataTypes.PLAYING_NEW_YEAR));
                     Constants.CURRENT_EVENT = "HAPPY NEW YEAR!";
                     Constants.EVENT_ACTIVE = true;
                     break;
@@ -230,7 +232,7 @@ public class MiscUtils {
                 case "24/12":
                 case "25/12":
                 case "26/12":
-                    Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING_CHRISTMAS));
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,MiscUtils.getRandomMessage(DataTypes.PLAYING_CHRISTMAS));
                     Constants.CURRENT_EVENT = "It's Christmas time!";
                     Constants.EVENT_ACTIVE = true;
                     break;
@@ -250,14 +252,14 @@ public class MiscUtils {
                     long secondsDay = diffSec % SECONDS_IN_A_DAY;
                     long hours = (secondsDay / 3600); // % 24 not needed
 
-                    Main.getInstance().getSkuddbot().changePlayingText(hours + " hours remain...");
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,hours + " hours remain...");
                     Constants.CURRENT_EVENT = "The countdown has begun...";
                     Constants.EVENT_ACTIVE = true;
                     break;
 
                 //Default
                 default:
-                    Main.getInstance().getSkuddbot().changePlayingText(MiscUtils.getRandomMessage(DataTypes.PLAYING));
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING, MiscUtils.getRandomMessage(DataTypes.PLAYING));
                     Constants.EVENT_ACTIVE = false;
                     break;
             }

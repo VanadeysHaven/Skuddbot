@@ -1,13 +1,11 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
-import me.Cooltimmetje.Skuddbot.Utilities.Constants;
-import me.Cooltimmetje.Skuddbot.Utilities.Logger;
-import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.*;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
@@ -21,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * This class allows users to link up their Twitch accounts for a real-time combined XP amount for both platforms.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
 public class TwitchLinkCommand {
@@ -51,14 +49,14 @@ public class TwitchLinkCommand {
             return;
         }
         if(serverID.containsKey(message.getAuthor().getStringID()) && !serverID.get(message.getAuthor().getStringID()).equalsIgnoreCase(message.getGuild().getStringID())) {
-            MessagesUtils.sendError("You currently have a link pending on " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID.get(message.getAuthor().getStringID()))).getName() + "! Please complete that one first!", message.getChannel());
+            MessagesUtils.addReaction(message,"You currently have a link pending on " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID.get(message.getAuthor().getStringID()))).getName() + "! Please complete that one first!", EmojiEnum.X);
             return;
         }
         
         serverID.put(message.getAuthor().getStringID(), message.getGuild().getStringID());
         
         if (su.getTwitchUsername() == null) {
-            MessagesUtils.sendPlain(message.getAuthor().mention() + ", please check your PM's for further instructions!", message.getChannel(), false);
+            MessagesUtils.addReaction(message,message.getAuthor().mention() + ", please check your PM's for further instructions!", EmojiEnum.MAILBOX_WITH_MAIL);
             if (su.getTwitchVerify() == null) {
                 code = MiscUtils.randomString(6);
                 while (Constants.verifyCodes.containsKey(code)) {
@@ -81,7 +79,7 @@ public class TwitchLinkCommand {
                     "To verify: You will need to head over to <https://www.twitch.tv/" + Constants.twitchBot + "> and type the following in the chat: `!verify " + code + "`\n" +
                     "Once you've done that, you will receive another PM from Skuddbot, with further instructions.\nOh and did I mention a nice tasty 1000xp for free? That's right! **1000xp**"));
         } else {
-            MessagesUtils.sendError("I already know your Twitch username. Your Twitch username is: '" + su.getTwitchUsername() + "'. Is this incorrect, or you want to change it? Please message Tim.", message.getChannel());
+            MessagesUtils.addReaction(message,"I already know your Twitch username. Your Twitch username is: '" + su.getTwitchUsername() + "'. Is this incorrect, or you want to change it? Please message Tim.", EmojiEnum.X);
         }
 
     }
@@ -112,7 +110,7 @@ public class TwitchLinkCommand {
             try {
                 user.getVerifyMessage().edit("[" + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID.get(user.getId()))).getName() + "]  You did it! **GG!** \nRight, for the next bit you'll only need to verify the information below and confirm it's correct, then SkuddSync will be active on your account.\n\n" +
                         "Are you sure you want to merge the stats of this Discord together with the stats of the Twitch account **" + twitch.getTwitchUsername() + "**? (See overview below)\n" +
-                        "**XP:** Your **Discord account** has `" + user.getXp() + "xp` and your **Twitch Account** has `" + twitch.getXp() + "xp` which will put your total XP on `" + (user.getXp() + twitch.getXp()) + "xp`\n\n" +
+                        EmojiHelper.getEmoji("xp_icon") + "**:** Your **Discord account** has `" + user.getXp() + "xp` and your **Twitch Account** has `" + twitch.getXp() + "xp` which will put your total XP on `" + (user.getXp() + twitch.getXp()) + "xp`\n\n" +
                         "Type `!confirm` to confirm or `!cancel` to cancel.\n**WARNING: Once you link your accounts, you can't unlink them!**");
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
@@ -151,7 +149,7 @@ public class TwitchLinkCommand {
         exec.schedule(() -> {
 
             try {
-                user.getVerifyMessage().edit("[" + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID.get(message.getAuthor().getStringID()))).getName() + "] **SkuddSync is now active!**\n*+1000xp* - Account linked to Twitch.");
+                user.getVerifyMessage().edit("[" + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID.get(message.getAuthor().getStringID()))).getName() + "] **SkuddSync is now active!**\n*+1000* " + EmojiHelper.getEmoji("xp_icon") + " - Account linked to Twitch.");
                 serverID.remove(user.getId());
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
