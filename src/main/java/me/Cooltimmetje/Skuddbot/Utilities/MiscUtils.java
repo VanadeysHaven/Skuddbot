@@ -191,6 +191,11 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
+                case "01/08":
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY DEFECTIUS!");
+                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
+                    Constants.EVENT_ACTIVE = true;
+                    break;
                 case "08/08":
                     Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY IAIN!");
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
