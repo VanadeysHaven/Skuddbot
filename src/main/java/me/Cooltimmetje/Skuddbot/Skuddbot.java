@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot;
 
+import me.Cooltimmetje.Skuddbot.Commands.ChallengeCommand;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
@@ -56,6 +57,7 @@ public class Skuddbot {
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
             skuddbot.getDispatcher().registerListener(new MessagesUtils());
+            skuddbot.getDispatcher().registerListener(new ChallengeCommand());
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();
 
