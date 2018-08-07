@@ -226,11 +226,6 @@ public class MiscUtils {
                     Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
                     Constants.EVENT_ACTIVE = true;
                     break;
-                case "06/12":
-                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING,"HAPPY BIRTHDAY BLACKHOLENIXON!");
-                    Constants.CURRENT_EVENT = "It's someone's birthday! HAPPY BIRTHDAY!";
-                    Constants.EVENT_ACTIVE = true;
-                    break;
 
                 //Seasonal events
                 case "01/01":
