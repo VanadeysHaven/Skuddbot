@@ -5,6 +5,7 @@ import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
+import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -20,7 +21,7 @@ import java.util.HashMap;
  * This class handles everything to do with the database, and contains all operations we can run on the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
 public class MySqlManager {
@@ -688,6 +689,7 @@ public class MySqlManager {
     }
 
     public static void loadGlobal(){
+        Logger.info("Loading global settings...");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -701,6 +703,7 @@ public class MySqlManager {
 
             while(rs.next()){
                 Constants.config.put(rs.getString(1), rs.getString(2));
+                Logger.info("Loaded setting \"" + rs.getString(1) + "\" with value \"" + rs.getString(2) + "\".");
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -766,6 +769,7 @@ public class MySqlManager {
     }
 
     public static void loadAuth(){
+        Logger.info("Loading server authorization...");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -779,6 +783,7 @@ public class MySqlManager {
 
             while(rs.next()){
                 CreateServerListener.authorized.add(rs.getString(1));
+                Logger.info("Server ID " + rs.getString(1) + " is authorized to use Skuddbot.");
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -808,6 +813,7 @@ public class MySqlManager {
     }
 
     public static void loadBans(){
+        Logger.info("Loading XP bans...");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -821,6 +827,7 @@ public class MySqlManager {
 
             while(rs.next()){
                 Constants.bannedUsers.add(rs.getString(1));
+                Logger.info("Twitch user " + rs.getString(1) + " is banned from gaining XP.");
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -1003,6 +1010,7 @@ public class MySqlManager {
      * This loads all awesome ID's (users) from the database and adds them to the ArrayList.
      */
     public static void loadAwesomeUsers(){
+        Logger.info("Loading donators...");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -1016,8 +1024,10 @@ public class MySqlManager {
 
             while(rs.next()){
                 Constants.awesomeUser.add(rs.getString(1));
+                Logger.info("User ID " + rs.getString(1) + " is an donator.");
                 if(rs.getString(3) != null) {
                     Constants.awesomePing.put(rs.getString(1), rs.getString(3));
+                    Logger.info("Loaded ping message \"" + rs.getString(3) + "\" for User ID " + rs.getString(1) +".");
                 }
             }
         } catch (SQLException e){
@@ -1051,6 +1061,7 @@ public class MySqlManager {
      * Loads all awesome data from the database and adds them to the HashMap.
      */
     public static void loadAwesomeData(){
+        Logger.info("Loading donator data...");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -1064,6 +1075,7 @@ public class MySqlManager {
 
             while(rs.next()){
                 Constants.awesomeStrings.put(rs.getString(4), DataTypes.valueOf(rs.getString(3).toUpperCase()));
+                Logger.info("Loaded donator message \"" + rs.getString(4) + "\" with type " + rs.getString(3).toUpperCase() + ".");
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -1214,6 +1226,7 @@ public class MySqlManager {
      * This loads all admin ID's (users) from the database and adds them to the ArrayList.
      */
     public static void loadAdmin(){
+        Logger.info("Loading admins...");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -1227,6 +1240,7 @@ public class MySqlManager {
 
             while(rs.next()){
                 Constants.adminUser.add(rs.getString(1));
+                Logger.info("User ID " + rs.getString(1) + " is an admin.");
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -1335,6 +1349,7 @@ public class MySqlManager {
      * This loads all whitelisted commands from the database and adds them to the ArrayList.
      */
     public static void loadWhitelistedCommands(){
+        Logger.info("Loading whitelisted commands...");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -1348,6 +1363,7 @@ public class MySqlManager {
 
             while(rs.next()){
                 Constants.whitelistedCommands.add(rs.getString(1));
+                Logger.info("Command " + rs.getString(1) + " is whitelisted for use with !reverse.");
             }
         } catch (SQLException e){
             e.printStackTrace();

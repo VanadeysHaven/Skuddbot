@@ -18,6 +18,7 @@ public class Constants {
     public static String TIMMY_OVERRIDE = "76593288865394688";
     public static String JASCH_OVERRIDE = "148376320726794240";
     public static long LOG_CHANNEL = 274542577880006656L;
+    public static long HOME_SERVER = 224987945638035456L;
     public static String[] STARTUP_ARGUMENTS;
     public static String twitchBot;
     public static String twitchOauth;

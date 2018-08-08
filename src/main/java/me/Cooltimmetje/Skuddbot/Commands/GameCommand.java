@@ -1,18 +1,17 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.*;
 
 /**
  * This command changes the playing status of Skuddbot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.1-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
 public class GameCommand {
@@ -40,15 +39,15 @@ public class GameCommand {
                         sb.append(args[i]).append(" ");
                     }
                     String input = sb.toString().trim();
-                    Main.getInstance().getSkuddbot().changePlayingText(input.substring(0, Math.min(input.length(), 128))); //Set the playing status.
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING, input.substring(0, Math.min(input.length(), 128))); //Set the playing status.
                     if(input.length() > 128) { //Check limit - See if we need to display the warning.
-                        MessagesUtils.sendSuccess("Game set to: `" + input.substring(0, Math.min(input.length(), 128)) + "`\n " +
-                                ":warning: Your message exceeded the __128 character limit__, therefore we have trimmed it down to that limit.", channel);
+                        MessagesUtils.addReaction(message,"Game set to: `" + input.substring(0, Math.min(input.length(), 128)) + "`\n " +
+                                ":warning: Your message exceeded the __128 character limit__, therefore we have trimmed it down to that limit.", EmojiEnum.WHITE_CHECK_MARK);
                     } else {
-                        MessagesUtils.sendSuccess("Game set to: `" + input.substring(0, Math.min(input.length(), 128)) + "`", channel);
+                        MessagesUtils.addReaction(message,"Game set to: `" + input.substring(0, Math.min(input.length(), 128)) + "`", EmojiEnum.WHITE_CHECK_MARK);
                     }
                 } else {
-                    MessagesUtils.sendError("No game specified.", channel);
+                    MessagesUtils.addReaction(message,"No game specified.", EmojiEnum.X);
                 }
             }
         }

@@ -3,6 +3,7 @@ package me.Cooltimmetje.Skuddbot;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.ActivityChecker;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import org.jibble.pircbot.IrcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import java.util.Timer;
  * This is the bot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -35,11 +36,12 @@ public class Main {
             log.info("Setting up...");
             skuddbot = new Skuddbot(args[0]);
 
+            log.info("Making database connection...");
             MySqlManager.setupHikari(args[1],args[2]);
             Constants.twitchBot = args[3];
             Constants.twitchOauth = args[4];
         }
-        log.info("Connecting to Twitch.");
+        log.info("Connecting to Twitch...");
 
         skuddbotTwitch = new SkuddbotTwitch();
 
@@ -55,6 +57,8 @@ public class Main {
         MySqlManager.loadAwesomeUsers();
         MySqlManager.loadAwesomeData();
         MySqlManager.loadWhitelistedCommands();
+        MySqlManager.loadGlobal();
+
         log.info("All systems operational. Ready to connect to Discord.");
         try {
             skuddbot.login();
@@ -64,7 +68,6 @@ public class Main {
 
         timer.schedule(new ActivityChecker(), Constants.INACTIVE_DELAY, Constants.INACTIVE_DELAY);
         Constants.STARTUP_TIME = System.currentTimeMillis();
-        MySqlManager.loadGlobal();
     }
 
     public static Skuddbot getInstance(){

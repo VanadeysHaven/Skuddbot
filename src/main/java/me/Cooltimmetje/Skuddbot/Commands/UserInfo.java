@@ -16,7 +16,7 @@ import java.util.List;
  * This class shows info about the user that ran the command or that has been specified.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.31-ALPHA
  * @since v0.3-ALPHA
  */
 public class UserInfo {
@@ -36,11 +36,10 @@ public class UserInfo {
         embed.withAuthorIcon(user.getAvatarURL()).withAuthorName(user.getName() + "#" + user.getDiscriminator()).withThumbnail(user.getAvatarURL());
 
         if (Constants.awesomeUser.contains(user.getStringID())) {
-            if (Constants.adminUser.contains(user.getStringID())) {
-                embed.withColor(255,0,0).withDesc("Skuddbot Admin");
-            } else {
-                embed.withColor(218,165,32).withDesc("Awesome!");
-            }
+            embed.withColor(218,165,32).withDesc("Awesome!");
+        }
+        if (Constants.adminUser.contains(user.getStringID())) {
+            embed.withColor(255,0,0).withDesc("Skuddbot Admin");
         }
 
         switch (user.getStringID()){

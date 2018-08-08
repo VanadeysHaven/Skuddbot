@@ -17,7 +17,7 @@ import java.util.List;
  * o7
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.4.01-ALPHA-DEV
  */
 public class SaluteCommand {
@@ -46,8 +46,8 @@ public class SaluteCommand {
                 MessagesUtils.sendPlain(Main.getInstance().getSkuddbot().getGuildByID(233573247021481995L).getEmojiByID(292331476362723328L).toString() + "7", message.getChannel(), false);
             } else {
                 int chance = MiscUtils.randomInt(0, 100);
-                if (chance <= 5) {
-                    MessagesUtils.sendPlain(MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 200)), message.getChannel(), false);
+                if (chance <= 5 && guild.getLongID() == 198483566026424321L) {
+                    MessagesUtils.sendPlain(MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + emojis.get(MiscUtils.randomInt(0, emojis.size())).toString() + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + "**7**" + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)), message.getChannel(), false);
                 } else {
                     MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
                 }

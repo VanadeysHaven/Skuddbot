@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -12,12 +13,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +30,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.31-ALPHA
  * @since v0.2-ALPHA
  */
 
@@ -78,11 +81,23 @@ public class Server {
             e.printStackTrace();
         }
 
-        MessagesUtils.sendPlain("**Welcome to the fun, welcome to the revolution, welcome to Skuddbot.** :eyes:\n\nI see that this server is not yet in my database, therefore I'll need to initialize this server before I can be used on this server!\n" +
-                        "In order to do so, please make sure I have a role that has the `ADMINISTRATOR` permission, then run `!initialize`. **NOTE:** This command requires you to also have the `ADMINISTRATOR` permission.",
-                Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getChannelByID(Long.parseLong(serverID)), false);
+        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
+
+        IMessage message = MessagesUtils.sendPlain("**Welcome to the fun, welcome to the revolution, welcome to Skuddbot.** :eyes:\n\n" +
+                        "I see that this server is not yet in my database, but I am taking care of that as we speak. I will add the :white_check_mark: reaction to this message when I'm ready.\n" +
+                        "You can start configuring me by typing `!serversettings`.",
+                Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getDefaultChannel(), false);
         Logger.info("[CreateServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
 
+
+
+        Logger.info(MessageFormat.format("Initializing {0} (ID: {1})",guild.getName(),guild.getStringID()));
+        this.clearProfiles();
+        MySqlManager.createServerTables(serverID);
+        this.setServerInitialized(true);
+        Logger.info(MessageFormat.format("Initialized {0} (ID: {1})",guild.getName(),guild.getStringID()));
+
+        MessagesUtils.addReaction(message, null, EmojiEnum.WHITE_CHECK_MARK);
     }
 
     /**
