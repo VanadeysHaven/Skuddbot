@@ -1,12 +1,14 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
-import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
-import me.Cooltimmetje.Skuddbot.Utilities.*;
+import me.Cooltimmetje.Skuddbot.Utilities.Constants;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
+import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IChannel;
@@ -90,14 +92,10 @@ public class ChallengeCommand {
 
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
-        Logger.info("Reaction added.");
         IUser challengerOne = botIMessage.get(event.getReaction().getMessage()).getAuthor();
         if(botMessage.containsValue(event.getReaction().getMessage().getStringID())){
-            Logger.info("Message recognized as challenge.");
             if(event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())){
-                Logger.info("We reacted");
                 if(event.getReaction().getUserReacted(outstandingChallenges.get(challengerOne))){ //Accepted
-                    Logger.info("User valid, running fight.");
                     IUser challengerTwo = outstandingChallenges.get(challengerOne);
                     fight(challengerOne, challengerTwo, null, event.getReaction().getMessage().getChannel());
                 }

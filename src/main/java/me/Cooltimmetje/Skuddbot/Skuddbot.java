@@ -9,6 +9,7 @@ import me.Cooltimmetje.Skuddbot.Listeners.JoinQuitListener;
 import me.Cooltimmetje.Skuddbot.Listeners.TwitchLiveListener;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.RoleAdder;
 import me.Cooltimmetje.Skuddbot.Utilities.*;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
@@ -58,6 +59,7 @@ public class Skuddbot {
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
             skuddbot.getDispatcher().registerListener(new MessagesUtils());
             skuddbot.getDispatcher().registerListener(new ChallengeCommand());
+            skuddbot.getDispatcher().registerListener(new RoleAdder());
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();
 

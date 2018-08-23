@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Commands.Admin;
+package me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin;
 
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;

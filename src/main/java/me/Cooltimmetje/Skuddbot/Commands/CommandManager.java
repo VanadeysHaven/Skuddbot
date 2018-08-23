@@ -1,9 +1,8 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
-import com.vdurmont.emoji.Emoji;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
-import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
+import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.SetupCommand;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -106,6 +105,13 @@ public class CommandManager {
                     break;
                 case "!clearcooldowns":
                     ClearCooldownCommand.run(event.getMessage());
+                    break;
+                case "!randomtest":
+                    RandomTestCommand.run(event.getMessage());
+                    break;
+
+                case "!pogo_setup":
+                    SetupCommand.run(event.getMessage());
                     break;
             }
         } else {
