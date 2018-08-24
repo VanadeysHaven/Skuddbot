@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Commands;
+package me.Cooltimmetje.Skuddbot.Commands.Useless;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;

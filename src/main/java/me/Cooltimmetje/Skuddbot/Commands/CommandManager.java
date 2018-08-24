@@ -2,6 +2,10 @@ package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
+import me.Cooltimmetje.Skuddbot.Commands.Useless.FlipTextCommand;
+import me.Cooltimmetje.Skuddbot.Commands.Useless.PanicCommand;
+import me.Cooltimmetje.Skuddbot.Commands.Useless.ReverseCommand;
+import me.Cooltimmetje.Skuddbot.Commands.Useless.SaluteCommand;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.SetupCommand;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;

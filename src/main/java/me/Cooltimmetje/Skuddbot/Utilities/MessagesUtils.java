@@ -13,6 +13,7 @@ import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.util.HashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * This class is used for message sending, there is a separate class for this so that I don't have try-catches all over my code. Keep it nice and tidy. SeemsGood
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.32-ALPHA
  * @since v0.1-ALPHA
  */
 public class MessagesUtils {
@@ -41,7 +42,7 @@ public class MessagesUtils {
     @SuppressWarnings("unchecked")
     public static void addReaction(IMessage message, String debug, EmojiEnum emoji){
         try {
-            message.addReaction(EmojiManager.getForAlias(emoji.getAlias()));
+            RequestBuffer.request(() -> message.addReaction(EmojiManager.getForAlias(emoji.getAlias())));
         } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
             e.printStackTrace();
         }
@@ -67,7 +68,7 @@ public class MessagesUtils {
                 if(event.getReaction().getUserReacted(event.getMessage().getAuthor())){ //Check if the original author reacted.
                     JSONObject obj = reactions.get(event.getMessage()); //Save it for sake of code tidyness.
                     if(obj.get("debug") != null){ //Check if there's a debug string.
-                        sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false); //Post the message.
+                        RequestBuffer.request(() -> sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false)); //Post the message.
                     }
 
                     reactions.remove(event.getMessage()); //Remove it from the HashMap as we no longer need it there.
@@ -85,61 +86,7 @@ public class MessagesUtils {
     public static void sendSuccess(String message, IChannel channel){
         if(!Constants.MUTED) {
             try {
-                channel.sendMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
-            } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Send a error message. Consisting out of a emoji (x), and a random message. Gets deleted after 10 seconds.
-     *
-     * @param error The error that occurred.
-     * @param channel Channel where we send the message.
-     */
-    public static void sendError(String error, IChannel channel) {
-        if (!Constants.MUTED) {
-            ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-            final IMessage message;
-
-            try {
-                message = channel.sendMessage((":x: " + MiscUtils.getRandomMessage(DataTypes.ERROR) + "\n \n`" + error + "`").replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
-                exec.schedule(() -> {
-                    assert message != null;
-                    try {
-                        message.delete();
-                    } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                        e.printStackTrace();
-                    }
-                }, 10, TimeUnit.SECONDS);
-            } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Send a message that starts with the "white_check_mark" emoji, often used to indicate that something succeeded. Gets deleted after 10 seconds.
-     *
-     * @param messageString Message that we send, gets appended to the emoji.
-     * @param channel Channel where we send the message.
-     */
-    public static void sendSuccessTime(String messageString, IChannel channel) {
-        if (!Constants.MUTED) {
-            ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-            final IMessage message;
-
-            try {
-                message = channel.sendMessage(":white_check_mark: " + messageString.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
-                exec.schedule(() -> {
-                    assert message != null;
-                    try {
-                        message.delete();
-                    } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                        e.printStackTrace();
-                    }
-                }, 10, TimeUnit.SECONDS);
+                RequestBuffer.request(() -> channel.sendMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere")));
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
             }
@@ -159,9 +106,12 @@ public class MessagesUtils {
         if(!allowEveryone){
             msg = msg.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere");
         }
+        String msgFinal = msg;
         if (!Constants.MUTED) {
             try {
-                IMessage message = channel.sendMessage(msg);
+                IMessage message = RequestBuffer.request(() -> {
+                    return channel.sendMessage(msgFinal);
+                }).get();
                 return message;
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
@@ -171,23 +121,6 @@ public class MessagesUtils {
         return null;
     }
 
-    /**
-     * Send a message regardless if Skuddbot is muted.
-     *
-     * @param msg The message that we send.
-     * @param channel Channel where we send the message.
-     * @return The message that was sent.
-     */
-    @SuppressWarnings("all") //Just because IntelliJ decided to be a dick.
-    public static IMessage sendForce (String msg, IChannel channel){
-        try {
-            IMessage message = channel.sendMessage(msg.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
-            return message;
-        } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * Send a PM to the specified user.
@@ -199,7 +132,7 @@ public class MessagesUtils {
     public static IMessage sendPM(IUser user, String message) {
         if (!Constants.MUTED) {
             try {
-                return Main.getInstance().getSkuddbot().getOrCreatePMChannel(user).sendMessage(message);
+                return RequestBuffer.request(() -> Main.getInstance().getSkuddbot().getOrCreatePMChannel(user).sendMessage(message)).get();
             } catch (DiscordException | RateLimitException | MissingPermissionsException e) {
                 e.printStackTrace();
             }
