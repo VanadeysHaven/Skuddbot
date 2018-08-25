@@ -18,7 +18,7 @@ import java.util.Random;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.32-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
