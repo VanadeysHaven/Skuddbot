@@ -11,7 +11,7 @@ import sx.blah.discord.handle.obj.*;
  * This command changes the playing status of Skuddbot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.32-ALPHA
  * @since v0.1-ALPHA
  */
 public class GameCommand {
@@ -30,7 +30,7 @@ public class GameCommand {
             Logger.info(user.getName() + " attempted to do something they don't have permission for.");
         } else {
             if(Constants.EVENT_ACTIVE){
-                MessagesUtils.sendError("There is a timed event active: " + Constants.CURRENT_EVENT, message.getChannel());
+                MessagesUtils.addReaction(message,"There is a timed event active: " + Constants.CURRENT_EVENT, EmojiEnum.X);
             } else {
                 if(msgContent.split(" ").length >= 2){ //Check arguments - Is there something specified?
                     String[] args = msgContent.split(" ");

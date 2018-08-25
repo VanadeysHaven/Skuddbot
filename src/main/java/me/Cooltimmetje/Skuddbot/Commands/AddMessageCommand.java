@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -10,7 +11,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * Allows awesome users to add stuff to the pool of messages!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.32-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 public class AddMessageCommand {
@@ -30,7 +31,7 @@ public class AddMessageCommand {
                 try {
                     dataType = DataTypes.valueOf(args[1].toUpperCase());
                 } catch (IllegalArgumentException e){
-                    MessagesUtils.sendError("Unknown type: " + args[1].toUpperCase(), message.getChannel());
+                    MessagesUtils.addReaction(message,"Unknown type: " + args[1].toUpperCase(), EmojiEnum.X);
                     return;
                 }
 
@@ -43,7 +44,7 @@ public class AddMessageCommand {
                 String trimmed = input.substring(0, Math.min(input.length(), dataType.getMaxLength()));
 
                 if(Constants.awesomeStrings.containsKey(trimmed)){
-                    MessagesUtils.sendError("This message already exists!", message.getChannel());
+                    MessagesUtils.addReaction(message,"This message already exists!", EmojiEnum.X);
                     return;
                 }
 
@@ -56,7 +57,7 @@ public class AddMessageCommand {
                     Constants.awesomeStrings.put(trimmed, dataType);
                 }
             } else {
-                MessagesUtils.sendError("Not enough arguments: !addmsg <type> <message>", message.getChannel());
+                MessagesUtils.addReaction(message,"Not enough arguments: !addmsg <type> <message>", EmojiEnum.X);
             }
         }
     }

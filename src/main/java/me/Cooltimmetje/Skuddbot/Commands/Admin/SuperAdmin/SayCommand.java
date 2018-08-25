@@ -13,7 +13,7 @@ import java.util.HashMap;
  * http://thecodinglove.com/post/153951828532/git-push-origin-master-force
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA-DEV
+ * @version v0.4.32-ALPHA
  * @since v0.2-ALPHA
  */
 public class SayCommand {
@@ -29,7 +29,7 @@ public class SayCommand {
      * @param message MEMES?!
      */
     public static void setChannel(IMessage message){
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getStringID().equals(Constants.JASCH_OVERRIDE)){
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID) || message.getAuthor().getStringID().equals(Constants.JASCH_ID)){
             String[] args = message.getContent().split(" ");
             if (args.length > 1) {
                 IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(Long.parseLong(args[1]));
@@ -52,7 +52,7 @@ public class SayCommand {
      * @param message SPICY MEMES!
      */
     public static void sayMessage(IMessage message){
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE) || message.getAuthor().getStringID().equals(Constants.JASCH_OVERRIDE)){
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID) || message.getAuthor().getStringID().equals(Constants.JASCH_ID)){
             String[] args = message.getContent().split(" ");
             if (args.length > 1) {
                 IChannel channel = Main.getInstance().getSkuddbot().getChannelByID(Long.parseLong(channels.get(message.getAuthor().getStringID())));

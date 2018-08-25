@@ -2,10 +2,7 @@ package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
-import me.Cooltimmetje.Skuddbot.Commands.Useless.FlipTextCommand;
-import me.Cooltimmetje.Skuddbot.Commands.Useless.PanicCommand;
-import me.Cooltimmetje.Skuddbot.Commands.Useless.ReverseCommand;
-import me.Cooltimmetje.Skuddbot.Commands.Useless.SaluteCommand;
+import me.Cooltimmetje.Skuddbot.Commands.Useless.*;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.SetupCommand;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -17,7 +14,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.32-ALPHA
  * @since v0.1-ALPHA
  */
 public class CommandManager {
@@ -113,7 +110,11 @@ public class CommandManager {
                 case "!randomtest":
                     RandomTestCommand.run(event.getMessage());
                     break;
+//                case "!hug":
+//                    HugCommand.run(event.getMessage());
+//                    break;
 
+                //Pogo Gravesend
                 case "!pogo_setup":
                     SetupCommand.run(event.getMessage());
                     break;

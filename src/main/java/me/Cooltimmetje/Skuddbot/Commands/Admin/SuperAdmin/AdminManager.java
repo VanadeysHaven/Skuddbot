@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin;
 
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -12,7 +13,7 @@ import java.text.MessageFormat;
  * This class will be able to add and remove SuperAdmins. Only for timmy though.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA-DEV
+ * @version v0.32-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 public class AdminManager {
@@ -23,7 +24,7 @@ public class AdminManager {
      * @param message This is the message where the command got triggered off.
      */
     public static void add(IMessage message){
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)) { //Check permissions
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID)) { //Check permissions
             if(message.getContent().split(" ").length > 1){ //Check arguments
                 if(message.getMentions().size() > 0){ //Check if there is a mention
                     if(message.getContent().split(" ")[1].replace("<@!", "<@").equals(message.getMentions().get(0).mention().replace("<@!", "<@"))){ //Check if mention is in the right position.
@@ -39,16 +40,16 @@ public class AdminManager {
                             MessagesUtils.sendSuccess(MessageFormat.format("User **{0}** `(ID: {1})` has been added as a admin!", user.getName(), user.getStringID()), message.getChannel()); //send confirm
 
                         } else {
-                            MessagesUtils.sendError("This user is already a admin! - Use '!removeadmin <mention>' if you wish to remove them.", message.getChannel());
+                            MessagesUtils.addReaction(message, "This user is already a admin! - Use '!removeadmin <mention>' if you wish to remove them.", EmojiEnum.X);
                         }
                     } else {
-                        MessagesUtils.sendError("Invalid arguments: !addadmin <mention>", message.getChannel());
+                        MessagesUtils.addReaction(message, "Invalid arguments: !addadmin <mention>", EmojiEnum.X);
                     }
                 } else {
-                    MessagesUtils.sendError("Please mention a person: !addadmin <mention>", message.getChannel());
+                    MessagesUtils.addReaction(message, "Please mention a person: !addadmin <mention>", EmojiEnum.X);
                 }
             } else {
-                MessagesUtils.sendError("Not enough arguments: !addadmin <mention>", message.getChannel());
+                MessagesUtils.addReaction(message, "Not enough arguments: !addadmin <mention>", EmojiEnum.X);
             }
         }
     }
@@ -59,7 +60,7 @@ public class AdminManager {
      * @param message This is the message where the command got triggered off.
      */
     public static void remove(IMessage message){
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)) { //Check permissions
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID)) { //Check permissions
             if(message.getContent().split(" ").length > 1){ //Check arguments
                 if(message.getMentions().size() > 0){ //Check if there is a mention
                     if(message.getContent().split(" ")[1].replace("<@!", "<@").equals(message.getMentions().get(0).mention().replace("<@!", "<@"))){ //Check if mention is in the right position.
@@ -69,16 +70,16 @@ public class AdminManager {
                             MySqlManager.removeAdmin(user.getStringID()); //Remove from admin database.
                             MessagesUtils.sendSuccess(MessageFormat.format("User **{0}** `(ID: {1})` has been removed as a admin!", user.getName(), user.getStringID()), message.getChannel()); //send confirm
                         } else {
-                            MessagesUtils.sendError("This user is not a admin! - Use '!addadmin <mention>' if you wish to add them.", message.getChannel());
+                            MessagesUtils.addReaction(message, "This user is not a admin! - Use '!addadmin <mention>' if you wish to add them.", EmojiEnum.X);
                         }
                     } else {
-                        MessagesUtils.sendError("Invalid arguments: !removeadmin <mention>", message.getChannel());
+                        MessagesUtils.addReaction(message, "Invalid arguments: !removeadmin <mention>", EmojiEnum.X);
                     }
                 } else {
-                    MessagesUtils.sendError("Please mention a person: !removeadmin <mention>", message.getChannel());
+                    MessagesUtils.addReaction(message, "Please mention a person: !removeadmin <mention>", EmojiEnum.X);
                 }
             } else {
-                MessagesUtils.sendError("Not enough arguments: !removeadmin <mention>", message.getChannel());
+                MessagesUtils.addReaction(message, "Not enough arguments: !removeadmin <mention>", EmojiEnum.X);
             }
         }
     }

@@ -10,13 +10,13 @@ import java.util.HashMap;
  * This will class holds lots of data, mostly global data.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.32-ALPHA
  * @since v0.1-ALPHA
  */
 public class Constants {
 
-    public static String TIMMY_OVERRIDE = "76593288865394688";
-    public static String JASCH_OVERRIDE = "148376320726794240";
+    public static long TIMMY_ID = 76593288865394688L;
+    public static long JASCH_ID = 148376320726794240L;
     public static long LOG_CHANNEL = 274542577880006656L;
     public static long HOME_SERVER = 224987945638035456L;
     public static String[] STARTUP_ARGUMENTS;

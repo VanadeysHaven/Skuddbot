@@ -11,7 +11,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class is used for reloading the list of authorized servers that can use Skuddbot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.32-ALPHA
  * @since v0.2-ALPHA
  */
 public class LoadAuth {
@@ -22,7 +22,7 @@ public class LoadAuth {
      * @param message Message that the command got triggered off.
      */
     public static void run(IMessage message){
-        if (message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)){
+        if (message.getAuthor().getStringID().equals(Constants.TIMMY_ID)){
             CreateServerListener.authorized.clear();
             MySqlManager.loadAuth();
             MessagesUtils.sendSuccess("Authorized Servers reloaded.", message.getChannel());

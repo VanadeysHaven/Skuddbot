@@ -20,13 +20,13 @@ import java.util.List;
  * CMD: Imports XP form other bots (Like Meme6)
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.32-ALPHA
  * @since v0.2-ALPHA
  */
 public class ImportCommand {
 
     public static void run(IMessage message) throws IOException {
-        if (message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)){
+        if (message.getAuthor().getStringID().equals(Constants.TIMMY_ID)){
             File file = new File("/skuddbot/import.txt");
             int imported = 0;
 

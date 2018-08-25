@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -9,7 +10,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class will update the ping message for awesome users.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.32-ALPHA-DEV
  * @since v0.3-ALPHA-DEV
  */
 public class SetPing {
@@ -38,7 +39,7 @@ public class SetPing {
                     MessagesUtils.sendSuccess("Your ping message was updated to: `" + trimmed + "`!", message.getChannel());
                 }
             } else {
-                MessagesUtils.sendError("Not enough arguments: !setping <message>", message.getChannel());
+                MessagesUtils.addReaction(message,"Not enough arguments: !setping <message>", EmojiEnum.X);
             }
         }
     }

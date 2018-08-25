@@ -14,7 +14,7 @@ import java.text.MessageFormat;
  * This class is used to save profiles and other stuff to the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.4.32-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -29,7 +29,7 @@ public class SaveProfile {
     public static void run(IMessage message){
         long startTime = System.currentTimeMillis();
 
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_OVERRIDE)){
+        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID)){
             if(message.getMentions().isEmpty()){
                 if(message.getContent().split(" ").length > 1){
                     if(message.getContent().split(" ")[1].equalsIgnoreCase("-all")){
