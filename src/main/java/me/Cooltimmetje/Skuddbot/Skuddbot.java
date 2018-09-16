@@ -81,7 +81,7 @@ public class Skuddbot {
     public void onMention(MentionEvent event){
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
-                if (event.getMessage().getAuthor().getStringID().equals(Constants.TIMMY_ID) || event.getMessage().getAuthor().getStringID().equals(Constants.JASCH_ID)) {
+                if (event.getMessage().getAuthor().getLongID() == Constants.TIMMY_ID || event.getMessage().getAuthor().getLongID() == Constants.JASCH_ID) {
                     MessagesUtils.addReaction(event.getMessage(),null, EmojiEnum.WHITE_CHECK_MARK);
 
                     terminate(false);

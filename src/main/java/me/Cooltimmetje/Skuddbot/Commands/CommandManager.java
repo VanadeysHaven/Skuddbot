@@ -26,6 +26,7 @@ public class CommandManager {
      */
     @EventSubscriber
     public void onMessage(MessageReceivedEvent event){
+
         if(!event.getMessage().getChannel().isPrivate()) {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {
                 case "!game":
@@ -110,9 +111,9 @@ public class CommandManager {
                 case "!randomtest":
                     RandomTestCommand.run(event.getMessage());
                     break;
-//                case "!hug":
-//                    HugCommand.run(event.getMessage());
-//                    break;
+                case "!hug":
+                    HugCommand.run(event.getMessage());
+                    break;
 
                 //Pogo Gravesend
                 case "!pogo_setup":

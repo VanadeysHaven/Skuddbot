@@ -22,7 +22,7 @@ public class LoadAuth {
      * @param message Message that the command got triggered off.
      */
     public static void run(IMessage message){
-        if (message.getAuthor().getStringID().equals(Constants.TIMMY_ID)){
+        if (message.getAuthor().getLongID() == Constants.TIMMY_ID){
             CreateServerListener.authorized.clear();
             MySqlManager.loadAuth();
             MessagesUtils.sendSuccess("Authorized Servers reloaded.", message.getChannel());

@@ -26,7 +26,7 @@ import java.util.List;
 public class ImportCommand {
 
     public static void run(IMessage message) throws IOException {
-        if (message.getAuthor().getStringID().equals(Constants.TIMMY_ID)){
+        if (message.getAuthor().getLongID() == Constants.TIMMY_ID){
             File file = new File("/skuddbot/import.txt");
             int imported = 0;
 

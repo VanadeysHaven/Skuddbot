@@ -21,7 +21,7 @@ public class ReloadGlobal {
      * @param message The message that the command got triggered off.
      */
     public static void run(IMessage message){
-        if (message.getAuthor().getStringID().equals(Constants.TIMMY_ID)){
+        if (message.getAuthor().getLongID() == Constants.TIMMY_ID){
             Constants.config.clear();
             MySqlManager.loadGlobal();
             MessagesUtils.sendSuccess("Global config reloaded!", message.getChannel());

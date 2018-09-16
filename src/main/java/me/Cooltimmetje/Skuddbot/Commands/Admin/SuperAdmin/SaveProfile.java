@@ -29,7 +29,7 @@ public class SaveProfile {
     public static void run(IMessage message){
         long startTime = System.currentTimeMillis();
 
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID)){
+        if(message.getAuthor().getLongID() == Constants.TIMMY_ID){
             if(message.getMentions().isEmpty()){
                 if(message.getContent().split(" ").length > 1){
                     if(message.getContent().split(" ")[1].equalsIgnoreCase("-all")){

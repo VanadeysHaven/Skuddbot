@@ -32,7 +32,7 @@ public class Main {
         Constants.STARTUP_ARGUMENTS = args;
 
         if(args.length < 5){
-            throw new IllegalArgumentException("I need a Discord Token, Mysql Username, Mysql Password, Twitch Username and Twitch Token.");
+            throw new IllegalArgumentException("Startup arguments are invalid: I need a Discord Token, Mysql Username, Mysql Password, Twitch Username and Twitch Token.");
         } else {
             log.info("Setting up...");
             skuddbot = new Skuddbot(args[0]);

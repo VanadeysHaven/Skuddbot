@@ -24,7 +24,7 @@ public class AdminManager {
      * @param message This is the message where the command got triggered off.
      */
     public static void add(IMessage message){
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID)) { //Check permissions
+        if(message.getAuthor().getLongID() == Constants.TIMMY_ID) { //Check permissions
             if(message.getContent().split(" ").length > 1){ //Check arguments
                 if(message.getMentions().size() > 0){ //Check if there is a mention
                     if(message.getContent().split(" ")[1].replace("<@!", "<@").equals(message.getMentions().get(0).mention().replace("<@!", "<@"))){ //Check if mention is in the right position.
@@ -60,7 +60,7 @@ public class AdminManager {
      * @param message This is the message where the command got triggered off.
      */
     public static void remove(IMessage message){
-        if(message.getAuthor().getStringID().equals(Constants.TIMMY_ID)) { //Check permissions
+        if(message.getAuthor().getLongID() == Constants.TIMMY_ID) { //Check permissions
             if(message.getContent().split(" ").length > 1){ //Check arguments
                 if(message.getMentions().size() > 0){ //Check if there is a mention
                     if(message.getContent().split(" ")[1].replace("<@!", "<@").equals(message.getMentions().get(0).mention().replace("<@!", "<@"))){ //Check if mention is in the right position.
