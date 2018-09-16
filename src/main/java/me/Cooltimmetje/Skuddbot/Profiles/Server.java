@@ -63,6 +63,7 @@ public class Server {
 
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
+    public HashMap<Long,Long> lastSeen = new HashMap<>();
 
     /**
      * Constructor for a new server, it puts all the settings to default and asks to initialize the server.

@@ -43,6 +43,7 @@ public class ProfileManager {
                 server.addTwitch(user);
             }
             user.setInactive(false); //Set active.
+            server.lastSeen.put(Long.parseLong(id), System.currentTimeMillis()); //Report last seen.
             return user; //Return it
         }
 
