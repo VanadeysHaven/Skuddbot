@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands.Useless;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -23,20 +24,21 @@ import java.util.ArrayList;
 public class HugCommand {
 
     public static void run(IMessage message){
+        ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), true);
         IGuild guild = message.getGuild();
         Server server = ServerManager.getServer(guild.getStringID());
         IChannel channel = message.getChannel();
         IUser user = message.getAuthor();
 
         int activeDelay = 24 * 60 * 60 * 1000;
-        ArrayList<Long> activeUsers = new ArrayList<>(server.lastSeen.keySet());
+        ArrayList<Long> activeUsers = new ArrayList<>();
         for(Long userid : server.lastSeen.keySet()){
-            if((System.currentTimeMillis() - server.lastSeen.get(user.getLongID())) > activeDelay){
-                activeUsers.remove(userid);
+            if((System.currentTimeMillis() - server.lastSeen.get(userid) < activeDelay)){
+                activeUsers.add(userid);
             }
         }
 
-        if(activeUsers.size() < 1){
+        if(activeUsers.size() <= 1){
             MessagesUtils.addReaction(message, "There are no users to be hugged.", EmojiEnum.X);
             return;
         }
