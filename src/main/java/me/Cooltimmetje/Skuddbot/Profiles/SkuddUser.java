@@ -52,6 +52,7 @@ public class SkuddUser {
     private boolean trackMe;
     private boolean analyticsMention;
     private boolean xpPrivate;
+    private boolean mentionMe;
 
     //---- USER STATS ----
     private int xpStreak;
@@ -265,6 +266,8 @@ public class SkuddUser {
                 return isAnalyticsMention()+"";
             case XP_PRIVATE:
                 return isXpPrivate()+"";
+            case MENTION_ME:
+                return isMentionMe()+"";
         }
         return null;
     }
@@ -332,6 +335,9 @@ public class SkuddUser {
             case XP_PRIVATE:
                 this.xpPrivate = booleanValue;
                 return null;
+            case MENTION_ME:
+                this.mentionMe = booleanValue;
+                return null;
         }
     }
 
@@ -380,6 +386,7 @@ public class SkuddUser {
      * @param value The value that should be set.
      * @return When the value was changed successfully it returns 'null'. When a error occurred it returns what went wrong.
      */
+    @SuppressWarnings("Duplicates")
     public String setStat(UserStats stat, String value){
         double doubleValue = 0;
         boolean booleanValue = false;

@@ -4,6 +4,7 @@ import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
@@ -48,12 +49,15 @@ public class HugCommand {
             randomUser = message.getGuild().getUserByID(activeUsers.get(MiscUtils.randomInt(0, activeUsers.size() - 1)));
         }
 
+        SkuddUser pickedUser = ProfileManager.getDiscord(randomUser.getStringID(), guild.getStringID(), true);
+        String userMention = pickedUser.isMentionMe() ? randomUser.mention() : randomUser.getDisplayName(guild);
+
         if(user.getLongID() == Constants.JASCH_ID){
-            MessagesUtils.sendPlain("FUCK YOU " + randomUser.getDisplayName(guild), channel, false);
+            MessagesUtils.sendPlain("FUCK YOU " + userMention.toUpperCase(), channel, false);
             return;
         }
 
-        MessagesUtils.sendPlain("*hugs " + randomUser.getDisplayName(guild) + "*", channel, false);
+        MessagesUtils.sendPlain("*hugs " + userMention + "*", channel, false);
     }
 
 }
