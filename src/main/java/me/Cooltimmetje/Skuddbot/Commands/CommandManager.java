@@ -114,6 +114,8 @@ public class CommandManager {
                 case "!hug":
                     HugCommand.run(event.getMessage());
                     break;
+                case "!punch":
+                    PunchCommand.run(event.getMessage());
 
                 //Pogo Gravesend
                 case "!pogo_setup":
