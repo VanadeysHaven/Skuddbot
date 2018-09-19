@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * This allows people to challenge each other. Winner is picked at random.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.32-ALPHA
  * @since v0.4.3-ALPHA
  */
 
@@ -82,7 +82,7 @@ public class ChallengeCommand {
             senderMessage.put(message.getAuthor().getStringID(), message.getStringID());
 
             IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + message.getAuthor().getDisplayName(message.getGuild()) + "** has challenged **" + message.getMentions().get(0).getDisplayName(message.getGuild()) + "** to a fight! " +
-                    "To accept type `!challenge @" + message.getAuthor().getName()  + "#" + message.getAuthor().getDiscriminator() + "` or click the reaction below!", message.getChannel(), false);
+                    "To accept click the reaction below!", message.getChannel(), false);
             messageBot.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias()));
 
             botMessage.put(message.getAuthor().getStringID(), messageBot.getStringID());
@@ -124,12 +124,20 @@ public class ChallengeCommand {
         cooldowns.put(challengerTwo.getStringID(), System.currentTimeMillis());
 
         IUser preWinner = (MiscUtils.randomInt(1,2) == 1) ? challengerOne : challengerTwo;
-        if(Constants.rigged.contains(challengerOne.getStringID())){
-            preWinner = challengerOne;
+        if(Constants.rigged.containsKey(challengerOne.getStringID())){
+            if(Constants.rigged.get(challengerOne.getStringID())){
+                preWinner = challengerOne;
+            } else {
+                preWinner = challengerTwo;
+            }
             Constants.rigged.remove(challengerOne.getStringID());
         }
-        if(Constants.rigged.contains(challengerTwo.getStringID())){
-            preWinner = challengerTwo;
+        if(Constants.rigged.containsKey(challengerTwo.getStringID())){
+            if(Constants.rigged.get(challengerTwo.getStringID())) {
+                preWinner = challengerTwo;
+            } else {
+                preWinner = challengerOne;
+            }
             Constants.rigged.remove(challengerTwo.getStringID());
         }
         final IUser winner = preWinner;

@@ -12,5 +12,8 @@
         - `!hug`
         - `!punch`
      
+## Changed
+- Removed the command way of accepting a challenge from the initial message.
+  - Typing the command **WILL STILL** accept the challenge.
 ## Fixed
 - Admin ID's not being recognized.
