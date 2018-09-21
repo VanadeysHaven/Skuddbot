@@ -60,6 +60,7 @@ public class Server {
     private boolean streamLive;
     private boolean allowAnalytics;
     private boolean allowRewards;
+    private String arenaName;
 
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
@@ -195,6 +196,8 @@ public class Server {
                 return isAllowAnalytics() + "";
             case ALLOW_REWARDS:
                 return isAllowRewards() + "";
+            case ARENA_NAME:
+                return getArenaName();
         }
     }
 
@@ -345,6 +348,9 @@ public class Server {
                 return null;
             case ALLOW_REWARDS:
                 setAllowRewards(booleanValue);
+                return null;
+            case ARENA_NAME:
+                setArenaName(value);
                 return null;
         }
     }

@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands.Useless;
 
+import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IEmoji;
@@ -20,7 +21,7 @@ public class PanicCommand {
         IGuild guild = message.getGuild();
         List<IEmoji> emojis = guild.getEmojis();
 
-        if(message.getAuthor().getLongID() == 148376320726794240L){
+        if(message.getAuthor().getLongID() == Constants.JASCH_ID){
             MessagesUtils.sendPlain("Go away jasch...", message.getChannel(), false);
         } else {
             MessagesUtils.sendPlain(((emojis.size() == 0) ? ("No emotes? PANIC!") : ("EVERYONE PANIC " + emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())), message.getChannel(), false);

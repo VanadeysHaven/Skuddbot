@@ -4,6 +4,8 @@ import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
+import me.Cooltimmetje.Skuddbot.Profiles.Server;
+import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
@@ -104,6 +106,7 @@ public class ChallengeCommand {
     }
 
     public static void fight(IUser challengerOne, IUser challengerTwo, IMessage message, IChannel channel){
+        Server server = ServerManager.getServer(channel.getGuild().getStringID());
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
 
         exec.schedule(() -> {
@@ -143,7 +146,7 @@ public class ChallengeCommand {
         final IUser winner = preWinner;
 
         IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + challengerOne.getDisplayName(channel.getGuild()) + "** and **" +
-                challengerTwo.getDisplayName(channel.getGuild()) + "** go head to head in the Rayscooter arena, who will win? 3... 2... 1... **FIGHT!**", channel, false);
+                challengerTwo.getDisplayName(channel.getGuild()) + "** go head to head in " + server.getArenaName() + ", who will win? 3... 2... 1... **FIGHT!**", channel, false);
         messageBot.getChannel().toggleTypingStatus();
 
         exec.schedule(() -> {

@@ -9,6 +9,6 @@ package me.Cooltimmetje.Skuddbot.Enums;
  */
 public enum ServerSettingsCats {
 
-    XP, WELCOME_GOODBYE, DISCORD, TWITCH, ANALYTICS;
+    XP, WELCOME_GOODBYE, DISCORD, TWITCH, ANALYTICS, MINI_GAMES
 
 }
