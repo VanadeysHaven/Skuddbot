@@ -11,6 +11,8 @@
      - This applies to the following commands:
         - `!hug`
         - `!punch`
+- Server setting: `ARENA_NAME`
+  - This will define the arena name in `!challenge`.
      
 ## Changed
 - Removed the command way of accepting a challenge from the initial message.

@@ -95,7 +95,7 @@ public class ServerSettingsCommand {
                     }
                 }
                 String value = message.getContent().split(" ")[2];
-                if(setting == ServerSettings.WELCOME_MESSAGE || setting == ServerSettings.GOODBYE_MESSAGE || setting == ServerSettings.ADMIN_ROLE || setting == ServerSettings.ROLE_ON_JOIN){
+                if(setting == ServerSettings.WELCOME_MESSAGE || setting == ServerSettings.GOODBYE_MESSAGE || setting == ServerSettings.ADMIN_ROLE || setting == ServerSettings.ROLE_ON_JOIN || setting == ServerSettings.ARENA_NAME){
                     StringBuilder sb = new StringBuilder();
                     String[] args = message.getContent().split(" ");
                     for(int i=2; i < args.length; i++){
