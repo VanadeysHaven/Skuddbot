@@ -65,15 +65,17 @@ public class Skuddbot {
 
             listenersReady = true;
             Runtime.getRuntime().addShutdownHook(new Thread(() -> terminate(true)));
-            MessagesUtils.sendPlain(":robot: Startup sequence complete!\n\n" +
-                            "**Status:**\n```\n" +
-                            "> Discord | Connected | Logged in as: " + this.getSkuddbot().getOurUser().getName() + "#" + this.getSkuddbot().getOurUser().getDiscriminator() + " / ID: " + this.getSkuddbot().getOurUser().getStringID() + "\n" +
-                            "> Twitch  | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[3] + "\n" +
-                            "> MySQL   | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[1] + "\n```\n" +
-                            "**Build:**\n```\n" +
-                            "> Built:   " + Constants.config.get("built_on") + " | Deployed: " + Constants.config.get("deployed_on") + "\n" +
-                            "> Version: " + Constants.config.get("version") + " | " + Constants.config.get("branch") + " > " + Constants.config.get("deployed_from") + "\n```",
-                    Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
+            if(Main.getInstance().getSkuddbot().getOurUser().getStringID().equals("209779500018434058")) {
+                MessagesUtils.sendPlain(":robot: Startup sequence complete!\n\n" +
+                                "**Status:**\n```\n" +
+                                "> Discord | Connected | Logged in as: " + this.getSkuddbot().getOurUser().getName() + "#" + this.getSkuddbot().getOurUser().getDiscriminator() + " / ID: " + this.getSkuddbot().getOurUser().getStringID() + "\n" +
+                                "> Twitch  | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[3] + "\n" +
+                                "> MySQL   | Connected | Logged in as: " + Constants.STARTUP_ARGUMENTS[1] + "\n```\n" +
+                                "**Build:**\n```\n" +
+                                "> Built:   " + Constants.config.get("built_on") + " | Deployed: " + Constants.config.get("deployed_on") + "\n" +
+                                "> Version: " + Constants.config.get("version") + " | " + Constants.config.get("branch") + " > " + Constants.config.get("deployed_from") + "\n```",
+                        Main.getInstance().getSkuddbot().getChannelByID(Constants.LOG_CHANNEL), false);
+            }
         }
     }
 

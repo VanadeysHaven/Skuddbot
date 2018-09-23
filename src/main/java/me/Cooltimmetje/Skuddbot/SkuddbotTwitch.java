@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot;
 
+import me.Cooltimmetje.Skuddbot.Commands.ChallengeCommand;
 import me.Cooltimmetje.Skuddbot.Commands.TwitchLinkCommand;
 import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -91,9 +92,9 @@ public class SkuddbotTwitch extends PircBot{
                 }
             } else if (message.startsWith("!reverse ")) {
                 reverseCommand(message, channel, sender);
-            } else if (message.startsWith("!toggletracking")){
-                if(cooldown.containsKey(sender)){
-                    if((System.currentTimeMillis() - cooldown.get(sender)) > 30000) {
+            } else if (message.startsWith("!toggletracking")) {
+                if (cooldown.containsKey(sender)) {
+                    if ((System.currentTimeMillis() - cooldown.get(sender)) > 30000) {
                         SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
                         boolean currentlyEnabled = user.isTrackMe();
                         user.setTrackMe(!user.isTrackMe());
@@ -111,6 +112,8 @@ public class SkuddbotTwitch extends PircBot{
                             (user.isLinked() ? " | NOTE: Because your account is linked to Discord, tracking has also been " + (currentlyEnabled ? "disabled" : "enabled") + " on Discord." : ""));
                     cooldown.put(sender, System.currentTimeMillis());
                 }
+            } else if(message.toLowerCase().startsWith("s!")) {
+                commands(sender, message, channel);
             } else {
                 if (!Constants.bannedUsers.contains(sender)) {
                     SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
@@ -145,6 +148,14 @@ public class SkuddbotTwitch extends PircBot{
         }
 
         Logger.info(MessageFormat.format("Twitch Message: {0} - {1}: {2} - XP: +{3}", channel, sender, message, gain));
+    }
+
+    private void commands(String sender, String message, String channel){
+        switch (message.split(" ")[0]){
+            case "s!challenge":
+                ChallengeCommand.run(sender, message, channel);
+                break;
+        }
     }
 
     private void reverseCommand(String message, String channel, String sender) {
@@ -212,7 +223,7 @@ public class SkuddbotTwitch extends PircBot{
     }
 
     public void send(String message, String channel){
-        sendMessage("#" + channel, message);
+        sendMessage(channel, message);
     }
 
 }

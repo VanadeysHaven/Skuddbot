@@ -7,10 +7,7 @@ import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
-import me.Cooltimmetje.Skuddbot.Utilities.Constants;
-import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
-import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.*;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IChannel;
@@ -20,6 +17,7 @@ import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,6 +39,8 @@ public class ChallengeCommand {
 
     public static HashMap<String, Long> cooldowns = new HashMap<>();
 
+
+    // ---Discord Stuff---
     public static HashMap<String, String> senderMessage = new HashMap<>();
     public static HashMap<String, String> botMessage = new HashMap<>();
     public static HashMap<IMessage, IMessage> botIMessage = new HashMap<>();
@@ -94,6 +94,9 @@ public class ChallengeCommand {
 
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
+        if(!botIMessage.containsKey(event.getReaction().getMessage().getAuthor())){
+            return;
+        }
         IUser challengerOne = botIMessage.get(event.getReaction().getMessage()).getAuthor();
         if(botMessage.containsValue(event.getReaction().getMessage().getStringID())){
             if(event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())){
@@ -166,5 +169,67 @@ public class ChallengeCommand {
         if(senderMessage.isEmpty()){ //Just for memory sake
             botIMessage.clear();
         }
+    }
+
+    // ---Twitch Stuff---
+    public static HashMap<String, String> outstandingChallengesTwitch = new HashMap<>();
+
+    public static void run(String sender, String message, String twitchChannel){
+        String[] args = message.toLowerCase().split(" ");
+
+
+        if(cooldowns.containsKey(sender)){
+            if((System.currentTimeMillis() - cooldowns.get(sender)) < (cooldown*1000)){
+                return;
+            }
+        }
+
+        if(args.length < 2){
+            Main.getSkuddbotTwitch().send(sender + ", you did not specify anyone to challenge!", twitchChannel);
+            return;
+        }
+
+        if(args[1].startsWith("@")){
+            args[1] = args[1].substring(1);
+        }
+
+        if(args[1].equalsIgnoreCase(sender)){
+            Main.getSkuddbotTwitch().send(sender + ", you can't challenge yourself!", twitchChannel);
+            return;
+        }
+
+        if(args[1].equalsIgnoreCase(Main.getSkuddbotTwitch().getNick())){
+            Main.getSkuddbotTwitch().send(sender + ", you can't challenge me!", twitchChannel);
+            return;
+        }
+
+        if(outstandingChallengesTwitch.containsKey(args[1]) && outstandingChallengesTwitch.get(args[1]).equalsIgnoreCase(sender)){ //Challenge was accepted
+            fight(args[1], sender, twitchChannel);
+        } else { //Challenge was not accepted
+            outstandingChallengesTwitch.put(sender, args[1]);
+
+            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} has challenged {1} to a fight!  Type s!challenge {0} to accept.", sender, args[1]), twitchChannel);
+        }
+    }
+
+    public static void fight(String challengerOne, String challengerTwo, String twitchChannel){
+        Server server = ServerManager.getTwitch(twitchChannel.substring(1));
+        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
+
+        cooldowns.put(challengerOne, System.currentTimeMillis());
+        cooldowns.put(challengerTwo, System.currentTimeMillis());
+        outstandingChallengesTwitch.remove(challengerOne);
+
+        String winner = (MiscUtils.randomInt(1,2) == 1) ? challengerOne : challengerTwo;
+        //TODO: MAKE RIGGED
+
+        Main.getSkuddbotTwitch().send(MessageFormat.format("{0} and {1} go head to head in {2}, who will win? 3... 2... 1... FIGHT!", challengerOne, challengerTwo, server.getArenaName()), twitchChannel);
+
+        exec.schedule(() -> {
+            Main.getSkuddbotTwitch().send(MessageFormat.format("The crowd goes wild but suddenly a scream of victory sounds! {0} has won the fight! | {0}: +{1} XP", winner, xpReward), twitchChannel);
+
+            SkuddUser user = ProfileManager.getTwitch(winner, twitchChannel.substring(1), true);
+            user.setXp(user.getXp() + xpReward);
+        }, 5, TimeUnit.SECONDS);
     }
 }

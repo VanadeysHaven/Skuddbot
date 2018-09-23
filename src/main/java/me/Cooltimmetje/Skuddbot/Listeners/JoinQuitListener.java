@@ -33,7 +33,7 @@ public class JoinQuitListener {
         Server server = ServerManager.getServer(event.getGuild().getStringID());
         if(server.getWelcomeMessage() != null) {
             String message = ServerManager.getServer(event.getGuild().getStringID()).getWelcomeMessage()
-                    .replace("$user", event.getUser().mention())
+                    .replace("$user", event.getUser().getName())
                     .replace("$guild", event.getGuild().getName())
                     .replace("$nl","\n");
             IChannel channel = server.getWelcomeGoodbyeChannel() != null ?
