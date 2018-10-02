@@ -94,7 +94,7 @@ public class ChallengeCommand {
 
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
-        if(!botIMessage.containsKey(event.getReaction().getMessage().getAuthor())){
+        if(!botIMessage.containsKey(event.getReaction().getMessage())){
             return;
         }
         IUser challengerOne = botIMessage.get(event.getReaction().getMessage()).getAuthor();
