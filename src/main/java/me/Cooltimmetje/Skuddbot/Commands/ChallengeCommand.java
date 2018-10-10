@@ -147,6 +147,14 @@ public class ChallengeCommand {
             Constants.rigged.remove(challengerTwo.getStringID());
         }
         final IUser winner = preWinner;
+        IUser loser = preWinner == challengerOne ? challengerTwo : challengerOne;
+
+        SkuddUser suWinner = ProfileManager.getDiscord(preWinner.getStringID(), channel.getGuild().getStringID(), true);
+        SkuddUser suLoser = ProfileManager.getDiscord(loser.getStringID(), channel.getGuild().getStringID(), true);
+
+        suLoser.setChallengeStreak(0);
+        suWinner.setChallengeStreak(suWinner.getChallengeStreak() + 1);
+        String streakString = suWinner.getChallengeStreak() == 1 ? "**Win streak started:** 1 win" : "**Win streak continued:** " + suWinner.getChallengeStreak() + " wins";
 
         IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + challengerOne.getDisplayName(channel.getGuild()) + "** and **" +
                 challengerTwo.getDisplayName(channel.getGuild()) + "** go head to head in " + server.getArenaName() + ", who will win? 3... 2... 1... **FIGHT!**", channel, false);
@@ -155,12 +163,10 @@ public class ChallengeCommand {
         exec.schedule(() -> {
             try {
                 IMessage messageResult = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " The crowd goes wild but suddenly a scream of victory sounds! **" + winner.getDisplayName(channel.getGuild()) + "** has won the fight!\n\n" +
-                        winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + " " + EmojiHelper.getEmoji("xp_icon") + "*", channel, false);
+                        winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + " " + EmojiHelper.getEmoji("xp_icon") + "* - " + streakString, channel, false);
 
-                SkuddUser user = ProfileManager.getDiscord(winner.getStringID(), message.getGuild().getStringID(), true);
-
-                user.setXp(user.getXp() + xpReward);
-                user.calcXP(false, messageResult);
+                suWinner.setXp(suWinner.getXp() + xpReward);
+                suWinner.calcXP(false, messageResult);
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
             }

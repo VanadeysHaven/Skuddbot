@@ -58,6 +58,7 @@ public class SkuddUser {
     private int xpStreak;
     private int msgStreak;
     private int wallStreak;
+    private int challengeStreak;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
@@ -435,6 +436,9 @@ public class SkuddUser {
             case MESSAGES_POSTED_STREAK:
                 this.msgStreak = intValue;
                 return null;
+            case CHALLENGE_WIN_STREAK:
+                this.challengeStreak = intValue;
+                return null;
         }
     }
 
@@ -452,6 +456,8 @@ public class SkuddUser {
                 return getWallStreak()+"";
             case XP_GAIN_STREAK:
                 return getXpStreak()+"";
+            case CHALLENGE_WIN_STREAK:
+                return getChallengeStreak()+"";
             default:
                 return null;
         }

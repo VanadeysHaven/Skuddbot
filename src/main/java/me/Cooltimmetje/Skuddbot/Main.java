@@ -4,7 +4,6 @@ import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.PogoConstants;
 import me.Cooltimmetje.Skuddbot.Utilities.ActivityChecker;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
-import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import org.jibble.pircbot.IrcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
