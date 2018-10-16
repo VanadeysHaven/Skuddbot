@@ -106,6 +106,7 @@ public class CommandManager {
                     ChallengeCommand.run(event.getMessage());
                     break;
                 case "!clearcooldowns":
+                case "!cc":
                     ClearCooldownCommand.run(event.getMessage());
                     break;
                 case "!randomtest":
