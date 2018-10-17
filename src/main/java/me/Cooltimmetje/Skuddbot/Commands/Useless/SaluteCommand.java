@@ -42,15 +42,11 @@ public class SaluteCommand {
                 }
             }
 
-            if (message.getAuthor().getLongID() == 91949596737011712L) {
-                MessagesUtils.sendPlain(Main.getInstance().getSkuddbot().getGuildByID(233573247021481995L).getEmojiByID(292331476362723328L).toString() + "7", message.getChannel(), false);
+            int chance = MiscUtils.randomInt(0, 100);
+            if (chance <= 5 && guild.getLongID() == 198483566026424321L) {
+                MessagesUtils.sendPlain(MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + emojis.get(MiscUtils.randomInt(0, emojis.size())).toString() + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + "**7**" + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)), message.getChannel(), false);
             } else {
-                int chance = MiscUtils.randomInt(0, 100);
-                if (chance <= 5 && guild.getLongID() == 198483566026424321L) {
-                    MessagesUtils.sendPlain(MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + emojis.get(MiscUtils.randomInt(0, emojis.size())).toString() + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + "**7**" + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)), message.getChannel(), false);
-                } else {
-                    MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
-                }
+                MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel(), false);
             }
 
             cooldown.put(message.getAuthor().getStringID(), System.currentTimeMillis());
