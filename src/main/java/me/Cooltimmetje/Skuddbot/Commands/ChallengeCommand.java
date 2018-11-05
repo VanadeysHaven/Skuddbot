@@ -170,7 +170,7 @@ public class ChallengeCommand {
         exec.schedule(() -> {
             try {
                 IMessage messageResult = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " The crowd goes wild but suddenly a scream of victory sounds! **" + winner.getDisplayName(channel.getGuild()) + "** has won the fight!\n\n" +
-                        winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + " " + EmojiHelper.getEmoji("xp_icon") + (finalStreakString != null ? "* - " + finalStreakString : ""), channel, false);
+                        winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + "* " + EmojiHelper.getEmoji("xp_icon") + (finalStreakString != null ? "* - " + finalStreakString : ""), channel, false);
 
                 suWinner.setXp(suWinner.getXp() + xpReward + bonusXP);
                 suWinner.calcXP(false, messageResult);
