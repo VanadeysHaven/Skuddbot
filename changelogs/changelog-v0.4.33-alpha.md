@@ -1,6 +1,7 @@
-# v0.4.32-ALPHA
+# v0.4.34-ALPHA
 
 ## Added
 - Winstreaks for `!challenge`.
   - You gain more XP the bigger your streak is. (Thanks for the idea Lockstar)
     - Bonus XP is calculated with this formula: `bonusXP = (winStreak - 1) * 25`.
+- `!puppy`
