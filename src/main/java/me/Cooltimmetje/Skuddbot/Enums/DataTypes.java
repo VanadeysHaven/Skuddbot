@@ -16,7 +16,8 @@ public enum DataTypes {
     PLAYING_CHRISTMAS(128),
     PLAYING_NEW_YEAR(128),
     ERROR(512),
-    ALIVE(512);
+    ALIVE(512),
+    PUPPY(512);
 
     private int maxLength;
 

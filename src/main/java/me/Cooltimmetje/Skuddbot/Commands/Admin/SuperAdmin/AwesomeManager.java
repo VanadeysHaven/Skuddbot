@@ -39,6 +39,7 @@ public class AwesomeManager {
                                             "- Add messages to the playing status pool. - `!addmsg playing <message>` *pm only*\n" +
                                             "- Add messages to the error messages pool. - `!addmsg error <message>` *pm only*\n" +
                                             "- Add messages to the \"I'm alive\" messages pool. - `!addmsg alive <message>` *pm only*\n" +
+                                            "- Add messages to the \"Puppy\" images pool. - `!addmsg puppy <url to image>` *pm only*\n" +
                                             "- Set a custom `!ping` message! - `!setping <message>` *pm only*\n" +
                                             "- Gain access to the `!game` command.\n\n" +
                                             "**VERY IMPORTANT NOTE: Once you added a message, it cannot be removed unless you ask Timmy.** Please think twice before you add something. We also track who added what. Just saying...\n\n" +

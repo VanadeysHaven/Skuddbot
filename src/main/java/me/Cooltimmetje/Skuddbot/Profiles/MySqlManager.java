@@ -24,6 +24,8 @@ import java.util.HashMap;
  * @version v0.4.31-ALPHA
  * @since v0.1-ALPHA
  */
+
+@SuppressWarnings("Duplicates")
 public class MySqlManager {
 
     private static HikariDataSource hikari = null;

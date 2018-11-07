@@ -117,6 +117,20 @@ public class CommandManager {
                     break;
                 case "!punch":
                     PunchCommand.run(event.getMessage());
+                    break;
+                case "!puppy":
+                case "!emergencypuppy":
+                case "!wuff":
+                case "!dogger":
+                case "!doggo":
+                case "!pupper":
+                case "!riit":
+                case "!rogged":
+                case "!help":
+                case "!woowoo":
+                case "!Defectius must be swelling up right now":
+                    PuppyCommand.run(event.getMessage());
+                    break;
 
                 //Pogo Gravesend
                 case "!pogo_setup":

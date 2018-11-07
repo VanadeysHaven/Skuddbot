@@ -190,7 +190,6 @@ public class ChallengeCommand {
     public static void run(String sender, String message, String twitchChannel){
         String[] args = message.toLowerCase().split(" ");
 
-
         if(cooldowns.containsKey(sender)){
             if((System.currentTimeMillis() - cooldowns.get(sender)) < (cooldown*1000)){
                 return;
