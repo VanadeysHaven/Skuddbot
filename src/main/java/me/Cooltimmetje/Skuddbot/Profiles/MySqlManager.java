@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.Cooltimmetje.Skuddbot.Commands.Useless.PuppyCommand;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Main;
@@ -1078,6 +1079,10 @@ public class MySqlManager {
             while(rs.next()){
                 Constants.awesomeStrings.put(rs.getString(4), DataTypes.valueOf(rs.getString(3).toUpperCase()));
                 Logger.info("Loaded donator message \"" + rs.getString(4) + "\" with type " + rs.getString(3).toUpperCase() + ".");
+
+                if(DataTypes.valueOf(rs.getString(3).toUpperCase()) == DataTypes.PUPPY){
+                    PuppyCommand.puppyPictures++;
+                }
             }
         } catch (SQLException e){
             e.printStackTrace();

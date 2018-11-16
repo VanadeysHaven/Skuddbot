@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import me.Cooltimmetje.Skuddbot.Commands.Useless.PuppyCommand;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
@@ -52,9 +53,13 @@ public class AddMessageCommand {
                         MessagesUtils.sendPlain(":warning: Your message is exceeding the __" + dataType.getMaxLength() + " character limit__. To add it you need to make it shorter." +
                                 "For your convenience: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel(), false);
                 } else {
-                    MessagesUtils.sendSuccess("Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", message.getChannel());
+                    MessagesUtils.addReaction(message, "Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", EmojiEnum.WHITE_CHECK_MARK);
                     MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getStringID());
                     Constants.awesomeStrings.put(trimmed, dataType);
+
+                    if(dataType == DataTypes.PUPPY){
+                        PuppyCommand.puppyPictures++;
+                    }
                 }
             } else {
                 MessagesUtils.addReaction(message,"Not enough arguments: !addmsg <type> <message>", EmojiEnum.X);
