@@ -5,3 +5,8 @@
   - You gain more XP the bigger your streak is. (Thanks for the idea Lockstar)
     - Bonus XP is calculated with this formula: `bonusXP = (winStreak - 1) * 25`.
 - `!puppy`
+
+## Improved
+- Challenge now properly seperates between servers.
+  - Cooldowns are now per server.
+  - You can now have one outstanding challenge per server.
