@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
+import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeHandler;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -62,6 +63,8 @@ public class Server {
     private boolean allowRewards;
     private String arenaName;
 
+    private ChallengeHandler challengeHandler;
+
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
     public HashMap<Long,Long> lastSeen = new HashMap<>();
@@ -100,6 +103,8 @@ public class Server {
         Logger.info(MessageFormat.format("Initialized {0} (ID: {1})",guild.getName(),guild.getStringID()));
 
         MessagesUtils.addReaction(message, null, EmojiEnum.WHITE_CHECK_MARK);
+
+        this.challengeHandler = new ChallengeHandler(serverID);
     }
 
     /**
@@ -123,6 +128,8 @@ public class Server {
         }
 
         Logger.info("[LoadServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
+
+        this.challengeHandler = new ChallengeHandler(serverID);
     }
 
     /**

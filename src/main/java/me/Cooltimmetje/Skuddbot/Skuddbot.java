@@ -1,12 +1,12 @@
 package me.Cooltimmetje.Skuddbot;
 
-import me.Cooltimmetje.Skuddbot.Commands.ChallengeCommand;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Listeners.JoinQuitListener;
 import me.Cooltimmetje.Skuddbot.Listeners.TwitchLiveListener;
+import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.RoleAdder;
@@ -58,7 +58,7 @@ public class Skuddbot {
             skuddbot.getDispatcher().registerListener(new JoinQuitListener());
             skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
             skuddbot.getDispatcher().registerListener(new MessagesUtils());
-            skuddbot.getDispatcher().registerListener(new ChallengeCommand());
+            skuddbot.getDispatcher().registerListener(new ChallengeManager());
             skuddbot.getDispatcher().registerListener(new RoleAdder());
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();

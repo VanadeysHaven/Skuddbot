@@ -1,7 +1,7 @@
 package me.Cooltimmetje.Skuddbot;
 
-import me.Cooltimmetje.Skuddbot.Commands.ChallengeCommand;
 import me.Cooltimmetje.Skuddbot.Commands.TwitchLinkCommand;
+import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
@@ -62,7 +62,7 @@ public class SkuddbotTwitch extends PircBot{
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions","Duplicates"})
     protected void onMessage(String channel, String sender, String login, String hostname, String message) {
         int gain = 0;
         if (twitchServers.containsKey(channel.replace("#", " ").trim())) {
@@ -153,7 +153,7 @@ public class SkuddbotTwitch extends PircBot{
     private void commands(String sender, String message, String channel){
         switch (message.split(" ")[0]){
             case "s!challenge":
-                ChallengeCommand.run(sender, message, channel);
+                ChallengeManager.run(sender, message, channel);
                 break;
         }
     }

@@ -1,7 +1,6 @@
 package me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend;
 
 import lombok.Getter;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 /**
  * Corresponding roles for the different emoji.
