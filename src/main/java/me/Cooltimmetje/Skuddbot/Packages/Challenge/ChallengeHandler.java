@@ -52,6 +52,7 @@ public class ChallengeHandler {
     private HashMap<IMessage, IMessage> botIMessage = new HashMap<>();
 
     private HashMap<IUser, IUser> outstandingChallenges = new HashMap<>();
+    public HashMap<IUser, IUser> targetPunch = new HashMap<>();
 
     public void run(IMessage message) {
         if(cooldowns.containsKey(message.getAuthor().getStringID())){
@@ -95,6 +96,8 @@ public class ChallengeHandler {
 
             botMessage.put(message.getAuthor().getStringID(), messageBot.getStringID());
             botIMessage.put(messageBot, message);
+
+            targetPunch.put(message.getAuthor(), message.getMentions().get(0));
         }
     }
 
@@ -114,6 +117,7 @@ public class ChallengeHandler {
     }
 
     private void fight(IUser challengerOne, IUser challengerTwo, IMessage message, IChannel channel){
+        targetPunch.put(challengerTwo, challengerOne);
         Server server = ServerManager.getServer(channel.getGuild().getStringID());
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
 
@@ -178,6 +182,9 @@ public class ChallengeHandler {
 
                 suWinner.setXp(suWinner.getXp() + xpReward + bonusXP);
                 suWinner.calcXP(false, messageResult);
+
+                targetPunch.remove(challengerOne);
+                targetPunch.remove(challengerTwo);
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
             }
