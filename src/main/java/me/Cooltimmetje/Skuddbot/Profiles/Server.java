@@ -5,7 +5,8 @@ import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
-import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeHandler;
+import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeHandler;
+import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAHandler;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -31,7 +32,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.34-ALPHA
  * @since v0.2-ALPHA
  */
 
@@ -64,6 +65,7 @@ public class Server {
     private String arenaName;
 
     private ChallengeHandler challengeHandler;
+    private FFAHandler ffaHandler;
 
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
@@ -105,6 +107,7 @@ public class Server {
         MessagesUtils.addReaction(message, null, EmojiEnum.WHITE_CHECK_MARK);
 
         this.challengeHandler = new ChallengeHandler(serverID);
+        this.ffaHandler = new FFAHandler(serverID);
     }
 
     /**
@@ -130,6 +133,7 @@ public class Server {
         Logger.info("[LoadServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
 
         this.challengeHandler = new ChallengeHandler(serverID);
+        this.ffaHandler = new FFAHandler(serverID);
     }
 
     /**

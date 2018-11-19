@@ -1,9 +1,10 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
-import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
+import me.Cooltimmetje.Skuddbot.Commands.Admin.ServerSettingsCommand;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Useless.*;
-import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeManager;
+import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
+import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.SetupCommand;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -129,8 +130,10 @@ public class CommandManager {
                 case "!rogged":
                 case "!help":
                 case "!woowoo":
-                case "!Defectius must be swelling up right now":
                     PuppyCommand.run(event.getMessage());
+                    break;
+                case "!ffa":
+                    FFAManager.run(event.getMessage());
                     break;
 
                 //Pogo Gravesend

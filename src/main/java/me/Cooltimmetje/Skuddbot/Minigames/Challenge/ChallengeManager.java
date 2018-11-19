@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Packages.Challenge;
+package me.Cooltimmetje.Skuddbot.Minigames.Challenge;
 
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;

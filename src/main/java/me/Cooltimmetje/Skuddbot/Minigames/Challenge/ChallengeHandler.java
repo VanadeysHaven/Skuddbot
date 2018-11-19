@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Packages.Challenge;
+package me.Cooltimmetje.Skuddbot.Minigames.Challenge;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;

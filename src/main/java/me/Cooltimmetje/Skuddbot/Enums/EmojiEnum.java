@@ -29,4 +29,8 @@ public enum EmojiEnum {
         this.alias = s1;
     }
 
+    public String getString(){
+        return ":" + alias + ":";
+    }
+
 }

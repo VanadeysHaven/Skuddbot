@@ -1,7 +1,7 @@
 package me.Cooltimmetje.Skuddbot;
 
 import me.Cooltimmetje.Skuddbot.Commands.TwitchLinkCommand;
-import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeManager;
+import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;

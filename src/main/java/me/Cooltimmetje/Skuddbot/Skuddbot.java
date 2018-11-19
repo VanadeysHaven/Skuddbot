@@ -6,7 +6,8 @@ import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Listeners.JoinQuitListener;
 import me.Cooltimmetje.Skuddbot.Listeners.TwitchLiveListener;
-import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeManager;
+import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
+import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.RoleAdder;
@@ -42,8 +43,7 @@ public class Skuddbot {
     public void login() throws DiscordException {
         skuddbot = new ClientBuilder().withToken(token).setMaxReconnectAttempts(3).login();
         if(!preReadyListenersReady) {
-            skuddbot.getDispatcher().registerListener(this);
-            skuddbot.getDispatcher().registerListener(new CreateServerListener());
+            skuddbot.getDispatcher().registerListeners(this, new CreateServerListener());
 
             preReadyListenersReady = true;
         }
@@ -53,13 +53,10 @@ public class Skuddbot {
     public void onReady(ReadyEvent event){
         if(!listenersReady){
             MiscUtils.setPlaying(true);
-            skuddbot.getDispatcher().registerListener(new CommandManager());
-            skuddbot.getDispatcher().registerListener(new XPGiver());
-            skuddbot.getDispatcher().registerListener(new JoinQuitListener());
-            skuddbot.getDispatcher().registerListener(new TwitchLiveListener());
-            skuddbot.getDispatcher().registerListener(new MessagesUtils());
-            skuddbot.getDispatcher().registerListener(new ChallengeManager());
-            skuddbot.getDispatcher().registerListener(new RoleAdder());
+
+            skuddbot.getDispatcher().registerListeners(new CommandManager(), new XPGiver(), new JoinQuitListener(), new TwitchLiveListener(), new MessagesUtils(),
+            new ChallengeManager(), new RoleAdder(), new FFAManager());
+
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();
 
@@ -117,6 +114,7 @@ public class Skuddbot {
     public IDiscordClient getSkuddbot(){
         return skuddbot;
     }
+
 
 
 

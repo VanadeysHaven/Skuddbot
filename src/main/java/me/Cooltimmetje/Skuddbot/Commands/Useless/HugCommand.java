@@ -1,7 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands.Useless;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
-import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeHandler;
+import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeHandler;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
