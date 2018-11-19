@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Commands;
+package me.Cooltimmetje.Skuddbot.Packages.Challenge;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
@@ -8,7 +8,6 @@ import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.*;
-import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
@@ -32,23 +31,30 @@ import java.util.concurrent.TimeUnit;
  * @since v0.4.3-ALPHA
  */
 
-public class ChallengeCommand {
+public class ChallengeHandler {
 
-    public static int cooldown = 300; //cooldown in seconds
-    public static int xpReward = 50;
-    public static int streakReward = 25;
+    private String serverID;
 
-    public static HashMap<String, Long> cooldowns = new HashMap<>();
+    public ChallengeHandler(String serverID){
+        this.serverID = serverID;
+        Logger.info("Creating challenge handler for Server with ID: " + serverID);
+    }
 
+    private int cooldown = 300; //cooldown in seconds
+    private int xpReward = 50;
+    private int streakReward = 25;
+
+    public HashMap<String, Long> cooldowns = new HashMap<>();
 
     // ---Discord Stuff---
-    public static HashMap<String, String> senderMessage = new HashMap<>();
-    public static HashMap<String, String> botMessage = new HashMap<>();
-    public static HashMap<IMessage, IMessage> botIMessage = new HashMap<>();
+    private HashMap<String, String> senderMessage = new HashMap<>();
+    private HashMap<String, String> botMessage = new HashMap<>();
+    private HashMap<IMessage, IMessage> botIMessage = new HashMap<>();
 
-    public static HashMap<IUser, IUser> outstandingChallenges = new HashMap<>();
+    private HashMap<IUser, IUser> outstandingChallenges = new HashMap<>();
+    public HashMap<IUser, IUser> targetPunch = new HashMap<>();
 
-    public static void run(IMessage message) {
+    public void run(IMessage message) {
         if(cooldowns.containsKey(message.getAuthor().getStringID())){
             if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getStringID())) < (cooldown * 1000)){
                 MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND);
@@ -90,11 +96,12 @@ public class ChallengeCommand {
 
             botMessage.put(message.getAuthor().getStringID(), messageBot.getStringID());
             botIMessage.put(messageBot, message);
+
+            targetPunch.put(message.getAuthor(), message.getMentions().get(0));
         }
     }
 
-    @EventSubscriber
-    public void onReaction(ReactionAddEvent event){
+    public void reactionAccept(ReactionAddEvent event){
         if(!botIMessage.containsKey(event.getReaction().getMessage())){
             return;
         }
@@ -109,7 +116,8 @@ public class ChallengeCommand {
         }
     }
 
-    public static void fight(IUser challengerOne, IUser challengerTwo, IMessage message, IChannel channel){
+    private void fight(IUser challengerOne, IUser challengerTwo, IMessage message, IChannel channel){
+        targetPunch.put(challengerTwo, challengerOne);
         Server server = ServerManager.getServer(channel.getGuild().getStringID());
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
 
@@ -170,10 +178,13 @@ public class ChallengeCommand {
         exec.schedule(() -> {
             try {
                 IMessage messageResult = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " The crowd goes wild but suddenly a scream of victory sounds! **" + winner.getDisplayName(channel.getGuild()) + "** has won the fight!\n\n" +
-                        winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + "* " + EmojiHelper.getEmoji("xp_icon") + (finalStreakString != null ? "* - " + finalStreakString : ""), channel, false);
+                        winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + "* " + EmojiHelper.getEmoji("xp_icon") + (finalStreakString != null ? " - " + finalStreakString : ""), channel, false);
 
                 suWinner.setXp(suWinner.getXp() + xpReward + bonusXP);
                 suWinner.calcXP(false, messageResult);
+
+                targetPunch.remove(challengerOne);
+                targetPunch.remove(challengerTwo);
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
                 e.printStackTrace();
             }
@@ -185,9 +196,9 @@ public class ChallengeCommand {
     }
 
     // ---Twitch Stuff---
-    public static HashMap<String, String> outstandingChallengesTwitch = new HashMap<>();
+    private HashMap<String, String> outstandingChallengesTwitch = new HashMap<>();
 
-    public static void run(String sender, String message, String twitchChannel){
+    public void run(String sender, String message, String twitchChannel){
         String[] args = message.toLowerCase().split(" ");
 
         if(cooldowns.containsKey(sender)){
@@ -224,7 +235,7 @@ public class ChallengeCommand {
         }
     }
 
-    public static void fight(String challengerOne, String challengerTwo, String twitchChannel){
+    private void fight(String challengerOne, String challengerTwo, String twitchChannel){
         Server server = ServerManager.getTwitch(twitchChannel.substring(1));
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
 

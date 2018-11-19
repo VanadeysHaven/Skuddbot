@@ -1,7 +1,5 @@
 package me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend;
 
-import me.Cooltimmetje.Skuddbot.Utilities.Constants;
-
 /**
  * PogoConstants for the role assignment on the Gravesend POGO server.
  *

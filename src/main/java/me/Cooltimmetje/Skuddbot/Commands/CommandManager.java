@@ -3,6 +3,7 @@ package me.Cooltimmetje.Skuddbot.Commands;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Useless.*;
+import me.Cooltimmetje.Skuddbot.Packages.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.SetupCommand;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -103,7 +104,7 @@ public class CommandManager {
                     PanicCommand.run(event.getMessage());
                     break;
                 case "!challenge":
-                    ChallengeCommand.run(event.getMessage());
+                    ChallengeManager.run(event.getMessage());
                     break;
                 case "!clearcooldowns":
                 case "!cc":
