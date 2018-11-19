@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Minigames.FreeForAll;
 
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
@@ -20,12 +21,12 @@ public class FFAManager {
     }
 
     @EventSubscriber
-    public static void onReactionAdd(ReactionAddEvent event){
+    public void onReaction(ReactionAddEvent event){
         ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionAdd(event);
     }
 
     @EventSubscriber
-    public static void onReactionRemove(ReactionRemoveEvent event){
+    public void onReactionRemove(ReactionRemoveEvent event){
         ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionRemove(event);
     }
 

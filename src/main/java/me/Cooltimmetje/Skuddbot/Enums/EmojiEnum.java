@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Enums;
 
+import com.vdurmont.emoji.Emoji;
 import lombok.Getter;
 
 /**
@@ -31,6 +32,15 @@ public enum EmojiEnum {
 
     public String getString(){
         return ":" + alias + ":";
+    }
+
+    public static EmojiEnum getByUnicode(String unicodeEmoji){
+        for(EmojiEnum emoji : EmojiEnum.values()){
+            if(emoji.getEmoji().equals(unicodeEmoji)){
+                return emoji;
+            }
+        }
+        return null;
     }
 
 }
