@@ -16,7 +16,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.4-ALPHA
  * @since v0.1-ALPHA
  */
 public class CommandManager {

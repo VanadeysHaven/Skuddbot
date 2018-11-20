@@ -2,12 +2,17 @@ package me.Cooltimmetje.Skuddbot.Minigames.FreeForAll;
 
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
-import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
 import sx.blah.discord.handle.obj.IMessage;
-
+/**
+ * Managing of the different FFA handlers.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4.4-ALPHA
+ * @since v0.4.4-ALPHA
+ */
 public class FFAManager {
 
     public static void clearCooldowns(){

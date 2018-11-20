@@ -15,13 +15,18 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.RequestBuffer;
 
-import java.net.CookieHandler;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
+/**
+ * This class handles the FFA command on a per-server basis.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4.4-ALPHA
+ * @since v0.4.4-ALPHA
+ */
 public class FFAHandler {
 
     private String serverID;

@@ -7,7 +7,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.Reactio
 import sx.blah.discord.handle.obj.IMessage;
 
 /**
- * Managing of different challenge handling.
+ * Managing of challenge handlers.
  *
  * @author Tim (Cooltimmetje)
  * @version v0.4.34-ALPHA

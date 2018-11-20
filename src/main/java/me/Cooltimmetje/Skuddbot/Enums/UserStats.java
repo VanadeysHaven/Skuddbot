@@ -6,7 +6,7 @@ import lombok.Getter;
  * This holds data about user statistics.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.33-ALPHA
+ * @version v0.4.4-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
