@@ -15,7 +15,10 @@ public enum UserStats {
     MESSAGES_POSTED_STREAK ("message_streak",       "0", "Integer"),
     XP_GAIN_STREAK         ("xp_streak",            "0", "Integer"),
     CHAT_WALL_STREAK       ("chat_wall_streak",     "0", "Integer"),
-    CHALLENGE_WIN_STREAK   ("challenge_win_streak", "0", "Integer");
+    CHALLENGE_WIN_STREAK   ("challenge_win_streak", "0", "Integer"),
+    FFA_WINS               ("ffa_wins",             "0", "Integer"),
+    FFA_LOSSES             ("ffa_losses",           "0", "Integer"),
+    FFA_MOST_WIN           ("ffa_most_win",         "0", "Integer");
 
     private String jsonReference;
     private String defaultValue;

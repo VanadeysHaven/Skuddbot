@@ -5,9 +5,14 @@
   - You gain more XP the bigger your streak is. (Thanks for the idea Lockstar)
     - Bonus XP is calculated with this formula: `bonusXP = (winStreak - 1) * 25`.
 - `!puppy`
+- `!ffa`
+  - Free for All fights! - Battle it out with an unlimited* amount of people!
 
 ## Improved
 - Challenge now properly seperates between servers.
   - Cooldowns are now per server.
   - You can now have one outstanding challenge per server.
 - Outstanding and ongoing challenges now cause the involved users to always punch/hug their competitor.
+
+#### Notes
+\*They aren't unlimited, but you know what I mean.

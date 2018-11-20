@@ -59,6 +59,9 @@ public class SkuddUser {
     private int msgStreak;
     private int wallStreak;
     private int challengeStreak;
+    private int ffaWins;
+    private int ffaLosses;
+    private int ffaMostWin;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
@@ -439,6 +442,15 @@ public class SkuddUser {
             case CHALLENGE_WIN_STREAK:
                 this.challengeStreak = intValue;
                 return null;
+            case FFA_WINS:
+                this.ffaWins = intValue;
+                return null;
+            case FFA_LOSSES:
+                this.ffaLosses = intValue;
+                return null;
+            case FFA_MOST_WIN:
+                this.ffaMostWin = intValue;
+                return null;
         }
     }
 
@@ -458,6 +470,12 @@ public class SkuddUser {
                 return getXpStreak()+"";
             case CHALLENGE_WIN_STREAK:
                 return getChallengeStreak()+"";
+            case FFA_WINS:
+                return getFfaWins()+"";
+            case FFA_LOSSES:
+                return getFfaLosses()+"";
+            case FFA_MOST_WIN:
+                return getFfaMostWin()+"";
             default:
                 return null;
         }
