@@ -1,4 +1,4 @@
-# v0.4.34-ALPHA
+# v0.4.41-ALPHA
 
 ## Added
 - Winstreaks for `!challenge`.
@@ -7,7 +7,7 @@
 - `!puppy`
 - `!ffa`
   - Free for All fights! - Battle it out with an unlimited* amount of people!
-
+- Stats for `!challenge`
 ## Improved
 - Challenge now properly seperates between servers.
   - Cooldowns are now per server.
