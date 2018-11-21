@@ -28,7 +28,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.4-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.1-ALPHA
  */
 @Getter
@@ -58,7 +58,10 @@ public class SkuddUser {
     private int xpStreak;
     private int msgStreak;
     private int wallStreak;
+    private int challengeWins;
+    private int challengeLosses;
     private int challengeStreak;
+    private int challengeLongestStreak;
     private int ffaWins;
     private int ffaLosses;
     private int ffaMostWin;
@@ -439,8 +442,17 @@ public class SkuddUser {
             case MESSAGES_POSTED_STREAK:
                 this.msgStreak = intValue;
                 return null;
+            case CHALLENGE_WINS:
+                this.challengeWins = intValue;
+                return null;
+            case CHALLENGE_LOSSES:
+                this.challengeLosses = intValue;
+                return null;
             case CHALLENGE_WIN_STREAK:
                 this.challengeStreak = intValue;
+                return null;
+            case CHALLENGE_LONGEST_STREAK:
+                this.challengeLongestStreak = intValue;
                 return null;
             case FFA_WINS:
                 this.ffaWins = intValue;
@@ -468,8 +480,14 @@ public class SkuddUser {
                 return getWallStreak()+"";
             case XP_GAIN_STREAK:
                 return getXpStreak()+"";
+            case CHALLENGE_WINS:
+                return getChallengeWins()+"";
+            case CHALLENGE_LOSSES:
+                return getChallengeLosses()+"";
             case CHALLENGE_WIN_STREAK:
                 return getChallengeStreak()+"";
+            case CHALLENGE_LONGEST_STREAK:
+                return getChallengeLongestStreak()+"";
             case FFA_WINS:
                 return getFfaWins()+"";
             case FFA_LOSSES:

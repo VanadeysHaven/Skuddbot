@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * This allows people to challenge each other. Winner is picked at random.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.33-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.4.3-ALPHA
  */
 
@@ -169,6 +169,9 @@ public class ChallengeHandler {
         if(suWinner.getChallengeStreak() > 1) {
             streakString = (suWinner.getChallengeStreak() == 2 ? "**Win streak started:** 2 wins" : "**Win streak continued:** " + suWinner.getChallengeStreak() + " wins") + " (+" + bonusXP + " bonus " + EmojiHelper.getEmoji("xp_icon") + ")";
         }
+        if(suWinner.getChallengeStreak() > suWinner.getChallengeLongestStreak()){
+            streakString = streakString + " - **New longest winstreak:** *" + suWinner.getChallengeStreak() + "*";
+        }
         final String finalStreakString = streakString;
 
         IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + challengerOne.getDisplayName(channel.getGuild()) + "** and **" +
@@ -182,6 +185,12 @@ public class ChallengeHandler {
 
                 suWinner.setXp(suWinner.getXp() + xpReward + bonusXP);
                 suWinner.calcXP(false, messageResult);
+                suWinner.setChallengeWins(suWinner.getChallengeWins() + 1);
+                suLoser.setChallengeLosses(suLoser.getChallengeLosses() + 1);
+                if(suWinner.getChallengeStreak() > suWinner.getChallengeLongestStreak()){
+                    suWinner.setChallengeLongestStreak(suWinner.getChallengeStreak());
+                }
+
 
                 targetPunch.remove(challengerOne);
                 targetPunch.remove(challengerTwo);
