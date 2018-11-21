@@ -170,7 +170,7 @@ public class ChallengeHandler {
             streakString = (suWinner.getChallengeStreak() == 2 ? "**Win streak started:** 2 wins" : "**Win streak continued:** " + suWinner.getChallengeStreak() + " wins") + " (+" + bonusXP + " bonus " + EmojiHelper.getEmoji("xp_icon") + ")";
         }
         if(suWinner.getChallengeStreak() > suWinner.getChallengeLongestStreak()){
-            streakString = streakString + " - **New longest winstreak:** *" + suWinner.getChallengeStreak() + "*";
+            streakString = streakString + " - **New longest winstreak:** *" + suWinner.getChallengeStreak() + " wins*";
         }
         final String finalStreakString = streakString;
 
