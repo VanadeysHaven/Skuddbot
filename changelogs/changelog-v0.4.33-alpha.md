@@ -8,6 +8,7 @@
 - `!ffa`
   - Free for All fights! - Battle it out with an unlimited* amount of people!
 - Stats for `!challenge`
+
 ## Improved
 - Challenge now properly seperates between servers.
   - Cooldowns are now per server.

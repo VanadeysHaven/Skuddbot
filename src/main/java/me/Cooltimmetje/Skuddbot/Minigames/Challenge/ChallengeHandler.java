@@ -112,6 +112,11 @@ public class ChallengeHandler {
                     IUser challengerTwo = outstandingChallenges.get(challengerOne);
                     fight(challengerOne, challengerTwo, null, event.getReaction().getMessage().getChannel());
                 }
+            } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.EYES){
+                if(Constants.adminUser.contains(event.getUser().getStringID())){
+                    IUser challengerTwo = outstandingChallenges.get(challengerOne);
+                    fight(challengerOne, challengerTwo, null, event.getReaction().getMessage().getChannel());
+                }
             }
         }
     }
