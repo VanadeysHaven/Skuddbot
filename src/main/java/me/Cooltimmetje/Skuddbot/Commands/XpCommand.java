@@ -40,7 +40,7 @@ public class XpCommand {
                 MessagesUtils.addReaction(message, "The user you defined has no XP or doesn't exist.", EmojiEnum.X);
                 return;
             }
-            if(su.isXpPrivate()){
+            if(su.isStatsPrivate()){
                 MessagesUtils.addReaction(message, "This user has set their XP to private.", EmojiEnum.X);
                 return;
             }

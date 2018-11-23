@@ -4,7 +4,7 @@
 * You can now attach images to welcome and goodbye messages!
   * You can do this using the `WELCOME_MSG_ATTACH` and `GOODBYE_MSG_ATTACH` settings under `!serversettings`.
 * You can now make your XP private.
-  * You can do this by setting `XP_PRIVATE` to `true` using the `!usersettings` command.
+  * You can do this by setting `STATS_PRIVATE` to `true` using the `!usersettings` command.
 * New avatar: `MEME`
 
 ## Changed

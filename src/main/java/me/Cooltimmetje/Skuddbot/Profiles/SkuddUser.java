@@ -51,7 +51,7 @@ public class SkuddUser {
     private int levelUpNotify;
     private boolean trackMe;
     private boolean analyticsMention;
-    private boolean xpPrivate;
+    private boolean statsPrivate;
     private boolean mentionMe;
 
     //---- USER STATS ----
@@ -271,8 +271,8 @@ public class SkuddUser {
                 return isTrackMe()+"";
             case ANALYTICS_MENTION:
                 return isAnalyticsMention()+"";
-            case XP_PRIVATE:
-                return isXpPrivate()+"";
+            case STATS_PRIVATE:
+                return isStatsPrivate()+"";
             case MENTION_ME:
                 return isMentionMe()+"";
         }
@@ -339,8 +339,8 @@ public class SkuddUser {
             case ANALYTICS_MENTION:
                 this.analyticsMention = booleanValue;
                 return null;
-            case XP_PRIVATE:
-                this.xpPrivate = booleanValue;
+            case STATS_PRIVATE:
+                this.statsPrivate = booleanValue;
                 return null;
             case MENTION_ME:
                 this.mentionMe = booleanValue;

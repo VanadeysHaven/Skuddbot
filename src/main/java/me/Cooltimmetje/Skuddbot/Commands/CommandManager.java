@@ -135,6 +135,9 @@ public class CommandManager {
                 case "!ffa":
                     FFAManager.run(event.getMessage());
                     break;
+                case "!stats":
+                    StatsCommand.run(event.getMessage());
+                    break;
 
                 //Pogo Gravesend
                 case "!pogo_setup":
