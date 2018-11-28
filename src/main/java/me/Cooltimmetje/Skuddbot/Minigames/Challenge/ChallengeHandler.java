@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Minigames.Challenge;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Enums.Platforms;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
@@ -10,6 +11,7 @@ import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.*;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
@@ -45,6 +47,76 @@ public class ChallengeHandler {
     private int streakReward = 25;
 
     public HashMap<String, Long> cooldowns = new HashMap<>();
+
+    private String updateStats(SkuddUser winner, SkuddUser loser, Platforms platform){
+        boolean newHighestStreak = false;
+        StringBuilder rewardString = new StringBuilder();
+        String winnerName = "hi";
+        IGuild guild;
+        switch (platform){
+            case DISCORD:
+                guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(winner.getServerID()));
+                winnerName = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(winner.getId())).getDisplayName(guild);
+                break;
+            case TWITCH:
+                winnerName = winner.getTwitchUsername();
+                break;
+        }
+
+        winner.setChallengeWins(winner.getChallengeWins() + 1);
+        winner.setChallengeStreak(winner.getChallengeStreak() + 1);
+        if(winner.getChallengeStreak() > winner.getChallengeLongestStreak()){
+            newHighestStreak = true;
+            winner.setChallengeLongestStreak(winner.getChallengeStreak());
+        }
+        loser.setChallengeLosses(loser.getChallengeLosses() + 1);
+        loser.setChallengeStreak(0);
+
+        switch (platform){
+            case DISCORD:
+                rewardString.append(winnerName).append(":").append(" *+").append(xpReward).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("*");
+                break;
+            case TWITCH:
+                rewardString.append(winnerName).append(": +").append(xpReward).append(" XP");
+                break;
+        }
+
+        if(winner.getChallengeStreak() > 1){
+            switch (platform){
+                case DISCORD:
+                    rewardString.append(" | **Win streak ");
+                    if(winner.getChallengeStreak() > 2){
+                        rewardString.append("continued");
+                    } else {
+                        rewardString.append("started");
+                    }
+                    rewardString.append(":** *").append(winner.getChallengeStreak()).append(" wins*").append(" (+ ").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus ").append(EmojiHelper.getEmoji("xp_icon")).append(")");
+                    break;
+                case TWITCH:
+                    rewardString.append(" | Win streak ");
+                    if(winner.getChallengeStreak() > 2){
+                        rewardString.append("continued");
+                    } else {
+                        rewardString.append("started");
+                    }
+                    rewardString.append(": ").append(winner.getChallengeStreak()).append(" wins").append( "(+ ").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus XP)");
+                    break;
+            }
+        }
+
+        if(newHighestStreak){
+            switch (platform){
+                case DISCORD:
+                    rewardString.append(" | **New longest winstreak:** *").append(winner.getChallengeLongestStreak()).append(" wins*");
+                    break;
+                case TWITCH:
+                    rewardString.append(" | New longest winstreak: ").append(winner.getChallengeLongestStreak()).append(" wins");
+                    break;
+            }
+        }
+
+        return rewardString.toString().trim();
+    }
 
     // ---Discord Stuff---
     private HashMap<String, String> senderMessage = new HashMap<>();
@@ -166,18 +238,7 @@ public class ChallengeHandler {
         SkuddUser suWinner = ProfileManager.getDiscord(preWinner.getStringID(), channel.getGuild().getStringID(), true);
         SkuddUser suLoser = ProfileManager.getDiscord(loser.getStringID(), channel.getGuild().getStringID(), true);
 
-        suLoser.setChallengeStreak(0);
-        suWinner.setChallengeStreak(suWinner.getChallengeStreak() + 1);
 
-        int bonusXP = (suWinner.getChallengeStreak() - 1) * streakReward;
-        String streakString = null;
-        if(suWinner.getChallengeStreak() > 1) {
-            streakString = (suWinner.getChallengeStreak() == 2 ? "**Win streak started:** 2 wins" : "**Win streak continued:** " + suWinner.getChallengeStreak() + " wins") + " (+" + bonusXP + " bonus " + EmojiHelper.getEmoji("xp_icon") + ")";
-        }
-        if(suWinner.getChallengeStreak() > suWinner.getChallengeLongestStreak() && suWinner.getChallengeStreak() > 1){
-            streakString = streakString + " - **New longest winstreak:** *" + suWinner.getChallengeStreak() + " wins*";
-        }
-        final String finalStreakString = streakString;
 
         IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + challengerOne.getDisplayName(channel.getGuild()) + "** and **" +
                 challengerTwo.getDisplayName(channel.getGuild()) + "** go head to head in " + server.getArenaName() + ", who will win? 3... 2... 1... **FIGHT!**", channel, false);
@@ -185,17 +246,9 @@ public class ChallengeHandler {
 
         exec.schedule(() -> {
             try {
-                IMessage messageResult = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " The crowd goes wild but suddenly a scream of victory sounds! **" + winner.getDisplayName(channel.getGuild()) + "** has won the fight!\n\n" +
-                        winner.getDisplayName(channel.getGuild()) + ": *+" + xpReward + "* " + EmojiHelper.getEmoji("xp_icon") + (finalStreakString != null ? " - " + finalStreakString : ""), channel, false);
-
-                suWinner.setXp(suWinner.getXp() + xpReward + bonusXP);
-                suWinner.calcXP(false, messageResult);
-                suWinner.setChallengeWins(suWinner.getChallengeWins() + 1);
-                suLoser.setChallengeLosses(suLoser.getChallengeLosses() + 1);
-                if(suWinner.getChallengeStreak() > suWinner.getChallengeLongestStreak()){
-                    suWinner.setChallengeLongestStreak(suWinner.getChallengeStreak());
-                }
-
+                String rewards = updateStats(suWinner, suLoser, Platforms.DISCORD);
+                String messageToSend = MessageFormat.format("{0} The crowd goes wild, but suddenly a scream of victory sounds! **{1}** has won the fight! \n\n{2}", EmojiEnum.CROSSED_SWORDS.getEmoji(), winner.getDisplayName(channel.getGuild()), rewards);
+                IMessage messageResult = MessagesUtils.sendPlain(messageToSend, channel, false);
 
                 targetPunch.remove(challengerOne);
                 targetPunch.remove(challengerTwo);
@@ -257,16 +310,20 @@ public class ChallengeHandler {
         cooldowns.put(challengerTwo, System.currentTimeMillis());
         outstandingChallengesTwitch.remove(challengerOne);
 
-        String winner = (MiscUtils.randomInt(1,2) == 1) ? challengerOne : challengerTwo;
-        //TODO: MAKE RIGGED
+        int winInt = MiscUtils.randomInt(1,2);
+
+        String winner = winInt == 1 ? challengerOne : challengerTwo;
+        String loser = winInt != 1 ? challengerOne : challengerTwo;
+
+        SkuddUser suWinner = ProfileManager.getTwitch(winner, twitchChannel.substring(1), true);
+        SkuddUser suLoser = ProfileManager.getTwitch(loser, twitchChannel.substring(1), true);
 
         Main.getSkuddbotTwitch().send(MessageFormat.format("{0} and {1} go head to head in {2}, who will win? 3... 2... 1... FIGHT!", challengerOne, challengerTwo, server.getArenaName()), twitchChannel);
 
         exec.schedule(() -> {
-            Main.getSkuddbotTwitch().send(MessageFormat.format("The crowd goes wild but suddenly a scream of victory sounds! {0} has won the fight! | {0}: +{1} XP", winner, xpReward), twitchChannel);
+            String rewards = updateStats(suWinner, suLoser, Platforms.TWITCH);
 
-            SkuddUser user = ProfileManager.getTwitch(winner, twitchChannel.substring(1), true);
-            user.setXp(user.getXp() + xpReward);
+            Main.getSkuddbotTwitch().send(MessageFormat.format("The crowd goes wild but suddenly a scream of victory sounds! {0} has won the fight! | {1}", winner, rewards), twitchChannel);
         }, 5, TimeUnit.SECONDS);
     }
 }
