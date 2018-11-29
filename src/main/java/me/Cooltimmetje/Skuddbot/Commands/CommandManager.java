@@ -138,6 +138,9 @@ public class CommandManager {
                 case "!stats":
                     StatsCommand.run(event.getMessage());
                     break;
+                case "!bacon":
+                    BaconCommand.run(event.getMessage());
+                    break;
 
                 //Pogo Gravesend
                 case "!pogo_setup":

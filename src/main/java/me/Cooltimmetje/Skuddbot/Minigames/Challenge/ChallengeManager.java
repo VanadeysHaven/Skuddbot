@@ -28,7 +28,9 @@ public class ChallengeManager {
 
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
-        ServerManager.getServer(event.getMessage().getGuild().getStringID()).getChallengeHandler().reactionAccept(event);
+        if(!event.getChannel().isPrivate()) {
+            ServerManager.getServer(event.getMessage().getGuild().getStringID()).getChallengeHandler().reactionAccept(event);
+        }
     }
 
     //--- TWITCH ---

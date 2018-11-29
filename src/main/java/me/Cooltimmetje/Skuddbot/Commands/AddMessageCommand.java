@@ -56,10 +56,6 @@ public class AddMessageCommand {
                     MessagesUtils.addReaction(message, "Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", EmojiEnum.WHITE_CHECK_MARK);
                     MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getStringID());
                     Constants.awesomeStrings.put(trimmed, dataType);
-
-                    if(dataType == DataTypes.PUPPY){
-                        PuppyCommand.puppyPictures++;
-                    }
                 }
             } else {
                 MessagesUtils.addReaction(message,"Not enough arguments: !addmsg <type> <message>", EmojiEnum.X);

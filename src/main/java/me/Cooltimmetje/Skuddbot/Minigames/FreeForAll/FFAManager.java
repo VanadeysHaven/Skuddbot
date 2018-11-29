@@ -27,12 +27,16 @@ public class FFAManager {
 
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
-        ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionAdd(event);
+        if(!event.getChannel().isPrivate()) {
+            ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionAdd(event);
+        }
     }
 
     @EventSubscriber
     public void onReactionRemove(ReactionRemoveEvent event){
-        ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionRemove(event);
+        if(!event.getChannel().isPrivate()) {
+            ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionRemove(event);
+        }
     }
 
 }

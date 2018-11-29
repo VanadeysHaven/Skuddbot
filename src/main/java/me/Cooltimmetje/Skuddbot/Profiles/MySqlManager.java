@@ -1079,10 +1079,6 @@ public class MySqlManager {
             while(rs.next()){
                 Constants.awesomeStrings.put(rs.getString(4), DataTypes.valueOf(rs.getString(3).toUpperCase()));
                 Logger.info("Loaded donator message \"" + rs.getString(4) + "\" with type " + rs.getString(3).toUpperCase() + ".");
-
-                if(DataTypes.valueOf(rs.getString(3).toUpperCase()) == DataTypes.PUPPY){
-                    PuppyCommand.puppyPictures++;
-                }
             }
         } catch (SQLException e){
             e.printStackTrace();

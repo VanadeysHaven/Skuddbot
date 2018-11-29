@@ -5,27 +5,28 @@ import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
+import javax.xml.crypto.Data;
 import java.util.HashMap;
 
 /**
- * This class is responsible for the handling of the puppy command (has some alliasses), it will spit out one random puppy picture from the database.
+ * mmmmmmmmmmmmmm..... Bacon....
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.34-ALPHA
- * @since v0.4.34-ALPHA
+ * @version v0.4.41-ALPHA
+ * @since v0.4.41-ALPHA
  */
-public class PuppyCommand {
+public class BaconCommand {
 
     public static void run(IMessage message){
-        String pictureURL = MiscUtils.getRandomMessage(DataTypes.PUPPY);
+        String pictureURL = MiscUtils.getRandomMessage(DataTypes.BACON);
         boolean allowed = MiscUtils.randomCheck(pictureURL);
 
         while (!allowed){
-            pictureURL = MiscUtils.getRandomMessage(DataTypes.PUPPY);
+            pictureURL = MiscUtils.getRandomMessage(DataTypes.BACON);
             allowed = MiscUtils.randomCheck(pictureURL);
         }
 
-        MessagesUtils.sendPlain(":dog: " + pictureURL , message.getChannel(), false);
+        MessagesUtils.sendPlain(":bacon: " + pictureURL , message.getChannel(), false);
     }
 
 }

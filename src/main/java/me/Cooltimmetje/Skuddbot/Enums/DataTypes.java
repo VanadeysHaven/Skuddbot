@@ -12,12 +12,13 @@ import lombok.Getter;
 @Getter
 public enum DataTypes {
 
-    PLAYING(128),
+    PLAYING          (128),
     PLAYING_CHRISTMAS(128),
-    PLAYING_NEW_YEAR(128),
-    ERROR(512),
-    ALIVE(512),
-    PUPPY(512);
+    PLAYING_NEW_YEAR (128),
+    ERROR            (512),
+    ALIVE            (512),
+    PUPPY            (512),
+    BACON            (512);
 
     private int maxLength;
 

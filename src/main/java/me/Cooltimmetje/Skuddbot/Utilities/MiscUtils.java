@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -148,6 +149,30 @@ public class MiscUtils {
         }
 
         return selectedMessage;
+    }
+
+    public static HashMap<String,Long> lastShown = new HashMap<>();
+
+    public static boolean randomCheck(String string) {
+        if ((Constants.awesomeStrings.size() * 0.75) < lastShown.size()) {
+            lastShown.clear();
+        }
+        boolean allowed = false;
+
+        if(!lastShown.containsKey(string)){
+            allowed = true;
+        } else {
+            if((System.currentTimeMillis() - lastShown.get(string)) < 24*60*60*1000){
+                allowed = MiscUtils.randomInt(1,4) == 1;
+            } else {
+                allowed = true;
+            }
+        }
+
+        if(allowed) {
+            lastShown.put(string, System.currentTimeMillis());
+        }
+        return allowed;
     }
 
     public static void setPlaying(boolean startup){
