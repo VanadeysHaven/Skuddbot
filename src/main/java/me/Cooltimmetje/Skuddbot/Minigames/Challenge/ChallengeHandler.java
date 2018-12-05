@@ -90,7 +90,7 @@ public class ChallengeHandler {
                     } else {
                         rewardString.append("started");
                     }
-                    rewardString.append(":** *").append(winner.getChallengeStreak()).append(" wins*").append(" (+ ").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus ").append(EmojiHelper.getEmoji("xp_icon")).append(")");
+                    rewardString.append(":** *").append(winner.getChallengeStreak()).append(" wins*").append(" (+").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus ").append(EmojiHelper.getEmoji("xp_icon")).append(")");
                     break;
                 case TWITCH:
                     rewardString.append(" | Win streak ");
@@ -99,12 +99,12 @@ public class ChallengeHandler {
                     } else {
                         rewardString.append("started");
                     }
-                    rewardString.append(": ").append(winner.getChallengeStreak()).append(" wins").append( "(+ ").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus XP)");
+                    rewardString.append(": ").append(winner.getChallengeStreak()).append(" wins").append(" (+").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus XP)");
                     break;
             }
         }
 
-        if(newHighestStreak){
+        if(newHighestStreak && winner.getChallengeStreak() > 1){
             switch (platform){
                 case DISCORD:
                     rewardString.append(" | **New longest winstreak:** *").append(winner.getChallengeLongestStreak()).append(" wins*");

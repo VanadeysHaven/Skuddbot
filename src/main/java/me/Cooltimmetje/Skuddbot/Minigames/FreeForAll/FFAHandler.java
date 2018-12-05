@@ -39,14 +39,15 @@ public class FFAHandler {
     private int xpReward = 50;
     private int cooldown = 300;
 
-    public HashMap<IUser,Long> cooldowns = new HashMap<>();
+    HashMap<IUser,Long> cooldowns = new HashMap<>();
     private ArrayList<IUser> entrants = new ArrayList<>();
 
     private IUser host;
     private IMessage messageSent;
     private IMessage messageHost;
 
-    public void enter(IMessage message){
+    void enter(IMessage message){
+        String[] args = message.getContent().split(" ");
         if(cooldowns.containsKey(message.getAuthor())){
             if((System.currentTimeMillis() - cooldowns.get(message.getAuthor())) < (cooldown * 1000)){
                 MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND);
@@ -54,7 +55,12 @@ public class FFAHandler {
             }
         }
         if(message.getAuthor() == host){
-            return;
+            RequestBuffer.request(message::delete);
+            if(args.length > 1){
+                if(args[1].equalsIgnoreCase("-start")){
+                    startFight(message.getChannel());
+                }
+            }
         }
 
         if(host == null) {
@@ -71,11 +77,11 @@ public class FFAHandler {
             });
             entrants.add(message.getAuthor());
         } else {
-            message.delete();
+            RequestBuffer.request(message::delete);
         }
     }
 
-    public void reactionAdd(ReactionAddEvent event){
+    void reactionAdd(ReactionAddEvent event){
         Logger.info(MessageFormat.format("FFA Reaction | Server ID: {0} | Reaction: {1} | User: {2}#{3}",
                 serverID, event.getReaction().getEmoji().getName(), event.getUser().getName(), event.getUser().getDiscriminator()));
         if(event.getUser().isBot()){
@@ -99,11 +105,12 @@ public class FFAHandler {
                 startFight(event.getChannel());
             } else {
                 Logger.info("Not enough entrants, stopping...");
-                messageSent.removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias()));
+                RequestBuffer.request(() -> messageSent.removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
             }
         } else if (EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.CROSSED_SWORDS){
             if(event.getUser() == host){
-                Logger.info("This user may not trigger this reaction, stopping...");
+                Logger.info("This user may not trigger this reaction, removing reaction...");
+                RequestBuffer.request(() -> event.getMessage().removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
                 return;
             }
 
@@ -125,7 +132,7 @@ public class FFAHandler {
         }
     }
 
-    public void reactionRemove(ReactionRemoveEvent event){
+    void reactionRemove(ReactionRemoveEvent event){
         if(event.getUser() == host){
             return;
         }
@@ -139,7 +146,7 @@ public class FFAHandler {
         entrants.remove(event.getUser());
     }
 
-    public void startFight(IChannel channel) {
+    private void startFight(IChannel channel) {
         int entrantsAmount = entrants.size();
         IGuild guild = channel.getGuild();
         IUser winner = entrants.get(MiscUtils.randomInt(0, entrantsAmount - 1));
