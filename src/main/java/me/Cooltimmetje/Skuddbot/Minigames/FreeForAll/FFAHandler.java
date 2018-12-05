@@ -76,37 +76,49 @@ public class FFAHandler {
     }
 
     public void reactionAdd(ReactionAddEvent event){
+        Logger.info(MessageFormat.format("FFA Reaction | Server ID: {0} | Reaction: {1} | User: {2}#{3}",
+                serverID, event.getReaction().getEmoji().getName(), event.getUser().getName(), event.getUser().getDiscriminator()));
         if(event.getUser().isBot()){
+            Logger.info("Reaction is from a bot, stopping...");
             return;
         }
         if(event.getMessage() != messageSent){
+            Logger.info("Reaction is on an invalid message, stopping...");
             return;
         }
         String unicodeEmoji = event.getReaction().getEmoji().getName();
 
         if(EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.WHITE_CHECK_MARK){
             if(event.getUser() != host){
+                Logger.info("This user may not trigger this reaction, stopping...");
                 return;
             }
 
             if(entrants.size() > 1){
+                Logger.info("Starting fight...");
                 startFight(event.getChannel());
             } else {
+                Logger.info("Not enough entrants, stopping...");
                 messageSent.removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias()));
             }
         } else if (EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.CROSSED_SWORDS){
             if(event.getUser() == host){
+                Logger.info("This user may not trigger this reaction, stopping...");
                 return;
             }
 
             if(!entrants.contains(event.getUser())) {
+                Logger.info("Adding user to fight...");
                 entrants.add(event.getUser());
             }
         } else if(EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.EYES){
             if(Constants.adminUser.contains(event.getUser().getStringID())){
+                Logger.info("Admin user");
                 if(entrants.size() > 1){
+                    Logger.info("Starting fight...");
                     startFight(event.getChannel());
                 } else {
+                    Logger.info("Not enough entrants, stopping...");
                     messageSent.removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.EYES.getAlias()));
                 }
             }
