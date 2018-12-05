@@ -31,6 +31,7 @@ public class FFAManager {
             if(args[1].equalsIgnoreCase("-fix") && Constants.adminUser.contains(message.getAuthor().getStringID())){
                 ServerManager.getServer(message.getGuild().getStringID()).setFfaHandler(new FFAHandler(message.getGuild().getStringID()));
                 MessagesUtils.addReaction(message, "Created new FFA handler for this server.", EmojiEnum.WHITE_CHECK_MARK);
+                return;
             }
         }
         ServerManager.getServer(message.getGuild().getStringID()).getFfaHandler().enter(message);
