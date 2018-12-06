@@ -46,7 +46,7 @@ public class Main {
         skuddbotTwitch = new SkuddbotTwitch();
 
         try {
-            skuddbotTwitch.connect("irc.twitch.tv", 6667, Constants.twitchOauth);
+            skuddbotTwitch.connect("irc.chat.twitch.tv", 6667, Constants.twitchOauth);
         } catch (IOException | IrcException e) {
             e.printStackTrace();
         }
