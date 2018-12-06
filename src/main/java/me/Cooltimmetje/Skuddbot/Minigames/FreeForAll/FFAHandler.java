@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Minigames.FreeForAll;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -58,7 +59,9 @@ public class FFAHandler {
             RequestBuffer.request(message::delete);
             if(args.length > 1){
                 if(args[1].equalsIgnoreCase("-start")){
-                    startFight(message.getChannel());
+                    if(entrants.size() > 1) {
+                        startFight(message.getChannel());
+                    }
                 }
             }
         }
@@ -71,10 +74,7 @@ public class FFAHandler {
                     EmojiEnum.CROSSED_SWORDS.getString(), message.getAuthor().getDisplayName(message.getGuild()), EmojiEnum.WHITE_CHECK_MARK.getString()),
                     message.getChannel(), false);
 
-            RequestBuffer.request(() -> {
-                messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias()));
-                messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias()));
-            });
+            RequestBuffer.request(() -> messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
             entrants.add(message.getAuthor());
         } else {
             RequestBuffer.request(message::delete);
@@ -117,6 +117,8 @@ public class FFAHandler {
             if(!entrants.contains(event.getUser())) {
                 Logger.info("Adding user to fight...");
                 entrants.add(event.getUser());
+                if((entrants.size() > 1) && (!messageSent.getReactionByUnicode(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())).getUserReacted(Main.getInstance().getSkuddbot().getOurUser()))){
+                    RequestBuffer.request(() -> messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));                }
             }
         } else if(EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.EYES){
             if(Constants.adminUser.contains(event.getUser().getStringID())){
