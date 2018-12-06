@@ -32,12 +32,13 @@ public class MessagesUtils {
 
     /**
      * This adds a reaction to the specified message with the specified emoji. The debug string get's saved to recall later and will be posted upon reaction from the original author with the same emoji.
+     *
      * @param message The message that we want to add the reaction to.
-     * @param debug The message that will be saved. (Debug String, not mandatory)
-     * @param emoji The emoji that we want to add.
+     * @param debug   The message that will be saved. (Debug String, not mandatory)
+     * @param emoji   The emoji that we want to add.
      */
     @SuppressWarnings("unchecked")
-    public static void addReaction(IMessage message, String debug, EmojiEnum emoji){
+    public static void addReaction(IMessage message, String debug, EmojiEnum emoji) {
         try {
             RequestBuffer.request(() -> message.addReaction(EmojiManager.getForAlias(emoji.getAlias())));
         } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
@@ -59,12 +60,12 @@ public class MessagesUtils {
      * @param event The event that fires this.
      */
     @EventSubscriber
-    public void onReaction(ReactionAddEvent event){
-        if(reactions.containsKey(event.getMessage())){ //Check if the message is actually eligible for a "debug" string.
-            if(event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())){ //Check if the bot reacted the same.
-                if(event.getReaction().getUserReacted(event.getMessage().getAuthor())){ //Check if the original author reacted.
+    public void onReaction(ReactionAddEvent event) {
+        if (reactions.containsKey(event.getMessage())) { //Check if the message is actually eligible for a "debug" string.
+            if (event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())) { //Check if the bot reacted the same.
+                if (event.getReaction().getUserReacted(event.getMessage().getAuthor())) { //Check if the original author reacted.
                     JSONObject obj = reactions.get(event.getMessage()); //Save it for sake of code tidyness.
-                    if(obj.get("debug") != null){ //Check if there's a debug string.
+                    if (obj.get("debug") != null) { //Check if there's a debug string.
                         RequestBuffer.request(() -> sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false)); //Post the message.
                     }
 
@@ -80,8 +81,8 @@ public class MessagesUtils {
      * @param message Message that we send, gets appended to the emoji.
      * @param channel Channel where we send the message.
      */
-    public static void sendSuccess(String message, IChannel channel){
-        if(!Constants.MUTED) {
+    public static void sendSuccess(String message, IChannel channel) {
+        if (!Constants.MUTED) {
             try {
                 RequestBuffer.request(() -> channel.sendMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere")));
             } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
@@ -93,14 +94,14 @@ public class MessagesUtils {
     /**
      * Send a message with no formatting, other than the formatting specified in the String.
      *
-     * @param msg The message that we send.
-     * @param channel Channel where we send the message.
+     * @param msg           The message that we send.
+     * @param channel       Channel where we send the message.
      * @param allowEveryone Defines if we should allow @everyone/@here. If false, @everyone and @here get a ZWC added to them so Discord doesn't trigger it.
      * @return The message that was sent.
      */
     @SuppressWarnings("all") //Just because IntelliJ decided to be a dick.
-    public static IMessage sendPlain(String msg, IChannel channel, boolean allowEveryone){
-        if(!allowEveryone){
+    public static IMessage sendPlain(String msg, IChannel channel, boolean allowEveryone) {
+        if (!allowEveryone) {
             msg = msg.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere");
         }
         String msgFinal = msg;
@@ -117,7 +118,6 @@ public class MessagesUtils {
         }
         return null;
     }
-
 
     /**
      * Send a PM to the specified user.
@@ -137,5 +137,16 @@ public class MessagesUtils {
         }
         return null;
     }
+
+    /**
+     * Gets the message with the specified ID
+     *
+     * @param id The ID of the message we want to get.
+     * @return The message we want.
+     */
+    public static IMessage getMessageByID(long id){
+        return Main.getInstance().getSkuddbot().getMessageByID(id);
+    }
+
 
 }

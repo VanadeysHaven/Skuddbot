@@ -44,8 +44,9 @@ public class FFAHandler {
     private ArrayList<IUser> entrants = new ArrayList<>();
 
     private IUser host;
-    private IMessage messageSent;
-    private IMessage messageHost;
+    private long messageSent;
+    private long messageHost;
+    private boolean startReact;
 
     void enter(IMessage message){
         String[] args = message.getContent().split(" ");
@@ -68,14 +69,15 @@ public class FFAHandler {
 
         if(host == null) {
             host = message.getAuthor();
-            messageHost = message;
+            messageHost = message.getLongID();
             messageSent = MessagesUtils.sendPlain(MessageFormat.format("{0} **{1}** is looking to host a free for all fight, anyone can participate!\n" +
                             "Click the {0} reaction to enter, {1} can start the fight by clicking the {2} reaction.",
                     EmojiEnum.CROSSED_SWORDS.getString(), message.getAuthor().getDisplayName(message.getGuild()), EmojiEnum.WHITE_CHECK_MARK.getString()),
-                    message.getChannel(), false);
+                    message.getChannel(), false).getLongID();
 
-            RequestBuffer.request(() -> messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
+            RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
             entrants.add(message.getAuthor());
+            startReact = false;
         } else {
             RequestBuffer.request(message::delete);
         }
@@ -88,7 +90,7 @@ public class FFAHandler {
             Logger.info("Reaction is from a bot, stopping...");
             return;
         }
-        if(event.getMessage() != messageSent){
+        if(event.getMessage().getLongID() != messageSent){
             Logger.info("Reaction is on an invalid message, stopping...");
             return;
         }
@@ -105,7 +107,7 @@ public class FFAHandler {
                 startFight(event.getChannel());
             } else {
                 Logger.info("Not enough entrants, stopping...");
-                RequestBuffer.request(() -> messageSent.removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
+                RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
             }
         } else if (EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.CROSSED_SWORDS){
             if(event.getUser() == host){
@@ -117,8 +119,10 @@ public class FFAHandler {
             if(!entrants.contains(event.getUser())) {
                 Logger.info("Adding user to fight...");
                 entrants.add(event.getUser());
-                if((entrants.size() > 1) && (!messageSent.getReactionByUnicode(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())).getUserReacted(Main.getInstance().getSkuddbot().getOurUser()))){
-                    RequestBuffer.request(() -> messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));                }
+                if((entrants.size() > 1) && !startReact){
+                    RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
+                    startReact = true;
+                }
             }
         } else if(EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.EYES){
             if(Constants.adminUser.contains(event.getUser().getStringID())){
@@ -128,7 +132,7 @@ public class FFAHandler {
                     startFight(event.getChannel());
                 } else {
                     Logger.info("Not enough entrants, stopping...");
-                    messageSent.removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.EYES.getAlias()));
+                    MessagesUtils.getMessageByID(messageSent).removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.EYES.getAlias()));
                 }
             }
         }
@@ -138,7 +142,7 @@ public class FFAHandler {
         if(event.getUser() == host){
             return;
         }
-        if(event.getMessage() != messageSent){
+        if(event.getMessage().getLongID() != messageSent){
             return;
         }
         if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) != EmojiEnum.CROSSED_SWORDS){
@@ -173,8 +177,8 @@ public class FFAHandler {
         }
         String rewards = sbRewards.toString();
 
-        messageHost.delete();
-        messageSent.delete();
+        MessagesUtils.getMessageByID(messageHost).delete();
+        MessagesUtils.getMessageByID(messageSent).delete();
 
         MessagesUtils.sendPlain(MessageFormat.format("{0} {1} all go into {2} for an epic Free For All battle. Only one can emerge victorious! *3*... *2*... *1*... **FIGHT!**",
                 EmojiEnum.CROSSED_SWORDS.getString(), entrantsString, server.getArenaName()),
@@ -208,8 +212,8 @@ public class FFAHandler {
         entrants.clear();
 
         host = null;
-        messageSent = null;
-        messageHost = null;
+        messageSent = 0;
+        messageHost = 0;
     }
 
 }
