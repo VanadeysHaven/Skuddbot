@@ -16,6 +16,13 @@ import sx.blah.discord.handle.obj.IUser;
 
 import java.util.ArrayList;
 
+/**
+ * Picks an random active user, and punches it.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4.41-ALPHA
+ * @since v0.4.32-ALPHA
+ */
 public class PunchCommand {
 
     @SuppressWarnings("Duplicates")
@@ -26,7 +33,7 @@ public class PunchCommand {
         IChannel channel = message.getChannel();
         IUser user = message.getAuthor();
         ChallengeHandler challengeHandler = server.getChallengeHandler();
-        IUser randomUser = user;
+        IUser randomUser;
 
         if(!challengeHandler.targetPunch.containsKey(user)) {
             int activeDelay = 24 * 60 * 60 * 1000;
@@ -43,9 +50,9 @@ public class PunchCommand {
             }
 
 
-            while (user == randomUser) {
+            do {
                 randomUser = message.getGuild().getUserByID(activeUsers.get(MiscUtils.randomInt(0, activeUsers.size() - 1)));
-            }
+            } while (user == randomUser || randomUser == null);
         } else {
             randomUser = challengeHandler.targetPunch.get(user);
         }

@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Picks an random active user, and hugs it.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.4.32-ALPHA
  */
 public class HugCommand {
@@ -32,7 +32,7 @@ public class HugCommand {
         IChannel channel = message.getChannel();
         IUser user = message.getAuthor();
         ChallengeHandler challengeHandler = server.getChallengeHandler();
-        IUser randomUser = user;
+        IUser randomUser;
 
         if(!challengeHandler.targetPunch.containsKey(user)) {
             int activeDelay = 24 * 60 * 60 * 1000;
@@ -49,9 +49,9 @@ public class HugCommand {
             }
 
 
-            while (user == randomUser) {
+            do {
                 randomUser = message.getGuild().getUserByID(activeUsers.get(MiscUtils.randomInt(0, activeUsers.size() - 1)));
-            }
+            } while (user == randomUser);
         } else {
             randomUser = challengeHandler.targetPunch.get(user);
         }
