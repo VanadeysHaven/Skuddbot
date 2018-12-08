@@ -15,13 +15,13 @@ import sx.blah.discord.handle.obj.IMessage;
 public class KittyCommand {
 
     public static void run(IMessage message) {
-        String pictureURL = MiscUtils.getRandomMessage(DataTypes.KITTY);
-        boolean allowed = MiscUtils.randomCheck(pictureURL);
+        String pictureURL;
+        boolean allowed;
 
-        while (!allowed){
+        do {
             pictureURL = MiscUtils.getRandomMessage(DataTypes.KITTY);
             allowed = MiscUtils.randomCheck(pictureURL);
-        }
+        } while (!allowed);
 
         MessagesUtils.sendPlain(":cat: " + pictureURL , message.getChannel(), false);
     }
