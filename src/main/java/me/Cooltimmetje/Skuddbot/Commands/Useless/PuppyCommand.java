@@ -9,7 +9,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class is responsible for the handling of the puppy command (has some alliasses), it will spit out one random puppy picture from the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.34-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.4.34-ALPHA
  */
 public class PuppyCommand {
