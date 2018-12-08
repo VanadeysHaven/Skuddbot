@@ -147,6 +147,9 @@ public class CommandManager {
                 case "!kitten":
                     KittyCommand.run(event.getMessage());
                     break;
+                case "!boobs":
+                    BoobsCommand.run(event.getMessage());
+                    break;
 
                 //Pogo Gravesend
                 case "!pogo_setup":
