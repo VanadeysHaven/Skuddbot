@@ -9,6 +9,8 @@
   - Free for All fights! - Battle it out with an unlimited* amount of people!
 - Stats for `!challenge`
 - `!stats`
+- `!kitty`
+  - I know I have said I would never add this... But shit happens.
 
 ## Improved
 - Challenge now properly seperates between servers.

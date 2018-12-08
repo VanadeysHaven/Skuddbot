@@ -13,7 +13,7 @@ import java.text.MessageFormat;
  * This will class will allow "SuperAdmins" to add and remove "Awesome People", these persons get various benefits.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 public class AwesomeManager {
@@ -40,6 +40,7 @@ public class AwesomeManager {
                                             "- Add messages to the error messages pool. - `!addmsg error <message>` *pm only*\n" +
                                             "- Add messages to the \"I'm alive\" messages pool. - `!addmsg alive <message>` *pm only*\n" +
                                             "- Add messages to the \"Puppy\" images pool. - `!addmsg puppy <url to image>` *pm only*\n" +
+                                            "- Add messages to the \"Kitty\" images pool. - `!addmsg kitty <url to image>` *pm only*\n" +
                                             "- Set a custom `!ping` message! - `!setping <message>` *pm only*\n" +
                                             "- Gain access to the `!game` command.\n\n" +
                                             "**VERY IMPORTANT NOTE: Once you added a message, it cannot be removed unless you ask Timmy.** Please think twice before you add something. We also track who added what. Just saying...\n\n" +

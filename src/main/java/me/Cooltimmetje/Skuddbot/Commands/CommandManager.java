@@ -16,7 +16,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.4-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.1-ALPHA
  */
 public class CommandManager {
@@ -140,6 +140,12 @@ public class CommandManager {
                     break;
                 case "!bacon":
                     BaconCommand.run(event.getMessage());
+                    break;
+                case "!kitty":
+                case "!cat":
+                case "!pussy":
+                case "!kitten":
+                    KittyCommand.run(event.getMessage());
                     break;
 
                 //Pogo Gravesend

@@ -18,7 +18,8 @@ public enum DataTypes {
     ERROR            (512),
     ALIVE            (512),
     PUPPY            (512),
-    BACON            (512);
+    BACON            (512),
+    KITTY            (512);
 
     private int maxLength;
 
