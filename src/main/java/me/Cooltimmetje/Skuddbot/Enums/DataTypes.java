@@ -1,6 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Enums;
 
-        import lombok.Getter;
+import lombok.Getter;
 
 /**
  * Database stuff, to separate stuff from each other.
@@ -19,8 +19,7 @@ public enum DataTypes {
     ALIVE            (512),
     PUPPY            (512),
     BACON            (512),
-    KITTY            (512),
-    BOOBS            (512);
+    KITTY            (512);
 
     private int maxLength;
 
