@@ -23,7 +23,11 @@ public class PuppyCommand {
             allowed = MiscUtils.randomCheck(pictureURL);
         } while (!allowed);
 
-        MessagesUtils.sendPlain(":dog: " + pictureURL , message.getChannel(), false);
+        String emojis = ":dog: ";
+        if(message.getContent().split(" ")[0].equalsIgnoreCase("!emergencypuppy")){
+            emojis += ":rotating_light: ";
+        }
+        MessagesUtils.sendPlain(emojis + pictureURL , message.getChannel(), false);
     }
 
 }
