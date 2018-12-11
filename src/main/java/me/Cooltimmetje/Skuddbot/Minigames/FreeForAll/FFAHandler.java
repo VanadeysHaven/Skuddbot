@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * This class handles the FFA command on a per-server basis.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.4-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.4.4-ALPHA
  */
 public class FFAHandler {
