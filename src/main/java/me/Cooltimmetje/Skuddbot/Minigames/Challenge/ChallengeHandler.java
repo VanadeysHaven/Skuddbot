@@ -122,11 +122,37 @@ public class ChallengeHandler {
             }
         }
 
+        String[] args = message.getContent().split(" ");
+        if(args.length == 1){
+            MessagesUtils.addReaction(message, "You need to specify if you want a open challenge or which user you want to fight.", EmojiEnum.X);
+            return;
+        }
+
+        if(!args[1].equalsIgnoreCase("-open") && message.getMentions().isEmpty()){
+            MessagesUtils.addReaction(message, "Allowed arguments are `-open` or a user mention (which is not Skuddbot or yourself).", EmojiEnum.X);
+            return;
+        }
+
+        if(!message.getMentions().isEmpty()){
+            if(message.getMentions().get(0) == message.getAuthor()){
+                MessagesUtils.addReaction(message, "You can't challenge yourself.", EmojiEnum.X);
+                return;
+            }
+
+            if(message.getMentions().get(0) == Main.getInstance().getSkuddbot().getOurUser()){
+                MessagesUtils.addReaction(message, "You can't challenge me!", EmojiEnum.X);
+                return;
+            }
+        }
+
         deletePreviousMessages(message);
 
 
 
+
     }
+
+
 
     private void deletePreviousMessages(IMessage message){
         if(senderMessage.containsKey(message.getAuthor().getStringID())) {
