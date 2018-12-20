@@ -2,7 +2,6 @@ package me.Cooltimmetje.Skuddbot.Minigames.FreeForAll;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
-import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -57,11 +56,11 @@ public class FFAHandler {
             }
         }
         if(message.getAuthor() == host){
-            RequestBuffer.request(message::delete);
             if(args.length > 1){
                 if(args[1].equalsIgnoreCase("-start")){
                     if(entrants.size() > 1) {
                         startFight(message.getChannel());
+                        RequestBuffer.request(message::delete);
                     }
                 }
             }
