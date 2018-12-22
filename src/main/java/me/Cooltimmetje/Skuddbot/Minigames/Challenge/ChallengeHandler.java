@@ -1,15 +1,21 @@
 package me.Cooltimmetje.Skuddbot.Minigames.Challenge;
 
+import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.Platforms;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
+import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
+import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.RequestBuffer;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -109,6 +115,7 @@ public class ChallengeHandler {
     //DISCORD
     private HashMap<String,String> senderMessage = new HashMap<>();
     private HashMap<String,String> botMessage = new HashMap<>();
+    private String openInvoker = "-open";
 
     private HashMap<String,String> outstandingChallenges = new HashMap<>();
     private ArrayList<String> openChallenges = new ArrayList<>();
@@ -128,8 +135,8 @@ public class ChallengeHandler {
             return;
         }
 
-        if(!args[1].equalsIgnoreCase("-open") && message.getMentions().isEmpty()){
-            MessagesUtils.addReaction(message, "Allowed arguments are `-open` or a user mention (which is not Skuddbot or yourself).", EmojiEnum.X);
+        if(!args[1].equalsIgnoreCase(openInvoker) && message.getMentions().isEmpty()){
+            MessagesUtils.addReaction(message, "Allowed arguments are `"  + openInvoker + "` or a user mention (which is not Skuddbot or yourself).", EmojiEnum.X);
             return;
         }
 
@@ -145,16 +152,73 @@ public class ChallengeHandler {
             }
         }
 
-        deletePreviousMessages(message);
+        deletePreviousChallenge(message);
 
+        if(args[1].equalsIgnoreCase(openInvoker)){
+            startOpenChallenge(message);
+            return;
+        }
 
 
 
     }
 
+    private void startOpenChallenge(IMessage message){
+        openChallenges.add(message.getAuthor().getStringID());
 
+        IMessage messageSent = MessagesUtils.sendPlain(MessageFormat.format("**{0}** has put down an open fight, anyone can accept it! Click the {1} to accept.",
+                message.getAuthor().getDisplayName(message.getGuild()), EmojiEnum.CROSSED_SWORDS.getEmoji()), message.getChannel(), false);
+        RequestBuffer.request(() -> messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
 
-    private void deletePreviousMessages(IMessage message){
+        senderMessage.put(message.getAuthor().getStringID(), message.getStringID());
+        botMessage.put(message.getAuthor().getStringID(), messageSent.getStringID());
+    }
+
+    private void startInviteChallenge(IMessage message){
+
+    }
+
+    private IUser getChallenger(IMessage message){
+        for (String s : botMessage.keySet()){
+            if (botMessage.get(s).equals(message.getStringID())) {
+                return Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(s));
+            }
+        }
+
+        return null;
+    }
+
+    public void reactionAccept(ReactionAddEvent event){
+        if(event.getUser().isBot()){
+            return;
+        }
+        if(!botMessage.containsValue(event.getReaction().getMessage().getStringID())){
+            return;
+        }
+        IUser challengerOne = getChallenger(event.getMessage());
+        if(challengerOne == null){
+            return;
+        }
+        if(!event.getReaction().getEmoji().getName().equals(EmojiEnum.CROSSED_SWORDS.getEmoji())) {
+            return;
+        }
+
+        if(openChallenges.contains(challengerOne.getStringID())) {
+            openChallenges.remove(challengerOne.getStringID());
+            IUser challengerTwo = event.getUser();
+            if(challengerOne != challengerTwo) {
+                Logger.info("An open challenge was accepted.");
+
+                fight(challengerOne, challengerTwo, event.getMessage(), event.getChannel());
+            }
+        }
+    }
+
+    private void fight(IUser challengerOne, IUser challengerTwo, IMessage message, IChannel channel){
+        MessagesUtils.sendPlain("[placeholder] fight between " + challengerOne.getName() + " and " + challengerTwo.getName() + " would be carried out here.", channel, false);
+    }
+
+    private void deletePreviousChallenge(IMessage message){
         if(senderMessage.containsKey(message.getAuthor().getStringID())) {
             message.getChannel().bulkDelete(new ArrayList<>(Arrays.asList(
                     Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(message.getAuthor().getStringID()))),
@@ -164,6 +228,9 @@ public class ChallengeHandler {
             senderMessage.remove(message.getAuthor().getStringID());
             botMessage.remove(message.getAuthor().getStringID());
         }
+
+        openChallenges.remove(message.getAuthor().getStringID());
+        outstandingChallenges.remove(message.getAuthor().getStringID());
     }
 
 
