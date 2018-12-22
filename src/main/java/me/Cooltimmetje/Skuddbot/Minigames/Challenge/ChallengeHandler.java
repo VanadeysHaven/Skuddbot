@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * This allows people to challenge each other. Winner is picked at random.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.4.42-ALPHA
  * @since v0.4.3-ALPHA
  */
 
