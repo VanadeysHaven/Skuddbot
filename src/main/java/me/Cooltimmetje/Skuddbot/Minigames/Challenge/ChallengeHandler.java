@@ -14,9 +14,7 @@ import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -29,24 +27,23 @@ import java.util.concurrent.TimeUnit;
  * This allows people to challenge each other. Winner is picked at random.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.4.42-ALPHA
  * @since v0.4.3-ALPHA
  */
 
 public class ChallengeHandler {
 
-    private String serverID;
+    private String serverId;
 
-    public ChallengeHandler(String serverID){
-        this.serverID = serverID;
-        Logger.info("Creating challenge handler for Server with ID: " + serverID);
+    public ChallengeHandler(String serverId){
+        this.serverId = serverId;
     }
 
-    private int cooldown = 300; //cooldown in seconds
+    private int cooldown = 300;
     private int xpReward = 50;
     private int streakReward = 25;
 
-    public HashMap<String, Long> cooldowns = new HashMap<>();
+    public HashMap<String,Long> cooldowns = new HashMap<>();
 
     private String updateStats(SkuddUser winner, SkuddUser loser, Platforms platform){
         boolean newHighestStreak = false;
@@ -118,15 +115,16 @@ public class ChallengeHandler {
         return rewardString.toString().trim();
     }
 
-    // ---Discord Stuff---
-    private HashMap<String, String> senderMessage = new HashMap<>();
-    private HashMap<String, String> botMessage = new HashMap<>();
-    private HashMap<IMessage, IMessage> botIMessage = new HashMap<>();
+    //DISCORD
+    private HashMap<String,String> senderMessage = new HashMap<>();
+    private HashMap<String,String> botMessage = new HashMap<>();
+    private String openInvoker = "-open";
 
-    private HashMap<IUser, IUser> outstandingChallenges = new HashMap<>();
-    public HashMap<IUser, IUser> targetPunch = new HashMap<>();
+    private HashMap<String,String> outstandingChallenges = new HashMap<>();
+    private ArrayList<String> openChallenges = new ArrayList<>();
+    public HashMap<IUser,IUser> targetPunch = new HashMap<>();
 
-    public void run(IMessage message) {
+    public void run(IMessage message){
         if(cooldowns.containsKey(message.getAuthor().getStringID())){
             if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getStringID())) < (cooldown * 1000)){
                 MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND);
@@ -134,32 +132,55 @@ public class ChallengeHandler {
             }
         }
 
-        if(message.getMentions().isEmpty()){
-            MessagesUtils.addReaction(message, "You didn't specify who you want to challenge.", EmojiEnum.X);
+        String[] args = message.getContent().split(" ");
+        if(args.length == 1){
+            MessagesUtils.addReaction(message, "You need to specify if you want a open challenge or which user you want to fight.", EmojiEnum.X);
             return;
         }
 
-        if(message.getMentions().get(0) == message.getAuthor()){
-            MessagesUtils.addReaction(message, "You can't challenge yourself.", EmojiEnum.X);
+        if(!args[1].equalsIgnoreCase(openInvoker) && message.getMentions().isEmpty()){
+            MessagesUtils.addReaction(message, "Allowed arguments are `"  + openInvoker + "` or a user mention (which is not Skuddbot or yourself).", EmojiEnum.X);
             return;
         }
 
-        if(message.getMentions().get(0) == Main.getInstance().getSkuddbot().getOurUser()){
-            MessagesUtils.addReaction(message, "You can't challenge me!", EmojiEnum.X);
+        if(!message.getMentions().isEmpty()){
+            if(message.getMentions().get(0) == message.getAuthor()){
+                MessagesUtils.addReaction(message, "You can't challenge yourself.", EmojiEnum.X);
+                return;
+            }
+
+            if(message.getMentions().get(0) == Main.getInstance().getSkuddbot().getOurUser()){
+                MessagesUtils.addReaction(message, "You can't challenge me!", EmojiEnum.X);
+                return;
+            }
+        }
+
+        deletePreviousChallenge(message);
+
+        if(args[1].equalsIgnoreCase(openInvoker)){
+            startOpenChallenge(message);
             return;
         }
 
-        if(outstandingChallenges.get(message.getMentions().get(0)) == message.getAuthor()){ //Challenge was accepted
+        startInviteChallenge(message);
+    }
+
+    private void startOpenChallenge(IMessage message){
+        openChallenges.add(message.getAuthor().getStringID());
+
+        IMessage messageSent = MessagesUtils.sendPlain(MessageFormat.format(EmojiEnum.CROSSED_SWORDS.getEmoji() + "**{0}** has put down an open fight, anyone can accept it! Click the {1} to accept.",
+                message.getAuthor().getDisplayName(message.getGuild()), EmojiEnum.CROSSED_SWORDS.getEmoji()), message.getChannel(), false);
+        RequestBuffer.request(() -> messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
+
+        senderMessage.put(message.getAuthor().getStringID(), message.getStringID());
+        botMessage.put(message.getAuthor().getStringID(), messageSent.getStringID());
+    }
+
+    private void startInviteChallenge(IMessage message){
+        if(outstandingChallenges.get(message.getMentions().get(0).getStringID()) == message.getAuthor().getStringID()){ //Challenge was accepted
             fight(message.getMentions().get(0),message.getAuthor(), message, message.getChannel());
         } else { //Challenge was not accepted.
-            if(senderMessage.containsKey(message.getAuthor().getStringID())) {
-                message.getChannel().bulkDelete(new ArrayList<>(Arrays.asList(
-                        Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(message.getAuthor().getStringID()))),
-                        Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(message.getAuthor().getStringID())))
-                )));
-            }
-            outstandingChallenges.put(message.getAuthor(), message.getMentions().get(0));
-
+            outstandingChallenges.put(message.getAuthor().getStringID(), message.getMentions().get(0).getStringID());
             senderMessage.put(message.getAuthor().getStringID(), message.getStringID());
 
             IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + message.getAuthor().getDisplayName(message.getGuild()) + "** has challenged **" + message.getMentions().get(0).getDisplayName(message.getGuild()) + "** to a fight! " +
@@ -167,33 +188,62 @@ public class ChallengeHandler {
             messageBot.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias()));
 
             botMessage.put(message.getAuthor().getStringID(), messageBot.getStringID());
-            botIMessage.put(messageBot, message);
-
             targetPunch.put(message.getAuthor(), message.getMentions().get(0));
         }
     }
 
+    private IUser getChallenger(IMessage message){
+        for (String s : botMessage.keySet()){
+            if (botMessage.get(s).equals(message.getStringID())) {
+                return Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(s));
+            }
+        }
+
+        return null;
+    }
+
     public void reactionAccept(ReactionAddEvent event){
-        if(!botIMessage.containsKey(event.getReaction().getMessage())){
+        if(event.getUser().isBot()){
             return;
         }
-        IUser challengerOne = botIMessage.get(event.getReaction().getMessage()).getAuthor();
-        if(botMessage.containsValue(event.getReaction().getMessage().getStringID())){
-            if(event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())){
-                if(event.getReaction().getUserReacted(outstandingChallenges.get(challengerOne))){ //Accepted
-                    IUser challengerTwo = outstandingChallenges.get(challengerOne);
-                    fight(challengerOne, challengerTwo, null, event.getReaction().getMessage().getChannel());
-                }
-            } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.EYES){
-                if(Constants.adminUser.contains(event.getUser().getStringID())){
-                    IUser challengerTwo = outstandingChallenges.get(challengerOne);
-                    fight(challengerOne, challengerTwo, null, event.getReaction().getMessage().getChannel());
+        if(!botMessage.containsValue(event.getReaction().getMessage().getStringID())){
+            return;
+        }
+        IUser challengerOne = getChallenger(event.getMessage());
+        if(challengerOne == null){
+            return;
+        }
+        if(!event.getReaction().getEmoji().getName().equals(EmojiEnum.CROSSED_SWORDS.getEmoji())) {
+            return;
+        }
+
+        if(openChallenges.contains(challengerOne.getStringID())) {
+            openChallenges.remove(challengerOne.getStringID());
+            IUser challengerTwo = event.getUser();
+            if(challengerOne != challengerTwo) {
+                Logger.info("An open challenge was accepted.");
+
+                fight(challengerOne, challengerTwo, null, event.getChannel());
+            }
+        } else if (outstandingChallenges.containsKey(challengerOne.getStringID())){
+            if(botMessage.containsValue(event.getReaction().getMessage().getStringID())){
+                if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.CROSSED_SWORDS){
+                    if(event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(outstandingChallenges.get(challengerOne.getStringID()))))){ //Accepted
+                        IUser challengerTwo = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(outstandingChallenges.get(challengerOne.getStringID())));
+                        fight(challengerOne, challengerTwo, null, event.getReaction().getMessage().getChannel());
+                    }
+                } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.EYES){
+                    if(Constants.adminUser.contains(event.getUser().getStringID())){
+                        IUser challengerTwo = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(outstandingChallenges.get(challengerOne)));
+                        fight(challengerOne, challengerTwo, null, event.getReaction().getMessage().getChannel());
+                    }
                 }
             }
         }
     }
 
     private void fight(IUser challengerOne, IUser challengerTwo, IMessage message, IChannel channel){
+        targetPunch.put(challengerOne, challengerTwo);
         targetPunch.put(challengerTwo, challengerOne);
         Server server = ServerManager.getServer(channel.getGuild().getStringID());
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
@@ -235,31 +285,36 @@ public class ChallengeHandler {
         final IUser winner = preWinner;
         IUser loser = preWinner == challengerOne ? challengerTwo : challengerOne;
 
-        SkuddUser suWinner = ProfileManager.getDiscord(preWinner.getStringID(), channel.getGuild().getStringID(), true);
-        SkuddUser suLoser = ProfileManager.getDiscord(loser.getStringID(), channel.getGuild().getStringID(), true);
+        SkuddUser suWinner = ProfileManager.getDiscord(winner, channel.getGuild(), true);
+        SkuddUser suLoser = ProfileManager.getDiscord(loser, channel.getGuild(), true);
 
-
-
-        IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + challengerOne.getDisplayName(channel.getGuild()) + "** and **" +
-                challengerTwo.getDisplayName(channel.getGuild()) + "** go head to head in " + server.getArenaName() + ", who will win? 3... 2... 1... **FIGHT!**", channel, false);
-        messageBot.getChannel().toggleTypingStatus();
+        String fightAnnounceFormat = "{0} **{1}** and **{2}** go head to head in {3}, who will win? *3*... *2*... *1*... **FIGHT!**";
+        MessagesUtils.sendPlain(MessageFormat.format(fightAnnounceFormat, EmojiEnum.CROSSED_SWORDS.getEmoji(), challengerOne.getDisplayName(channel.getGuild()), challengerTwo.getDisplayName(channel.getGuild()), server.getArenaName()), channel, false);
+        channel.setTypingStatus(true);
 
         exec.schedule(() -> {
-            try {
-                String rewards = updateStats(suWinner, suLoser, Platforms.DISCORD);
-                String messageToSend = MessageFormat.format("{0} The crowd goes wild, but suddenly a scream of victory sounds! **{1}** has won the fight! \n\n{2}", EmojiEnum.CROSSED_SWORDS.getEmoji(), winner.getDisplayName(channel.getGuild()), rewards);
-                IMessage messageResult = MessagesUtils.sendPlain(messageToSend, channel, false);
+            String rewards = updateStats(suWinner, suLoser, Platforms.DISCORD);
+            String messageToSend = MessageFormat.format("{0} The crowd goes wild, but suddenly a scream of victory sounds! **{1}** has won the fight! \n\n{2}", EmojiEnum.CROSSED_SWORDS.getEmoji(), winner.getDisplayName(channel.getGuild()), rewards);
+            MessagesUtils.sendPlain(messageToSend, channel, false);
 
-                targetPunch.remove(challengerOne);
-                targetPunch.remove(challengerTwo);
-            } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                e.printStackTrace();
-            }
+            targetPunch.remove(challengerOne);
+            targetPunch.remove(challengerTwo);
         }, 5, TimeUnit.SECONDS);
+    }
 
-        if(senderMessage.isEmpty()){ //Just for memory sake
-            botIMessage.clear();
+    private void deletePreviousChallenge(IMessage message){
+        if(senderMessage.containsKey(message.getAuthor().getStringID())) {
+            message.getChannel().bulkDelete(new ArrayList<>(Arrays.asList(
+                    Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(senderMessage.get(message.getAuthor().getStringID()))),
+                    Main.getInstance().getSkuddbot().getMessageByID(Long.parseLong(botMessage.get(message.getAuthor().getStringID())))
+            )));
+
+            senderMessage.remove(message.getAuthor().getStringID());
+            botMessage.remove(message.getAuthor().getStringID());
         }
+
+        openChallenges.remove(message.getAuthor().getStringID());
+        outstandingChallenges.remove(message.getAuthor().getStringID());
     }
 
     // ---Twitch Stuff---
@@ -326,4 +381,6 @@ public class ChallengeHandler {
             Main.getSkuddbotTwitch().send(MessageFormat.format("The crowd goes wild but suddenly a scream of victory sounds! {0} has won the fight! | {1}", winner, rewards), twitchChannel);
         }, 5, TimeUnit.SECONDS);
     }
+
+
 }

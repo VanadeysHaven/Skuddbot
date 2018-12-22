@@ -1,4 +1,4 @@
-# v0.4.41-ALPHA
+# v0.4.42-ALPHA
 
 ## Added
 - Winstreaks for `!challenge`.
@@ -11,6 +11,9 @@
 - `!stats`
 - `!kitty`
   - I know I have said I would never add this... But shit happens.
+- Open challenges!
+  - Start one by typing `!challenge -open`
+
 
 ## Improved
 - Challenge now properly seperates between servers.

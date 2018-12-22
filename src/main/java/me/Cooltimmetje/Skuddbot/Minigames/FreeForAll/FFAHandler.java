@@ -56,11 +56,11 @@ public class FFAHandler {
             }
         }
         if(message.getAuthor() == host){
-            RequestBuffer.request(message::delete);
             if(args.length > 1){
                 if(args[1].equalsIgnoreCase("-start")){
                     if(entrants.size() > 1) {
                         startFight(message.getChannel());
+                        RequestBuffer.request(message::delete);
                     }
                 }
             }
