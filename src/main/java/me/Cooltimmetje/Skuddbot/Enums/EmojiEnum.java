@@ -1,13 +1,12 @@
 package me.Cooltimmetje.Skuddbot.Enums;
 
-import com.vdurmont.emoji.Emoji;
 import lombok.Getter;
 
 /**
  * This is to easily recall emoji's without going out and copying them.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.5-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
@@ -20,7 +19,14 @@ public enum EmojiEnum {
     HOURGLASS_FLOWING_SAND  ("⏳", "hourglass_flowing_sand"),
     CROSSED_SWORDS          ("⚔", "crossed_swords"),
     EYES                    ("\uD83D\uDC40", "eyes"),
-    MAILBOX_WITH_MAIL       ("\uD83D\uDCEC", "mailbox_with_mail");
+    MAILBOX_WITH_MAIL       ("\uD83D\uDCEC", "mailbox_with_mail"),
+    SPADES                  ("♠", "spades"),
+    CLUBS                   ("♣", "clubs"),
+    DIAMONDS                ("♦", "diamonds"),
+    HEARTS                  ("♥", "hearts"),
+    QUESTION                ("❓", "question"),
+    REGIONAL_INDICATOR_H    ("\uD83C\uDDED", "regional_indicator_symbol_h"),
+    REGIONAL_INDICATOR_S    ("\uD83C\uDDF8", "regional_indicator_symbol_s");
 
     private String emoji;
     private String alias;

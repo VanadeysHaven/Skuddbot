@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
+import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackHandler;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeHandler;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAHandler;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -66,6 +67,7 @@ public class Server {
 
     private ChallengeHandler challengeHandler;
     private FFAHandler ffaHandler;
+    private BlackjackHandler blackjackHandler;
 
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
@@ -108,6 +110,7 @@ public class Server {
 
         this.challengeHandler = new ChallengeHandler(serverID);
         this.ffaHandler = new FFAHandler(serverID);
+        this.blackjackHandler = new BlackjackHandler(serverID);
     }
 
     /**
@@ -134,6 +137,7 @@ public class Server {
 
         this.challengeHandler = new ChallengeHandler(serverID);
         this.ffaHandler = new FFAHandler(serverID);
+        this.blackjackHandler = new BlackjackHandler(serverID);
     }
 
     /**
