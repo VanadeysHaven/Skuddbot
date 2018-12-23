@@ -83,8 +83,11 @@ public class BlackjackGame {
                 gameState = GameStates.PLAYER_PLAYING;
             }
         } else if (gameState == GameStates.DEALER_PLAYING) {
-            if(dealerHandValue == 21){
+            if(dealerHandValue == 21) {
                 playingInstructions = "**You lose! The dealer got 21.**";
+                gameState = GameStates.ENDED;
+            } else if(dealerHandValue > 21) {
+                playingInstructions = "**You win! The dealer busted!";
                 gameState = GameStates.ENDED;
             } else if(dealerHandValue == playerHandValue){
                 playingInstructions = "**PUSH! You tied with the dealer.**";
