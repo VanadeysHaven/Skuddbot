@@ -1,5 +1,8 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
+
 /**
  * This class handles all profiles, getting them from either memory or the database, or creating new ones.
  *
@@ -47,6 +50,10 @@ public class ProfileManager {
             return user; //Return it
         }
 
+    }
+
+    public static SkuddUser getDiscord(IUser user, IGuild guild, boolean createNew){
+        return getDiscord(user.getStringID(), guild.getStringID(), createNew);
     }
 
     public static SkuddUser getTwitch(String twitchUsername, String twitchChannel, boolean createNew){

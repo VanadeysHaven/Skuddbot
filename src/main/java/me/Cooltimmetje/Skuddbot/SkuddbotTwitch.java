@@ -151,7 +151,7 @@ public class SkuddbotTwitch extends PircBot{
     }
 
     private void commands(String sender, String message, String channel){
-        switch (message.split(" ")[0]){
+        switch (message.toLowerCase().split(" ")[0]){
             case "s!challenge":
                 ChallengeManager.run(sender, message, channel);
                 break;

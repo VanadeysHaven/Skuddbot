@@ -2,7 +2,6 @@ package me.Cooltimmetje.Skuddbot.Minigames.FreeForAll;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
-import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -25,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * This class handles the FFA command on a per-server basis.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.4-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.4.4-ALPHA
  */
 public class FFAHandler {
@@ -57,11 +56,11 @@ public class FFAHandler {
             }
         }
         if(message.getAuthor() == host){
-            RequestBuffer.request(message::delete);
             if(args.length > 1){
                 if(args[1].equalsIgnoreCase("-start")){
                     if(entrants.size() > 1) {
                         startFight(message.getChannel());
+                        RequestBuffer.request(message::delete);
                     }
                 }
             }
@@ -177,8 +176,12 @@ public class FFAHandler {
         }
         String rewards = sbRewards.toString();
 
-        MessagesUtils.getMessageByID(messageHost).delete();
-        MessagesUtils.getMessageByID(messageSent).delete();
+        if(MessagesUtils.getMessageByID(messageHost) != null) {
+            MessagesUtils.getMessageByID(messageHost).delete();
+        }
+        if(MessagesUtils.getMessageByID(messageSent) != null) {
+            MessagesUtils.getMessageByID(messageSent).delete();
+        }
 
         MessagesUtils.sendPlain(MessageFormat.format("{0} {1} all go into {2} for an epic Free For All battle. Only one can emerge victorious! *3*... *2*... *1*... **FIGHT!**",
                 EmojiEnum.CROSSED_SWORDS.getString(), entrantsString, server.getArenaName()),

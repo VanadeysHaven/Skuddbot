@@ -6,7 +6,7 @@ import lombok.Getter;
  * Database stuff, to separate stuff from each other.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.3-ALPHA
+ * @version v0.4.41-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 @Getter
@@ -18,7 +18,8 @@ public enum DataTypes {
     ERROR            (512),
     ALIVE            (512),
     PUPPY            (512),
-    BACON            (512);
+    BACON            (512),
+    KITTY            (512);
 
     private int maxLength;
 
