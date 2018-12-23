@@ -6,7 +6,7 @@ import lombok.Getter;
  * This is to easily recall emoji's without going out and copying them.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.5-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
@@ -24,7 +24,9 @@ public enum EmojiEnum {
     CLUBS                   ("♣", "clubs"),
     DIAMONDS                ("♦", "diamonds"),
     HEARTS                  ("♥", "hearts"),
-    QUESTION                ("❓", "question");
+    QUESTION                ("❓", "question"),
+    REGIONAL_INDICATOR_H    ("\uD83C\uDDED", "regional_indicator_symbol_h"),
+    REGIONAL_INDICATOR_S    ("\uD83C\uDDF8", "regional_indicator_symbol_s");
 
     private String emoji;
     private String alias;
