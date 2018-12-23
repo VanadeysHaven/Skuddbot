@@ -1,6 +1,5 @@
 package me.Cooltimmetje.Skuddbot.Enums;
 
-import com.vdurmont.emoji.Emoji;
 import lombok.Getter;
 
 /**
@@ -20,7 +19,12 @@ public enum EmojiEnum {
     HOURGLASS_FLOWING_SAND  ("⏳", "hourglass_flowing_sand"),
     CROSSED_SWORDS          ("⚔", "crossed_swords"),
     EYES                    ("\uD83D\uDC40", "eyes"),
-    MAILBOX_WITH_MAIL       ("\uD83D\uDCEC", "mailbox_with_mail");
+    MAILBOX_WITH_MAIL       ("\uD83D\uDCEC", "mailbox_with_mail"),
+    SPADES                  ("♠", "spades"),
+    CLUBS                   ("♣", "clubs"),
+    DIAMONDS                ("♦", "diamonds"),
+    HEARTS                  ("♥", "hearts"),
+    QUESTION                ("❓", "question");
 
     private String emoji;
     private String alias;

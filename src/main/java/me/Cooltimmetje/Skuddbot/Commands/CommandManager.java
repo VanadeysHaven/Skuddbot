@@ -3,6 +3,7 @@ package me.Cooltimmetje.Skuddbot.Commands;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.ServerSettingsCommand;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Useless.*;
+import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackManager;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.SetupCommand;
@@ -140,6 +141,9 @@ public class CommandManager {
                     break;
                 case "!bacon":
                     BaconCommand.run(event.getMessage());
+                    break;
+                case "!blackjack":
+                    BlackjackManager.run(event.getMessage());
                     break;
 
                 //Pogo Gravesend
