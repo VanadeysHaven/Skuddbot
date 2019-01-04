@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackManager;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -20,6 +21,7 @@ public class ClearCooldownCommand {
         if(Constants.adminUser.contains(message.getAuthor().getStringID())){
             ChallengeManager.clearCooldowns();
             FFAManager.clearCooldowns();
+            BlackjackManager.clearCooldowns();
 
             MessagesUtils.addReaction(message, "All cooldowns have been cleared.", EmojiEnum.WHITE_CHECK_MARK);
         }

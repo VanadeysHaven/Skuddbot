@@ -9,8 +9,18 @@
     - `BLACKJACK_LOSSES`
     - `BLACKJACK_PUSHES`
     - `BLACKJACK_TWENTY_ONES`
+  - New user setting:
+    - `BLACKJACK_SIMPLE_VIEW`
+       - This defines your view mode in blackjack.
+          - When set to `true` your cards are displayed like this: :nine: :diamonds:
+          - When set to `false` your cards are displayed like this: :diamonds: Nine of diamonds
+  - Command aliases:
+    - `!blackjack`
+    - `!21`
+    - `!bj`
   - **Known issues:**
      - The reactions sometimes may not fully appear, add them yourself if this happens.
+     - The message sometimes displays weird, this is a rendering bug in Discord, restart your client and it'll fix itself. (CRTL+R)
 
 ## Changed
 - `!ffa`'s now must have 3 users before they can be started.

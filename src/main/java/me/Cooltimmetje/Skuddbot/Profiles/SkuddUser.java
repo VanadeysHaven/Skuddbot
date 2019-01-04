@@ -53,6 +53,7 @@ public class SkuddUser {
     private boolean analyticsMention;
     private boolean statsPrivate;
     private boolean mentionMe;
+    private boolean bjSimpleMode;
 
     //---- USER STATS ----
     private int xpStreak;
@@ -279,6 +280,8 @@ public class SkuddUser {
                 return isStatsPrivate()+"";
             case MENTION_ME:
                 return isMentionMe()+"";
+            case BLACKJACK_SIMPLE_VIEW:
+                return isBjSimpleMode()+"";
         }
         return null;
     }
@@ -348,6 +351,9 @@ public class SkuddUser {
                 return null;
             case MENTION_ME:
                 this.mentionMe = booleanValue;
+                return null;
+            case BLACKJACK_SIMPLE_VIEW:
+                this.bjSimpleMode = booleanValue;
                 return null;
         }
     }

@@ -1,18 +1,30 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import sx.blah.discord.handle.obj.IGuild;
+
 import java.util.HashMap;
 
 /**
  * Used for handling servers.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4-ALPHA-DEV
+ * @version v0.4.51-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerManager {
 
     public static HashMap<String,Server> servers = new HashMap<>();
     public static HashMap<String,Server> twitchServers = new HashMap<>();
+
+    /**
+     * Get the server by their Guild Instance.
+     *
+     * @param guild The Guild Instance of the server we want.
+     * @return The server instance.
+     */
+    public static Server getServer(IGuild guild){
+        return getServer(guild.getStringID());
+    }
 
     /**
      * Get the server by their Guild ID.

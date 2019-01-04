@@ -3,6 +3,13 @@ package me.Cooltimmetje.Skuddbot.Minigames.Blackjack;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * This represents a regular playing card.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4.51-ALPHA
+ * @since v0.4.5-ALPHA
+ */
 @Getter
 @Setter
 public class Card {
@@ -22,7 +29,15 @@ public class Card {
 
     @Override
     public String toString(){
-        return suit.getEmoji().getEmoji() + " " + rank.getRankName() + " of " + suit.getSuitName();
+        return rank.getEmoji().getEmoji() + " " + suit.getEmoji().getEmoji();
+    }
+
+    public String toString(boolean simpleMode){
+        if(simpleMode){
+            return rank.getEmoji().getEmoji() + " " + suit.getEmoji().getEmoji();
+        } else {
+            return suit.getEmoji().getEmoji() + " " + rank.getRankName() + " of " + suit.getSuitName();
+        }
     }
 
 }

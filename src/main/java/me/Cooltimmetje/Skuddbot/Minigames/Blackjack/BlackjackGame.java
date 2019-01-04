@@ -5,6 +5,7 @@ import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
@@ -41,6 +42,10 @@ public class BlackjackGame {
     private String playingInstructions;
     private GameStates gameState;
 
+    private int baseReward = 75;
+    private int winBonus = 50;
+    private int twentyOneBonus = 100;
+
 
     private String messageFormat = "[beta] **BLACKJACK** | *{0}*\n\n" +
             "**DEALER HAND:** (hand value: {1}) *Dealer draws to 16, stands on 17.*\n" +
@@ -67,9 +72,11 @@ public class BlackjackGame {
 
         if(gameState == GameStates.PLAYER_PLAYING) {
             RequestBuffer.request(() -> {
-                message.addReaction(EmojiManager.getForAlias(EmojiEnum.REGIONAL_INDICATOR_H.getAlias()));
-                message.addReaction(EmojiManager.getForAlias(EmojiEnum.REGIONAL_INDICATOR_S.getAlias()));
+                message.addReaction(EmojiManager.getForAlias(EmojiEnum.H.getAlias()));
+                message.addReaction(EmojiManager.getForAlias(EmojiEnum.S.getAlias()));
             });
+        } else {
+            ServerManager.getServer(message.getGuild().getStringID()).getBlackjackHandler().games.remove(user.getStringID());
         }
     }
 
@@ -83,7 +90,8 @@ public class BlackjackGame {
 
         if (gameState == GameStates.PLAYER_PLAYING) {
             if (playerHandValue == 21) {
-                playingInstructions = "**21! You win!**";
+                playingInstructions = "**21! You win!** | Reward: *+" + (baseReward + winBonus + twentyOneBonus) + " " + EmojiHelper.getEmoji("xp_icon") + "*";
+                su.setXp(su.getXp() + baseReward + winBonus + twentyOneBonus);
                 su.setBlackjackWins(su.getBlackjackWins() + 1);
                 su.setBlackjackTwentyOnes(su.getBlackjackTwentyOnes() + 1);
                 gameState = GameStates.ENDED;
@@ -92,7 +100,7 @@ public class BlackjackGame {
                 su.setBlackjackLosses(su.getBlackjackLosses() + 1);
                 gameState = GameStates.ENDED;
             } else {
-                playingInstructions = "*Press " + EmojiEnum.REGIONAL_INDICATOR_H.getEmoji() + " to hit, press " + EmojiEnum.REGIONAL_INDICATOR_S.getEmoji() + " to stand.*";
+                playingInstructions = "*Press " + EmojiEnum.H.getEmoji() + " to hit, press " + EmojiEnum.S.getEmoji() + " to stand.*";
                 gameState = GameStates.PLAYER_PLAYING;
             }
         } else if (gameState == GameStates.DEALER_PLAYING) {
@@ -101,11 +109,13 @@ public class BlackjackGame {
                 su.setBlackjackLosses(su.getBlackjackLosses() + 1);
                 gameState = GameStates.ENDED;
             } else if(dealerHandValue > 21) {
-                playingInstructions = "**You win! The dealer busted!**";
+                playingInstructions = "**You win! The dealer busted!** | Reward: *+" + (baseReward + winBonus) + " " + EmojiHelper.getEmoji("xp_icon") + "*";
+                su.setXp(su.getXp() + baseReward + winBonus);
                 su.setBlackjackWins(su.getBlackjackWins() + 1);
                 gameState = GameStates.ENDED;
             } else if(dealerHandValue == playerHandValue){
-                playingInstructions = "**PUSH! You tied with the dealer.**";
+                playingInstructions = "**PUSH! You tied with the dealer.** | Reward: *+" + (baseReward) + " " + EmojiHelper.getEmoji("xp_icon") + "*";
+                su.setXp(su.getXp() + baseReward);
                 su.setBlackjackPushes(su.getBlackjackPushes() + 1);
                 gameState = GameStates.ENDED;
             } else if (dealerHandValue > playerHandValue){
@@ -113,10 +123,15 @@ public class BlackjackGame {
                 su.setBlackjackLosses(su.getBlackjackLosses() + 1);
                 gameState = GameStates.ENDED;
             } else {
-                playingInstructions = "**You win! The dealer has a lower hand value than you!**";
+                playingInstructions = "**You win! The dealer has a lower hand value than you!** | Reward: *+" + (baseReward + winBonus) + " " + EmojiHelper.getEmoji("xp_icon") + "*";
+                su.setXp(su.getXp() + baseReward + winBonus);
                 su.setBlackjackWins(su.getBlackjackWins() + 1);
                 gameState = GameStates.ENDED;
             }
+        }
+
+        if(gameState == GameStates.ENDED){
+            ServerManager.getServer(guild).getBlackjackHandler().cooldowns.put(user.getLongID(), System.currentTimeMillis());
         }
     }
 
@@ -149,16 +164,18 @@ public class BlackjackGame {
 
     private String formatHand(ArrayList<Card> cards){
         StringBuilder sb = new StringBuilder();
+        SkuddUser su = ProfileManager.getDiscord(user, guild, true);
 
         for(Card card : cards){
-            sb.append(card.toString()).append("\n");
+            sb.append(card.toString(su.isBjSimpleMode())).append(" | ");
         }
 
         if(cards.size() == 1){
-            sb.append(EmojiEnum.QUESTION.getEmoji()).append(" face down card\n");
+            sb.append(EmojiEnum.QUESTION.getEmoji()).append(" face down card | ");
         }
 
-        return sb.toString().trim();
+        String hand = sb.toString();
+        return hand.substring(0, hand.length() - 2);
     }
 
     public void hit(){
@@ -173,7 +190,7 @@ public class BlackjackGame {
         if(gameState == GameStates.ENDED){
             ServerManager.getServer(message.getGuild().getStringID()).getBlackjackHandler().games.remove(user.getStringID());
         } else if (gameState == GameStates.PLAYER_PLAYING){
-            RequestBuffer.request(() -> message.removeReaction(user, EmojiManager.getForAlias(EmojiEnum.REGIONAL_INDICATOR_H.getAlias())));
+            RequestBuffer.request(() -> message.removeReaction(user, EmojiManager.getForAlias(EmojiEnum.H.getAlias())));
         }
     }
 
