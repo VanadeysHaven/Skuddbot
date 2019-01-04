@@ -2,7 +2,9 @@ package me.Cooltimmetje.Skuddbot.Minigames.Blackjack;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
@@ -15,6 +17,13 @@ import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This is a game of blackjack, with all the needed functions to carry out an game.
+ *
+ * @author Tim (Cooltimmetje)
+ * @version v0.4.51-ALPHA
+ * @since v0.4.5-ALPHA
+ */
 public class BlackjackGame {
 
     private IMessage message;
@@ -70,13 +79,17 @@ public class BlackjackGame {
         dealerHandString = formatHand(dealerHand);
         playerHandValue = calculateHandValue(playerHand);
         playerHandString = formatHand(playerHand);
+        SkuddUser su = ProfileManager.getDiscord(user, guild, true);
 
         if (gameState == GameStates.PLAYER_PLAYING) {
             if (playerHandValue == 21) {
                 playingInstructions = "**21! You win!**";
+                su.setBlackjackWins(su.getBlackjackWins() + 1);
+                su.setBlackjackTwentyOnes(su.getBlackjackTwentyOnes() + 1);
                 gameState = GameStates.ENDED;
             } else if (playerHandValue > 21) {
                 playingInstructions = "**You busted! Better luck next time.**";
+                su.setBlackjackLosses(su.getBlackjackLosses() + 1);
                 gameState = GameStates.ENDED;
             } else {
                 playingInstructions = "*Press " + EmojiEnum.REGIONAL_INDICATOR_H.getEmoji() + " to hit, press " + EmojiEnum.REGIONAL_INDICATOR_S.getEmoji() + " to stand.*";
@@ -85,18 +98,23 @@ public class BlackjackGame {
         } else if (gameState == GameStates.DEALER_PLAYING) {
             if(dealerHandValue == 21) {
                 playingInstructions = "**You lose! The dealer got 21.**";
+                su.setBlackjackLosses(su.getBlackjackLosses() + 1);
                 gameState = GameStates.ENDED;
             } else if(dealerHandValue > 21) {
-                playingInstructions = "**You win! The dealer busted!";
+                playingInstructions = "**You win! The dealer busted!**";
+                su.setBlackjackWins(su.getBlackjackWins() + 1);
                 gameState = GameStates.ENDED;
             } else if(dealerHandValue == playerHandValue){
                 playingInstructions = "**PUSH! You tied with the dealer.**";
+                su.setBlackjackPushes(su.getBlackjackPushes() + 1);
                 gameState = GameStates.ENDED;
             } else if (dealerHandValue > playerHandValue){
                 playingInstructions = "**You lose! The dealer has a higher hand value than you!**";
+                su.setBlackjackLosses(su.getBlackjackLosses() + 1);
                 gameState = GameStates.ENDED;
             } else {
                 playingInstructions = "**You win! The dealer has a lower hand value than you!**";
+                su.setBlackjackWins(su.getBlackjackWins() + 1);
                 gameState = GameStates.ENDED;
             }
         }

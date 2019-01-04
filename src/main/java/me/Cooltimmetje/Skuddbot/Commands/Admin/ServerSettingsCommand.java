@@ -19,7 +19,7 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.51-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerSettingsCommand {
@@ -32,15 +32,8 @@ public class ServerSettingsCommand {
      */
     public static void run(IMessage message) {
         Server server = ServerManager.getServer(message.getGuild().getStringID());
-        boolean allowAccess = false;
-        if (server.getAdminRole() != null) {
-            if (message.getGuild().getRolesByName(server.getAdminRole()).size() == 1) {
-                allowAccess = message.getAuthor().getRolesForGuild(message.getGuild()).contains(message.getGuild().getRolesByName(server.getAdminRole()).get(0));
-            }
-        }
-        if (!allowAccess){
-            allowAccess = message.getAuthor() == message.getGuild().getOwner() || Constants.adminUser.contains(message.getAuthor().getStringID());
-        }
+        boolean allowAccess = ProfileManager.getDiscord(message.getAuthor(), message.getGuild(), true).hasElevatedPermissions();
+
         if (allowAccess) {
             if(message.getContent().split(" ").length == 1){ //No arguments: Show list of the settings.
 

@@ -21,7 +21,11 @@ public enum UserStats {
     CHALLENGE_LONGEST_STREAK ("challenge_longest_streak", "0", "Integer", true,  "Longest challenge winstreak","wins"    ),
     FFA_WINS                 ("ffa_wins",                 "0", "Integer", true,  "Free for all wins",          "wins"    ),
     FFA_LOSSES               ("ffa_losses",               "0", "Integer", true,  "Free for all losses",        "losses"  ),
-    FFA_MOST_WIN             ("ffa_most_win",             "0", "Integer", true,  "FFA highest entrants win",   "entrants");
+    FFA_MOST_WIN             ("ffa_most_win",             "0", "Integer", true,  "FFA highest entrants win",   "entrants"),
+    BLACKJACK_WINS           ("blackjack_wins",           "0", "Integer", true,  "Blackjack wins",             "wins"    ),
+    BLACKJACK_PUSHES         ("blackjack_pushes",         "0", "Integer", true,  "Blackjack pushes",           "pushes"  ),
+    BLACKJACK_TWENTY_ONES    ("blackjack_twenty_one",     "0", "Integer", true,  "Blackjack 21's",             "21's"    ),
+    BLACKJACK_LOSSES         ("blackjack_losses",         "0", "Integer", true,  "Blackjack losses",           "losses"  );
 
     private String jsonReference;
     private String defaultValue;

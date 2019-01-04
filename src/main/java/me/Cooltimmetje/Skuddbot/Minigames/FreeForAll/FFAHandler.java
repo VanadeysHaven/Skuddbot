@@ -6,7 +6,10 @@ import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
-import me.Cooltimmetje.Skuddbot.Utilities.*;
+import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
+import me.Cooltimmetje.Skuddbot.Utilities.Logger;
+import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
 import sx.blah.discord.handle.obj.IChannel;
@@ -24,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * This class handles the FFA command on a per-server basis.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.4.51-ALPHA
  * @since v0.4.4-ALPHA
  */
 public class FFAHandler {
@@ -101,7 +104,7 @@ public class FFAHandler {
                 return;
             }
 
-            if(entrants.size() > 1){
+            if(entrants.size() > 2){
                 Logger.info("Starting fight...");
                 startFight(event.getChannel());
             } else {
@@ -118,14 +121,14 @@ public class FFAHandler {
             if(!entrants.contains(event.getUser())) {
                 Logger.info("Adding user to fight...");
                 entrants.add(event.getUser());
-                if((entrants.size() > 1) && !startReact){
+                if((entrants.size() > 2) && !startReact){
                     RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
                     startReact = true;
                 }
             }
         } else if(EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.EYES){
-            if(Constants.adminUser.contains(event.getUser().getStringID())){
-                Logger.info("Admin user");
+            if(ProfileManager.getDiscord(event.getUser(), event.getGuild(), true).hasElevatedPermissions()){
+                Logger.info("User has elevated permissions.");
                 if(entrants.size() > 1){
                     Logger.info("Starting fight...");
                     startFight(event.getChannel());

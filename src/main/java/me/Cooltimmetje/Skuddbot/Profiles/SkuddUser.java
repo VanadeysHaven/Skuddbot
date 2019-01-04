@@ -28,7 +28,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.4.51-ALPHA
  * @since v0.1-ALPHA
  */
 @Getter
@@ -65,6 +65,10 @@ public class SkuddUser {
     private int ffaWins;
     private int ffaLosses;
     private int ffaMostWin;
+    private int blackjackWins;
+    private int blackjackPushes;
+    private int blackjackTwentyOnes;
+    private int blackjackLosses;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
@@ -463,6 +467,18 @@ public class SkuddUser {
             case FFA_MOST_WIN:
                 this.ffaMostWin = intValue;
                 return null;
+            case BLACKJACK_WINS:
+                this.blackjackWins = intValue;
+                return null;
+            case BLACKJACK_LOSSES:
+                this.blackjackLosses = intValue;
+                return null;
+            case BLACKJACK_PUSHES:
+                this.blackjackPushes = intValue;
+                return null;
+            case BLACKJACK_TWENTY_ONES:
+                this.blackjackTwentyOnes = intValue;
+                return null;
         }
     }
 
@@ -494,6 +510,14 @@ public class SkuddUser {
                 return getFfaLosses()+"";
             case FFA_MOST_WIN:
                 return getFfaMostWin()+"";
+            case BLACKJACK_PUSHES:
+                return getBlackjackPushes()+"";
+            case BLACKJACK_LOSSES:
+                return getBlackjackLosses()+"";
+            case BLACKJACK_WINS:
+                return getBlackjackWins()+"";
+            case BLACKJACK_TWENTY_ONES:
+                return getBlackjackTwentyOnes()+"";
             default:
                 return null;
         }
@@ -519,5 +543,27 @@ public class SkuddUser {
         return obj.toString();
     }
 
+    /**
+     * Determines if the user has elevated permissions within this server.
+     *
+     * @return if the user has elevated permissions.
+     */
+    public boolean hasElevatedPermissions(){
+        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
+        IUser user = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id));
+        Server server = ServerManager.getServer(serverID);
+        boolean elevatedPerms = false;
+
+        if(server.getAdminRole() != null){
+            if(guild.getRolesByName(server.getAdminRole()).size() == 1){
+                elevatedPerms = user.getRolesForGuild(guild).contains(guild.getRolesByName(server.getAdminRole()).get(0));
+            }
+        }
+        if(!elevatedPerms){
+            elevatedPerms = user == guild.getOwner() || Constants.adminUser.contains(user.getStringID());
+        }
+
+        return elevatedPerms;
+    }
 
 }
