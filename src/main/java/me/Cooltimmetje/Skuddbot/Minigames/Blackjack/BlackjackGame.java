@@ -40,7 +40,7 @@ public class BlackjackGame {
     private int playerHandValue;
     private String playerHandString;
     private String playingInstructions;
-    private GameStates gameState;
+    public GameStates gameState;
 
     private int baseReward = 50;
     private int winBonus = 75;
@@ -75,8 +75,6 @@ public class BlackjackGame {
                 message.addReaction(EmojiManager.getForAlias(EmojiEnum.H.getAlias()));
                 message.addReaction(EmojiManager.getForAlias(EmojiEnum.S.getAlias()));
             });
-        } else {
-            ServerManager.getServer(message.getGuild().getStringID()).getBlackjackHandler().games.remove(user.getStringID());
         }
     }
 

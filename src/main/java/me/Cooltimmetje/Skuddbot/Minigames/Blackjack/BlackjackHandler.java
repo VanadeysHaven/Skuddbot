@@ -39,7 +39,10 @@ public class BlackjackHandler {
         }
 
         if(!games.containsKey(user.getStringID())) {
-            games.put(user.getStringID(), new BlackjackGame(user, message.getChannel()));
+            BlackjackGame blackjackGame = new BlackjackGame(user, message.getChannel());
+            if(blackjackGame.gameState != GameStates.ENDED) {
+                games.put(user.getStringID(), blackjackGame);
+            }
         } else {
             MessagesUtils.addReaction(message, "You already have a game of blackjack in progress, please finish that first!", EmojiEnum.X);
         }
