@@ -18,14 +18,20 @@
     - `!blackjack`
     - `!21`
     - `!bj`
+    - `!deal`
+  - Rewards:
+    - Push: 50xp
+    - Win: 125xp
+    - 21: 225xp
   - **Known issues:**
      - The reactions sometimes may not fully appear, add them yourself if this happens.
-     - The message sometimes displays weird, this is a rendering bug in Discord, restart your client and it'll fix itself. (CRTL+R)
+     - The message sometimes displays weird, this is a rendering bug in Discord, you can fix this by restarting your client (CRTL+R) or by viewing a different channel and coming back.
 
 ## Changed
 - `!ffa`'s now must have 3 users before they can be started.
 - Guild owners and users with the admin role can now force start `!ffa`'s, by adding the :eyes: emoji to the message.
   - By using this reaction they can also bypass the 3 user requirement, this is then lowered to 2.
+- `!challenge` rewards have been doubled.
 
 
 ## Backend changes

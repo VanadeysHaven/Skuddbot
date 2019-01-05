@@ -40,8 +40,8 @@ public class ChallengeHandler {
     }
 
     private int cooldown = 300;
-    private int xpReward = 50;
-    private int streakReward = 25;
+    private int xpReward = 100;
+    private int streakReward = 50;
 
     public HashMap<String,Long> cooldowns = new HashMap<>();
 

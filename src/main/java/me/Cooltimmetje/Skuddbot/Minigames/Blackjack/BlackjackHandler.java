@@ -55,7 +55,7 @@ public class BlackjackHandler {
         if(event.getChannel().isPrivate()){
             return;
         }
-        if(games.get(event.getUser().getStringID()).getMessage() != event.getMessage()){
+        if(games.get(event.getUser().getStringID()).getMessage().getLongID()!= event.getMessage().getLongID()){
             return;
         }
 

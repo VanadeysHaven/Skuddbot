@@ -42,8 +42,8 @@ public class BlackjackGame {
     private String playingInstructions;
     private GameStates gameState;
 
-    private int baseReward = 75;
-    private int winBonus = 50;
+    private int baseReward = 50;
+    private int winBonus = 75;
     private int twentyOneBonus = 100;
 
 
