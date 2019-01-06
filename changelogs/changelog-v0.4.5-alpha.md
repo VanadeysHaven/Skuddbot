@@ -25,7 +25,6 @@
     - 21: 225xp
   - **Known issues:**
      - The reactions sometimes may not fully appear, add them yourself if this happens.
-     - The message sometimes displays weird, this is a rendering bug in Discord, you can fix this by restarting your client (CRTL+R) or by viewing a different channel and coming back.
 
 ## Changed
 - `!ffa`'s now must have 3 users before they can be started.

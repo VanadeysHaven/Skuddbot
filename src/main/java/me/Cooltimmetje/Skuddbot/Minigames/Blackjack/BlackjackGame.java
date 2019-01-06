@@ -47,7 +47,7 @@ public class BlackjackGame {
     private int twentyOneBonus = 100;
 
 
-    private String messageFormat = "[beta] **BLACKJACK** | *{0}*\n\n" +
+    private String messageFormat = "**BLACKJACK** | *{0}*\n\n" +
             "**DEALER HAND:** (hand value: {1}) *Dealer draws to 16, stands on 17.*\n" +
             "{2}\n\n" +
             "**YOUR HAND:** (hand value: {3})\n" +
@@ -169,11 +169,11 @@ public class BlackjackGame {
         }
 
         if(cards.size() == 1){
-            sb.append(EmojiEnum.QUESTION.getEmoji()).append(" face down card | ");
+            sb.append(EmojiEnum.QUESTION.getEmoji()).append(" ").append(EmojiEnum.QUESTION.getEmoji()).append(" | ");
         }
 
         String hand = sb.toString();
-        return hand.substring(0, hand.length() - 2);
+        return hand.substring(0, hand.length() - 3);
     }
 
     public void hit(){
