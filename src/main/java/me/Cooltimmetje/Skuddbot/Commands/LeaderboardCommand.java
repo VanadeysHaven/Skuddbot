@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import com.vdurmont.emoji.EmojiParser;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -15,7 +16,7 @@ import java.util.TreeMap;
  * Show the XP leaderboard of the server.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA-DEV
+ * @version v0.4.51-ALPHA
  * @since v0.1-ALPHA
  */
 public class LeaderboardCommand {
@@ -59,12 +60,8 @@ public class LeaderboardCommand {
                     name = "JuiceMedia";
                 }
             }
-            
-            if(user.getTwitchUsername() != null){
-                if(user.getTwitchUsername().equals("battlekiller2000")){
-                    name = "battlekiller2000";
-                }
-            }
+
+            name = EmojiParser.removeAllEmojis(name);
 
             if(name.length() > lengthName){
                 lengthName = name.length();
