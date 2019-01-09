@@ -1,6 +1,5 @@
 package me.Cooltimmetje.Skuddbot.Listeners;
 
-import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -27,7 +26,6 @@ public class CreateServerListener {
         if(authorized.contains(event.getGuild().getStringID())) {
             Logger.info("[ServerAuthorization] " + event.getGuild().getName() + " (ID: " + event.getGuild().getStringID() + ") is authorized to use Skuddbot.");
             ServerManager.getServer(event.getGuild().getStringID());
-            MySqlManager.getTopDiscord(event.getGuild().getStringID());
         } else {
             Logger.info("[ServerAuthorization] " + event.getGuild().getName() + " (ID: " + event.getGuild().getStringID() + ") is not authorized to use Skuddbot. Leaving...");
             MessagesUtils.sendPlain("I'm sorry but this server is not authorized... Please refer to the manual on how to get your server authorized! You can find the manual here: https://goo.gl/oWoyG2", event.getGuild().getChannelByID(event.getGuild().getLongID()), false);

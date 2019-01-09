@@ -139,6 +139,7 @@ public class BlackjackGame {
 
     private int calculateHandValue(ArrayList<Card> cards){
         int aces = 0;
+        int elevenAces = 0;
         int handValue = 0;
         for(Card card : cards){
             if(card.getRank() == CardRanks.ACE){
@@ -152,8 +153,17 @@ public class BlackjackGame {
         for(int i=0; i < aces; i++){
             if((handValue + 11) <= 21){
                 handValue += 11;
+                elevenAces++;
             } else {
                 handValue += 1;
+            }
+        }
+
+        if(handValue > 21 && elevenAces > 0){
+            for(int i=0; i < elevenAces; i++){
+                if(handValue > 21){
+                    handValue -= 10;
+                }
             }
         }
 

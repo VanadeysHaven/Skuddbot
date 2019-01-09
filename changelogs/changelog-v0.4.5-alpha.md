@@ -31,6 +31,8 @@
 - Guild owners and users with the admin role can now force start `!ffa`'s, by adding the :eyes: emoji to the message.
   - By using this reaction they can also bypass the 3 user requirement, this is then lowered to 2.
 - `!challenge` rewards have been doubled.
+- Optimization for `!hug` and `!punch`.
+- Names on the XP leaderboard now get stripped from emoji's.
 
 
 ## Backend changes

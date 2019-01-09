@@ -4,22 +4,20 @@ import me.Cooltimmetje.Skuddbot.Enums.Avatars;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
+import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import sx.blah.discord.handle.obj.ActivityType;
 import sx.blah.discord.handle.obj.StatusType;
 import sx.blah.discord.util.Image;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.51-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -332,5 +330,19 @@ public class MiscUtils {
             MySqlManager.saveGlobal("avatar", avatar.toString());
         }
 
+    }
+
+    public static ArrayList<Long> gatherActiveUsers(Server server){
+        return gatherActiveUsers(server,24 * 60 * 60 * 1000);
+    }
+
+    public static ArrayList<Long> gatherActiveUsers(Server server, int activeDelay){
+        ArrayList<Long> activeUsers = new ArrayList<>();
+        for (Long userid : server.lastSeen.keySet()) {
+            if ((System.currentTimeMillis() - server.lastSeen.get(userid) < activeDelay)) {
+                activeUsers.add(userid);
+            }
+        }
+        return activeUsers;
     }
 }
