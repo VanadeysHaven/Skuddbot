@@ -16,6 +16,10 @@ import sx.blah.discord.handle.obj.IMessage;
 public class BlackjackManager {
 
     public static void run(IMessage message){
+        if(message.getGuild().getLongID() == 198483566026424321L && message.getContent().split(" ")[0].equalsIgnoreCase("!bj")){
+            return;
+        }
+
         ServerManager.getServer(message.getGuild().getStringID()).getBlackjackHandler().startNewGame(message.getAuthor(), message);
     }
 
