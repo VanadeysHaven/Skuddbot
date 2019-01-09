@@ -33,7 +33,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.4-ALPHA
+ * @version v0.4.51-ALPHA
  * @since v0.2-ALPHA
  */
 
@@ -103,7 +103,7 @@ public class Server {
         Logger.info(MessageFormat.format("Initializing {0} (ID: {1})",guild.getName(),guild.getStringID()));
         this.clearProfiles();
         MySqlManager.createServerTables(serverID);
-        this.setServerInitialized(true);
+        this.serverInitialized = true;
         Logger.info(MessageFormat.format("Initialized {0} (ID: {1})",guild.getName(),guild.getStringID()));
 
         MessagesUtils.addReaction(message, null, EmojiEnum.WHITE_CHECK_MARK);

@@ -1,11 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands.Useless;
 
-import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeHandler;
-import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
-import me.Cooltimmetje.Skuddbot.Profiles.Server;
-import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
-import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
@@ -20,7 +16,7 @@ import java.util.ArrayList;
  * Picks an random active user, and punches it.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.4.51-ALPHA
  * @since v0.4.32-ALPHA
  */
 public class PunchCommand {
@@ -36,19 +32,12 @@ public class PunchCommand {
         IUser randomUser;
 
         if(!challengeHandler.targetPunch.containsKey(user)) {
-            int activeDelay = 24 * 60 * 60 * 1000;
-            ArrayList<Long> activeUsers = new ArrayList<>();
-            for (Long userid : server.lastSeen.keySet()) {
-                if ((System.currentTimeMillis() - server.lastSeen.get(userid) < activeDelay)) {
-                    activeUsers.add(userid);
-                }
-            }
+            ArrayList<Long> activeUsers = MiscUtils.gatherActiveUsers(server);
 
             if (activeUsers.size() <= 1) {
-                MessagesUtils.addReaction(message, "There are no users to be punched.", EmojiEnum.X);
-                return;
+                MySqlManager.getTopDiscord(guild.getStringID());
+                activeUsers = MiscUtils.gatherActiveUsers(server);
             }
-
 
             do {
                 randomUser = message.getGuild().getUserByID(activeUsers.get(MiscUtils.randomInt(0, activeUsers.size() - 1)));
