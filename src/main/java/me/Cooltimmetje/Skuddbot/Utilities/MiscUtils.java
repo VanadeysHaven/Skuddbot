@@ -291,7 +291,7 @@ public class MiscUtils {
                     thatDay.setTime(new Date(0)); /* reset */
                     thatDay.set(Calendar.DAY_OF_MONTH,1);
                     thatDay.set(Calendar.MONTH,0); // 0-11 so 1 less
-                    thatDay.set(Calendar.YEAR, 2019);
+                    thatDay.set(Calendar.YEAR, 2020);
 
                     Calendar today = Calendar.getInstance();
                     long diff =  thatDay.getTimeInMillis() - today.getTimeInMillis();
@@ -307,7 +307,7 @@ public class MiscUtils {
 
                 //Default
                 default:
-                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING, MiscUtils.getRandomMessage(DataTypes.PLAYING));
+                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING, MiscUtils.getRandomMessage(DataTypes.PLAYING).replace("$version", Constants.config.get("version")));
                     Constants.EVENT_ACTIVE = false;
                     break;
             }
