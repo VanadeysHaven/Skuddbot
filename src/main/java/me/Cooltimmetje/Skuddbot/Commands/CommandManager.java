@@ -126,6 +126,7 @@ public class CommandManager {
                 case "!wuff":
                 case "!dogger":
                 case "!doggo":
+                case "!dog":
                 case "!pupper":
                 case "!riit":
                 case "!rogged":
