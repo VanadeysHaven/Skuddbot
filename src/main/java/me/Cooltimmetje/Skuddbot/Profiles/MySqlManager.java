@@ -1,14 +1,16 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
 import com.zaxxer.hikari.HikariDataSource;
-import me.Cooltimmetje.Skuddbot.Commands.Useless.PuppyCommand;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,7 +24,7 @@ import java.util.HashMap;
  * This class handles everything to do with the database, and contains all operations we can run on the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -30,6 +32,7 @@ import java.util.HashMap;
 public class MySqlManager {
 
     private static HikariDataSource hikari = null;
+    static JSONParser parser = new JSONParser();
 
     public static void setupHikari(String user, String pass){
         hikari = new HikariDataSource();
@@ -1393,6 +1396,69 @@ public class MySqlManager {
                 }
             }
         }
+    }
+
+    public static HashMap<String,Integer> getStats(UserStats stat, String serverId){
+        HashMap<String,Integer> result = new HashMap<>();
+        Logger.info("Loading all " + stat.toString() + " stats for server " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverId)) + " (ID: " + serverId + ")");
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String queryDiscord = "SELECT discord_id,userstats FROM " + serverId + "_discord WHERE userstats LIKE '%" + stat.getJsonReference() + "%';";
+        String queryTwitch = "SELECT twitch_user,userstats FROM " + serverId + "_twitch WHERE userstats LIKE '%" + stat.getJsonReference() + "%';";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(queryDiscord);
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                JSONObject object = (JSONObject) parser.parse(rs.getString("userstats"));
+                int statValue = Integer.parseInt(String.valueOf(object.get(stat.getJsonReference())));
+                String id = rs.getString("discord_id");
+
+                result.put(id, statValue);
+            }
+
+            ps = c.prepareStatement(queryTwitch);
+            rs = ps.executeQuery();
+
+            while (rs.next()){
+                JSONObject object = (JSONObject) parser.parse(rs.getString("userstats"));
+                int statValue = Integer.parseInt(String.valueOf(object.get(stat.getJsonReference())));
+                String userName = rs.getString("twitch_user");
+
+                result.put(userName, statValue);
+            }
+
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return result;
     }
 
 }

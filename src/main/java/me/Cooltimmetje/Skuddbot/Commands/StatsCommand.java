@@ -1,7 +1,8 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
-import me.Cooltimmetje.Skuddbot.Enums.UserStats;
+import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
+import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStatsCats;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -15,7 +16,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * Command that will generate a stats overview and print it out.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.42-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.4.42-ALPHA
  */
 public class StatsCommand {
@@ -48,11 +49,18 @@ public class StatsCommand {
         eb.withColor(MiscUtils.randomInt(0, 255), MiscUtils.randomInt(0, 255), MiscUtils.randomInt(0, 255));
         eb.withDesc("__Server:__ " + guild.getName());
 
-        for (UserStats stat : UserStats.values()) {
-            if (stat.isShowInStats()) {
-                eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
+        for (UserStatsCats category : UserStatsCats.values()){
+            if(category.isShow()) {
+                eb.appendField("\u200B", "__" + category.getName() + ":__",  false);
+
+                for (UserStats stat : UserStats.values()) {
+                    if (stat.isShow() && stat.getCategory() == category) {
+                        eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
+                    }
+                }
             }
         }
+
 
         message.getChannel().sendMessage("" , eb.build());
     }

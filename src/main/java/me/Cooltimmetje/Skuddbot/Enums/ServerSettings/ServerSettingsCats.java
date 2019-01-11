@@ -1,10 +1,10 @@
-package me.Cooltimmetje.Skuddbot.Enums;
+package me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 
 /**
  * Categories for the ServerSettings
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.4.2-ALPHA
  */
 public enum ServerSettingsCats {

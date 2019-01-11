@@ -3,7 +3,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 import lombok.Getter;
 import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
-import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
+import me.Cooltimmetje.Skuddbot.Enums.ServerSettings.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackHandler;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeHandler;
@@ -33,7 +33,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.2-ALPHA
  */
 

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.UserSettings;
-import me.Cooltimmetje.Skuddbot.Enums.UserStats;
+import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
@@ -28,7 +28,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.1-ALPHA
  */
 @Getter

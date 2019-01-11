@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Enums;
+package me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
 
 import lombok.Getter;
 
@@ -6,7 +6,7 @@ import lombok.Getter;
  * This holds the information for Server Settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.2-ALPHA
  */
 @Getter

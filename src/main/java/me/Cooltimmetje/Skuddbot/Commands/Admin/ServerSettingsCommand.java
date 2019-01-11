@@ -1,8 +1,8 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
-import me.Cooltimmetje.Skuddbot.Enums.ServerSettings;
-import me.Cooltimmetje.Skuddbot.Enums.ServerSettingsCats;
+import me.Cooltimmetje.Skuddbot.Enums.ServerSettings.ServerSettings;
+import me.Cooltimmetje.Skuddbot.Enums.ServerSettings.ServerSettingsCats;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -19,7 +19,7 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerSettingsCommand {
