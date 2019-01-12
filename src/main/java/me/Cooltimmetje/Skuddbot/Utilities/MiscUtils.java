@@ -36,6 +36,15 @@ public class MiscUtils {
         }
     }
 
+    public static boolean isLong(String str){
+        try {
+            long num = Long.parseLong(str);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
     public static String randomString(int len){
         final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random rnd = new Random();
@@ -344,5 +353,18 @@ public class MiscUtils {
             }
         }
         return activeUsers;
+    }
+
+    public static boolean isNumeric(String str) {
+        if (str == null) {
+            return false;
+        }
+        int sz = str.length();
+        for (int i = 0; i < sz; i++) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

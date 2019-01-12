@@ -3,6 +3,8 @@
 ## Added
 - STATISTICS LEADERBOARD
   - You wanted it, so here you go.
+  - Command: `!statlb <stat name>`
+    - You can find all the stat names with `!statlb -list`
 - Categories for stats.
 
 ## Changed

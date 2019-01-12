@@ -1400,7 +1400,7 @@ public class MySqlManager {
 
     public static HashMap<String,Integer> getStats(UserStats stat, String serverId){
         HashMap<String,Integer> result = new HashMap<>();
-        Logger.info("Loading all " + stat.toString() + " stats for server " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverId)) + " (ID: " + serverId + ")");
+        Logger.info("Loading all " + stat.toString() + " stats for server " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverId)).getName() + " (ID: " + serverId + ")");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -1418,6 +1418,7 @@ public class MySqlManager {
                 int statValue = Integer.parseInt(String.valueOf(object.get(stat.getJsonReference())));
                 String id = rs.getString("discord_id");
 
+                Logger.info("Loaded stat value " + statValue + " for user ID " + id);
                 result.put(id, statValue);
             }
 
@@ -1429,6 +1430,7 @@ public class MySqlManager {
                 int statValue = Integer.parseInt(String.valueOf(object.get(stat.getJsonReference())));
                 String userName = rs.getString("twitch_user");
 
+                Logger.info("Loaded stat value " + statValue + " for username " + userName);
                 result.put(userName, statValue);
             }
 

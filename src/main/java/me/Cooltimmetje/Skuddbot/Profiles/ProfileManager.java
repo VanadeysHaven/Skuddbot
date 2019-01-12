@@ -7,7 +7,7 @@ import sx.blah.discord.handle.obj.IUser;
  * This class handles all profiles, getting them from either memory or the database, or creating new ones.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.2-ALPHA
+ * @version v0.4.6-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -110,6 +110,15 @@ public class ProfileManager {
         Server server = ServerManager.getServer(serverID);
         server.removeTwitch(user.getTwitchUsername());
         server.addTwitch(user);
+    }
+
+    public static SkuddUser getByString(String str, String serverID, boolean createNew){
+        SkuddUser su = getDiscord(str, serverID, createNew);
+        if(su == null){
+            su = getTwitchServer(str, serverID);
+        }
+
+        return su;
     }
 
 }
