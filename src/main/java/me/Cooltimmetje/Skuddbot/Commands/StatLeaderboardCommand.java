@@ -24,6 +24,7 @@ import java.util.*;
 public class StatLeaderboardCommand {
 
     public static void run(IMessage message){
+        long startTime = System.currentTimeMillis();
         String[] args = message.getContent().split(" ");
         IChannel channel = message.getChannel();
         IGuild guild = message.getGuild();
@@ -102,7 +103,7 @@ public class StatLeaderboardCommand {
             i++;
         }
 
-        MessagesUtils.sendPlain(sb.append("```").toString().trim(), channel, false);
+        MessagesUtils.sendPlain(sb.append("```").append("\n\n").append("Generated in `").append(System.currentTimeMillis() - startTime).append("ms`").toString().trim(), channel, false);
     }
 
     private static LinkedHashMap<String,Integer> getTop(UserStats stat, IGuild guild){
