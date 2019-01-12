@@ -4,9 +4,7 @@ import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStatsCats;
 import me.Cooltimmetje.Skuddbot.Main;
-import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
-import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
-import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
+import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +27,8 @@ public class StatLeaderboardCommand {
         String[] args = message.getContent().split(" ");
         IChannel channel = message.getChannel();
         IGuild guild = message.getGuild();
+        Server server = ServerManager.getServer(guild);
+        server.save(false);
         UserStats stat = null;
         StringBuilder sb = new StringBuilder();
 
