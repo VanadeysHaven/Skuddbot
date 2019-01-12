@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -113,8 +114,10 @@ public class ProfileManager {
     }
 
     public static SkuddUser getByString(String str, String serverID, boolean createNew){
-        SkuddUser su = getDiscord(str, serverID, createNew);
-        if(su == null){
+        SkuddUser su = null;
+        if(MiscUtils.isLong(str)) {
+            su = getDiscord(str, serverID, createNew);
+        } else {
             su = getTwitchServer(str, serverID);
         }
 
