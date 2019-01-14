@@ -71,7 +71,7 @@ public class StatLeaderboardCommand {
         channel.setTypingStatus(true);
         LinkedHashMap<String,Integer> top = getTop(stat, guild);
 
-        sb.append("**").append(stat.getDescription()).append(" leaderboard** | **").append(guild.getName()).append("**\n\n```\n");
+        sb.append("**").append(stat.getDescription()).append(" leaderboard** | **").append(guild.getName()).append("**\n```\n");
         int longestName = 0;
 
         for (String string : top.keySet()) {
@@ -81,15 +81,21 @@ public class StatLeaderboardCommand {
             }
         }
 
-        int i = 1;
+        int i = 0;
+        int lastValue = -1;
         for(String string : top.keySet()){
             if(i<10){
                 sb.append(" ");
             }
             String name = getName(string, guild);
             SkuddUser su = ProfileManager.getByString(string, guild.getStringID(), true);
-
-            sb.append(i).append(". ").append(name).append(StringUtils.repeat(" ", longestName - name.length())).append(" | ").append(top.get(string)).append(" ").append(stat.getStatSuffix());
+            if(lastValue == top.get(string)){
+                sb.append("   ");
+            } else {
+                i++;
+                sb.append(i).append(". ");
+            }
+            sb.append(name).append(StringUtils.repeat(" ", longestName - name.length())).append(" | ").append(top.get(string)).append(" ").append(stat.getStatSuffix());
             if(!su.isLinked()){
                 sb.append(" - ");
                 if(su.getTwitchUsername() != null) {
@@ -100,10 +106,10 @@ public class StatLeaderboardCommand {
                 sb.append(" (not linked)");
             }
             sb.append("\n");
-            i++;
+            lastValue = top.get(string);
         }
 
-        MessagesUtils.sendPlain(sb.append("```").append("\n\n").append("Generated in `").append(System.currentTimeMillis() - startTime).append("ms`").toString().trim(), channel, false);
+        MessagesUtils.sendPlain(sb.append("```").append("\n").append("Generated in `").append(System.currentTimeMillis() - startTime).append("ms`").toString().trim(), channel, false);
     }
 
     private static LinkedHashMap<String,Integer> getTop(UserStats stat, IGuild guild){
