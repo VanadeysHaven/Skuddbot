@@ -127,30 +127,30 @@ public class ChallengeHandler {
     public void run(IMessage message){
         if(cooldowns.containsKey(message.getAuthor().getStringID())){
             if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getStringID())) < (cooldown * 1000)){
-                MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND);
+                MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
                 return;
             }
         }
 
         String[] args = message.getContent().split(" ");
         if(args.length == 1){
-            MessagesUtils.addReaction(message, "You need to specify if you want a open challenge or which user you want to fight.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "You need to specify if you want a open challenge or which user you want to fight.", EmojiEnum.X, false);
             return;
         }
 
         if(!args[1].equalsIgnoreCase(openInvoker) && message.getMentions().isEmpty()){
-            MessagesUtils.addReaction(message, "Allowed arguments are `"  + openInvoker + "` or a user mention (which is not Skuddbot or yourself).", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "Allowed arguments are `"  + openInvoker + "` or a user mention (which is not Skuddbot or yourself).", EmojiEnum.X, false);
             return;
         }
 
         if(!message.getMentions().isEmpty()){
             if(message.getMentions().get(0) == message.getAuthor()){
-                MessagesUtils.addReaction(message, "You can't challenge yourself.", EmojiEnum.X);
+                MessagesUtils.addReaction(message, "You can't challenge yourself.", EmojiEnum.X, false);
                 return;
             }
 
             if(message.getMentions().get(0) == Main.getInstance().getSkuddbot().getOurUser()){
-                MessagesUtils.addReaction(message, "You can't challenge me!", EmojiEnum.X);
+                MessagesUtils.addReaction(message, "You can't challenge me!", EmojiEnum.X, false);
                 return;
             }
         }

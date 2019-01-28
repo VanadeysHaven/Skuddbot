@@ -6,7 +6,7 @@ import lombok.Getter;
  * This holds data about user statistics.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
@@ -22,6 +22,7 @@ public enum UserStats {
     FFA_WINS                 ("ffa_wins",                 "0", "Integer", true,  "Free for all wins",          "wins",     UserStatsCats.FREE_FOR_ALL),
     FFA_LOSSES               ("ffa_losses",               "0", "Integer", true,  "Free for all losses",        "losses",   UserStatsCats.FREE_FOR_ALL),
     FFA_MOST_WIN             ("ffa_most_win",             "0", "Integer", true,  "FFA highest entrants win",   "entrants", UserStatsCats.FREE_FOR_ALL),
+    FFA_KILLS                ("ffa_kills",                "0", "Integer", true,  "Free for all kills",         "kills",    UserStatsCats.FREE_FOR_ALL),
     BLACKJACK_WINS           ("blackjack_wins",           "0", "Integer", true,  "Blackjack wins",             "wins",     UserStatsCats.BLACKJACK   ),
     BLACKJACK_PUSHES         ("blackjack_pushes",         "0", "Integer", true,  "Blackjack pushes",           "pushes",   UserStatsCats.BLACKJACK   ),
     BLACKJACK_TWENTY_ONES    ("blackjack_twenty_one",     "0", "Integer", true,  "Blackjack 21's",             "21's",     UserStatsCats.BLACKJACK   ),

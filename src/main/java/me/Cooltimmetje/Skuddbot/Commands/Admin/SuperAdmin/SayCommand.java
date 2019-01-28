@@ -13,7 +13,7 @@ import java.util.HashMap;
  * http://thecodinglove.com/post/153951828532/git-push-origin-master-force
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.2-ALPHA
  */
 public class SayCommand {
@@ -36,12 +36,12 @@ public class SayCommand {
                 if(channel != null){
                     channels.put(message.getAuthor().getStringID(), channel.getStringID());
                     MessagesUtils.addReaction(message,"Channel set to " + channel.mention() + " in **" + channel.getGuild().getName() + "** `(ID: " + channel.getGuild().getStringID() + ")`!\n" +
-                            "You may now send messages to that channel using the `!say` command in PM.", EmojiEnum.WHITE_CHECK_MARK);
+                            "You may now send messages to that channel using the `!say` command in PM.", EmojiEnum.WHITE_CHECK_MARK, false);
                 } else {
-                    MessagesUtils.addReaction(message,"Well... that channel doesn't exist, or I'm not in that server!", EmojiEnum.X);
+                    MessagesUtils.addReaction(message,"Well... that channel doesn't exist, or I'm not in that server!", EmojiEnum.X, false);
                 }
             } else {
-                MessagesUtils.addReaction(message,"You cunt... I need a fucking channel to do this... <.<", EmojiEnum.X);
+                MessagesUtils.addReaction(message,"You cunt... I need a fucking channel to do this... <.<", EmojiEnum.X, false);
             }
         }
     }
@@ -62,12 +62,12 @@ public class SayCommand {
                         sb.append(args[i]).append(" ");
                     }
                     MessagesUtils.sendPlain(sb.toString().trim(), channel, true);
-                    MessagesUtils.addReaction(message,":mailbox_with_mail: " + channel.mention(), EmojiEnum.MAILBOX_WITH_MAIL);
+                    MessagesUtils.addReaction(message,":mailbox_with_mail: " + channel.mention(), EmojiEnum.MAILBOX_WITH_MAIL, false);
                 } else {
-                    MessagesUtils.addReaction(message,"The channel that you set doesn't a exist anymore O.o (ID: " + channels.get(message.getAuthor().getStringID()) + ")", EmojiEnum.X);
+                    MessagesUtils.addReaction(message,"The channel that you set doesn't a exist anymore O.o (ID: " + channels.get(message.getAuthor().getStringID()) + ")", EmojiEnum.X, false);
                 }
             } else {
-                MessagesUtils.addReaction(message,"Err... what would you like to say?", EmojiEnum.X);
+                MessagesUtils.addReaction(message,"Err... what would you like to say?", EmojiEnum.X, false);
             }
         }
     }

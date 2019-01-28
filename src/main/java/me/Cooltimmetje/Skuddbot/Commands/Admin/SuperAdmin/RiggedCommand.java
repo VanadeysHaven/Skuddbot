@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * DISCLAIMER: THIS COMMAND IS FOR DEBUGGING PURPOSES ONLY, STAFF WILL NOT ABUSE THIS TO "rig shit".
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.3-ALPHA
  */
 public class RiggedCommand {
@@ -19,7 +19,7 @@ public class RiggedCommand {
         if(Constants.adminUser.contains(message.getAuthor().getStringID())){
             boolean inverted = message.getContent().toLowerCase().contains("-inv");
             Constants.rigged.put(message.getAuthor().getStringID(), !inverted);
-            MessagesUtils.addReaction(message, "Rigged it! - The next !challenge you participate in will be an automatic " + (inverted ? "loss" : "win") + " for you.", EmojiEnum.EYES);
+            MessagesUtils.addReaction(message, "Rigged it! - The next !challenge you participate in will be an automatic " + (inverted ? "loss" : "win") + " for you.", EmojiEnum.EYES, false);
         }
     }
 

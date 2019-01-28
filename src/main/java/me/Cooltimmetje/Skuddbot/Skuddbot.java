@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Holds the Skuddbot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 public class Skuddbot {
@@ -82,11 +82,11 @@ public class Skuddbot {
         if(event.getMessage().getContent().split(" ").length > 1) {
             if (event.getMessage().getContent().split(" ")[1].equalsIgnoreCase("logout")) {
                 if (event.getMessage().getAuthor().getLongID() == Constants.TIMMY_ID || event.getMessage().getAuthor().getLongID() == Constants.JASCH_ID) {
-                    MessagesUtils.addReaction(event.getMessage(),null, EmojiEnum.WHITE_CHECK_MARK);
+                    MessagesUtils.addReaction(event.getMessage(),null, EmojiEnum.WHITE_CHECK_MARK, false);
 
                     terminate(false);
                 } else {
-                    MessagesUtils.addReaction(event.getMessage(),"Ur not timmy >=(", EmojiEnum.X);
+                    MessagesUtils.addReaction(event.getMessage(),"Ur not timmy >=(", EmojiEnum.X, false);
                 }
             }
         }

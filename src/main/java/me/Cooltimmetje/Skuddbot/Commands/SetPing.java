@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This class will update the ping message for awesome users.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA-DEV
+ * @version v0.4.61-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 public class SetPing {
@@ -39,7 +39,7 @@ public class SetPing {
                     MessagesUtils.sendSuccess("Your ping message was updated to: `" + trimmed + "`!", message.getChannel());
                 }
             } else {
-                MessagesUtils.addReaction(message,"Not enough arguments: !setping <message>", EmojiEnum.X);
+                MessagesUtils.addReaction(message,"Not enough arguments: !setping <message>", EmojiEnum.X, false);
             }
         }
     }

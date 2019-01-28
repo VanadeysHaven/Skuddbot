@@ -16,7 +16,7 @@ import java.util.List;
  * o7
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.01-ALPHA-DEV
  */
 public class SaluteCommand {
@@ -30,7 +30,7 @@ public class SaluteCommand {
         if(message.getContent().endsWith("-tc") && Constants.adminUser.contains(message.getAuthor().getStringID())){
             boolean newState = !Boolean.parseBoolean(Constants.config.get("salute_cooldown"));
             Constants.config.put("salute_cooldown", newState+"");
-            MessagesUtils.addReaction(message, "Cooldown toggled: " + newState, EmojiEnum.WHITE_CHECK_MARK);
+            MessagesUtils.addReaction(message, "Cooldown toggled: " + newState, EmojiEnum.WHITE_CHECK_MARK, false);
             MySqlManager.saveGlobal("salute_cooldown", newState+"");
         } else {
             if(cooldown.containsKey(message.getAuthor().getStringID())){

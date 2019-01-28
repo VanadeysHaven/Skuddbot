@@ -6,7 +6,7 @@ import lombok.Getter;
  * This is to easily recall emoji's without going out and copying them.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
@@ -20,6 +20,7 @@ public enum EmojiEnum {
     CROSSED_SWORDS          ("⚔", "crossed_swords"),
     EYES                    ("\uD83D\uDC40", "eyes"),
     MAILBOX_WITH_MAIL       ("\uD83D\uDCEC", "mailbox_with_mail"),
+    NOTEPAD_SPIRAL          ("\uD83D\uDDD2", "spiral_note_pad"),
     SPADES                  ("♠", "spades"),
     CLUBS                   ("♣", "clubs"),
     DIAMONDS                ("♦", "diamonds"),

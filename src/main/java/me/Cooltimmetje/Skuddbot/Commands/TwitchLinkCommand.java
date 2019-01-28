@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * This class allows users to link up their Twitch accounts for a real-time combined XP amount for both platforms.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 public class TwitchLinkCommand {
@@ -49,14 +49,14 @@ public class TwitchLinkCommand {
             return;
         }
         if(serverID.containsKey(message.getAuthor().getStringID()) && !serverID.get(message.getAuthor().getStringID()).equalsIgnoreCase(message.getGuild().getStringID())) {
-            MessagesUtils.addReaction(message,"You currently have a link pending on " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID.get(message.getAuthor().getStringID()))).getName() + "! Please complete that one first!", EmojiEnum.X);
+            MessagesUtils.addReaction(message,"You currently have a link pending on " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID.get(message.getAuthor().getStringID()))).getName() + "! Please complete that one first!", EmojiEnum.X, false);
             return;
         }
         
         serverID.put(message.getAuthor().getStringID(), message.getGuild().getStringID());
         
         if (su.getTwitchUsername() == null) {
-            MessagesUtils.addReaction(message,message.getAuthor().mention() + ", please check your PM's for further instructions!", EmojiEnum.MAILBOX_WITH_MAIL);
+            MessagesUtils.addReaction(message,message.getAuthor().mention() + ", please check your PM's for further instructions!", EmojiEnum.MAILBOX_WITH_MAIL, false);
             if (su.getTwitchVerify() == null) {
                 code = MiscUtils.randomString(6);
                 while (Constants.verifyCodes.containsKey(code)) {
@@ -79,7 +79,7 @@ public class TwitchLinkCommand {
                     "To verify: You will need to head over to <https://www.twitch.tv/" + Constants.twitchBot + "> and type the following in the chat: `!verify " + code + "`\n" +
                     "Once you've done that, you will receive another PM from Skuddbot, with further instructions.\nOh and did I mention a nice tasty 1000xp for free? That's right! **1000xp**"));
         } else {
-            MessagesUtils.addReaction(message,"I already know your Twitch username. Your Twitch username is: '" + su.getTwitchUsername() + "'. Is this incorrect, or you want to change it? Please message Tim.", EmojiEnum.X);
+            MessagesUtils.addReaction(message,"I already know your Twitch username. Your Twitch username is: '" + su.getTwitchUsername() + "'. Is this incorrect, or you want to change it? Please message Tim.", EmojiEnum.X, false);
         }
 
     }

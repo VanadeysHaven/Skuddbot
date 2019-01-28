@@ -1,4 +1,4 @@
-# The "WE WANT LEADERBOARDS" update (v0.4.6-ALPHA)
+# The "WE WANT LEADERBOARDS" update (v0.4.61-ALPHA)
 
 ## Added
 - STATISTICS LEADERBOARD
@@ -9,6 +9,7 @@
 
 ## Changed
 - The stats command now shows stats neatly sorted into their category.
+- Free for all fights are now simulated and feature a kill feed and xp for kills!
 
 ## Backend changes
 - Refeactoring

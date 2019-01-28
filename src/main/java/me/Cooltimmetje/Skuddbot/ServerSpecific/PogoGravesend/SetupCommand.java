@@ -13,7 +13,7 @@ import sx.blah.discord.util.RequestBuffer;
  * Command for setting up the message.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.32-ALPHA
  */
 public class SetupCommand {
@@ -40,19 +40,19 @@ public class SetupCommand {
 
         String[] args = message.getContent().split(" ");
         if(args.length <= 1){
-            MessagesUtils.addReaction(message, "Not enough arguments. - Usage: `!pogo_setup <message ID>`", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "Not enough arguments. - Usage: `!pogo_setup <message ID>`", EmojiEnum.X, false);
             return;
         }
         long messageID;
         try {
             messageID = Long.parseLong(args[1]);
         } catch (NumberFormatException e){
-            MessagesUtils.addReaction(message, "A message ID may only consist of numbers and is typically 18 numbers long.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "A message ID may only consist of numbers and is typically 18 numbers long.", EmojiEnum.X, false);
             return;
         }
         IMessage setupMessage = RequestBuffer.request(() -> message.getChannel().getMessageByID(messageID)).get();
         if(setupMessage == null){
-            MessagesUtils.addReaction(message, "A message with that ID doesn't exist, try again.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "A message with that ID doesn't exist, try again.", EmojiEnum.X, false);
             return;
         }
 

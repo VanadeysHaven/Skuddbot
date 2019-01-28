@@ -19,7 +19,7 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerSettingsCommand {
@@ -59,7 +59,7 @@ public class ServerSettingsCommand {
                                 setting.toString(), setting.getDescription(), ServerManager.getServer(message.getGuild().getStringID()).getSetting(setting),
                                 setting.getDefaultValue(), setting.getType(), setting.getCategory().toString(), setting.toString()), message.getChannel(), false);
                     } catch (IllegalArgumentException ex){
-                        MessagesUtils.addReaction(message, "Unknown setting/category: " + message.getContent().split(" ")[1].toUpperCase().replace('-','_'), EmojiEnum.X);
+                        MessagesUtils.addReaction(message, "Unknown setting/category: " + message.getContent().split(" ")[1].toUpperCase().replace('-','_'), EmojiEnum.X, false);
                     }
                 }
 
@@ -71,7 +71,7 @@ public class ServerSettingsCommand {
                 try {
                     setting = ServerSettings.valueOf(message.getContent().split(" ")[1].toUpperCase().replace('-','_'));
                 } catch (IllegalArgumentException e){
-                    MessagesUtils.addReaction(message, "Unknown setting: " + message.getContent().split(" ")[1].toUpperCase().replace('-','_'), EmojiEnum.X);
+                    MessagesUtils.addReaction(message, "Unknown setting: " + message.getContent().split(" ")[1].toUpperCase().replace('-','_'), EmojiEnum.X, false);
                     return;
                 }
 
@@ -79,11 +79,11 @@ public class ServerSettingsCommand {
                     SkuddUser su = ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), true);
                     assert su != null; //FUCK YOU INTELLIJ, FUCK YOOOOUUUU (╯°□°）╯︵ ┻━┻
                     if(su.isLinked() && !Constants.adminUser.contains(message.getAuthor().getStringID())){
-                        MessagesUtils.addReaction(message, "You do not have a Twitch Account linked, type '!twitch' to get started with linking!", EmojiEnum.X);
+                        MessagesUtils.addReaction(message, "You do not have a Twitch Account linked, type '!twitch' to get started with linking!", EmojiEnum.X, false);
                         return;
                     }
                     if(!su.getTwitchUsername().equalsIgnoreCase(message.getContent().split(" ")[2]) && !Constants.adminUser.contains(message.getAuthor().getStringID())){
-                        MessagesUtils.addReaction(message, "You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact a Skuddbot Admin.)", EmojiEnum.X);
+                        MessagesUtils.addReaction(message, "You can only set this value to your linked Twitch Account, which is " + su.getTwitchUsername() + "! (If this is incorrect, please contact a Skuddbot Admin.)", EmojiEnum.X, false);
                         return;
                     }
                 }
@@ -107,9 +107,9 @@ public class ServerSettingsCommand {
                 }
 
                 if(result == null){
-                    MessagesUtils.addReaction(message, MessageFormat.format("Setting `{0}` has been updated to `{1}`!", setting.toString(), value), EmojiEnum.WHITE_CHECK_MARK);
+                    MessagesUtils.addReaction(message, MessageFormat.format("Setting `{0}` has been updated to `{1}`!", setting.toString(), value), EmojiEnum.WHITE_CHECK_MARK, false);
                 } else {
-                    MessagesUtils.addReaction(message, result, EmojiEnum.X);
+                    MessagesUtils.addReaction(message, result, EmojiEnum.X, false);
                 }
 
             }

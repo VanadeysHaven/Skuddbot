@@ -16,7 +16,7 @@ import sx.blah.discord.util.EmbedBuilder;
  * Command that will generate a stats overview and print it out.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.42-ALPHA
  */
 public class StatsCommand {
@@ -34,12 +34,12 @@ public class StatsCommand {
 
         if (su == null) {
             String debug = otherUser ? "**" + user.getDisplayName(guild) + "** has no stats yet." : "You have no stats yet.";
-            MessagesUtils.addReaction(message, debug, EmojiEnum.X);
+            MessagesUtils.addReaction(message, debug, EmojiEnum.X, false);
             return;
         }
 
         if (su.isStatsPrivate() && otherUser) {
-            MessagesUtils.addReaction(message, "**" + user.getDisplayName(guild) + "** has made their stats private.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "**" + user.getDisplayName(guild) + "** has made their stats private.", EmojiEnum.X, false);
             return;
         }
 

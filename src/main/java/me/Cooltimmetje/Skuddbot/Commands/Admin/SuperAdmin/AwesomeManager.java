@@ -13,7 +13,7 @@ import java.text.MessageFormat;
  * This will class will allow "SuperAdmins" to add and remove "Awesome People", these persons get various benefits.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 public class AwesomeManager {
@@ -51,16 +51,16 @@ public class AwesomeManager {
                                     MessagesUtils.sendSuccess(MessageFormat.format("User **{0}** `(ID: {1})` has been added as Awesome!", user.getName(), user.getStringID()), message.getChannel()); //send confirm
 
                         } else {
-                            MessagesUtils.addReaction(message,"This user is already Awesome! - Use '!removeawesome <mention>' if you wish to remove them.", EmojiEnum.X);
+                            MessagesUtils.addReaction(message,"This user is already Awesome! - Use '!removeawesome <mention>' if you wish to remove them.", EmojiEnum.X, false);
                         }
                     } else {
-                        MessagesUtils.addReaction(message,"Invalid arguments: !addawesome <mention>", EmojiEnum.X);
+                        MessagesUtils.addReaction(message,"Invalid arguments: !addawesome <mention>", EmojiEnum.X, false);
                     }
                 } else {
-                    MessagesUtils.addReaction(message,"Please mention a person: !addawesome <mention>", EmojiEnum.X);
+                    MessagesUtils.addReaction(message,"Please mention a person: !addawesome <mention>", EmojiEnum.X, false);
                 }
             } else {
-                MessagesUtils.addReaction(message,"Not enough arguments: !addawesome <mention>", EmojiEnum.X);
+                MessagesUtils.addReaction(message,"Not enough arguments: !addawesome <mention>", EmojiEnum.X, false);
             }
         }
     }
@@ -83,16 +83,16 @@ public class AwesomeManager {
                             MessagesUtils.sendSuccess(MessageFormat.format("User **{0}** `(ID: {1})` has been removed as Awesome!", user.getName(), user.getStringID()), message.getChannel()); //send confirm
 
                         } else {
-                            MessagesUtils.addReaction(message,"This user is not Awesome! - Use '!addawesome <mention>' if you wish to add them.", EmojiEnum.X);
+                            MessagesUtils.addReaction(message,"This user is not Awesome! - Use '!addawesome <mention>' if you wish to add them.", EmojiEnum.X, false);
                         }
                     } else {
-                        MessagesUtils.addReaction(message,"Invalid arguments: !removeawesome <mention>", EmojiEnum.X);
+                        MessagesUtils.addReaction(message,"Invalid arguments: !removeawesome <mention>", EmojiEnum.X, false);
                     }
                 } else {
-                    MessagesUtils.addReaction(message,"Please mention a person: !removeawesome <mention>", EmojiEnum.X);
+                    MessagesUtils.addReaction(message,"Please mention a person: !removeawesome <mention>", EmojiEnum.X, false);
                 }
             } else {
-                MessagesUtils.addReaction(message,"Not enough arguments: !removeawesome <mention>", EmojiEnum.X);
+                MessagesUtils.addReaction(message,"Not enough arguments: !removeawesome <mention>", EmojiEnum.X, false);
             }
         }
     }
