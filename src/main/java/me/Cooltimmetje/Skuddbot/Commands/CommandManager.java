@@ -132,6 +132,12 @@ public class CommandManager {
                 case "!rogged":
                 case "!help":
                 case "!woowoo":
+                case "!dogo":
+                case "!dogggo":
+                case "!doogo":
+                case "!owo":
+                case "!doggerino":
+                case "!addit":
                     PuppyCommand.run(event.getMessage());
                     break;
                 case "!ffa":
