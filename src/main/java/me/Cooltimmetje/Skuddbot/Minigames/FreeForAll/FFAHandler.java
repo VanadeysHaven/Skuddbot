@@ -184,8 +184,9 @@ public class FFAHandler {
         SkuddUser suWinner = ProfileManager.getDiscord(winner.getStringID(), guild.getStringID(), true);
         sbRewards.append(winner.getDisplayName(guild)).append(": *+").append(winReward + (killReward * kills.get(winner.getStringID()))).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(winner.getStringID())).append(" kills)");
         if(suWinner.getFfaMostWin() < entrantsAmount){
-            sbRewards.append(" - **New highest entrants win:** *").append(entrantsAmount).append(" people*\n");
+            sbRewards.append(" - **New highest entrants win:** *").append(entrantsAmount).append(" people*");
         }
+        sbRewards.append("\n");
         for(String s : kills.keySet()){
             if(!s.equals(winner.getStringID()))
             sbRewards.append(channel.getGuild().getUserByID(Long.parseLong(s)).getDisplayName(guild)).append(": *+").append(killReward * kills.get(s)).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(s)).append(" kills)\n");
