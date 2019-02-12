@@ -66,7 +66,7 @@ public class MessagesUtils {
                 if (event.getReaction().getUserReacted(event.getMessage().getAuthor())) { //Check if the original author reacted.
                     JSONObject obj = reactions.get(event.getMessage()); //Save it for sake of code tidyness.
                     if (obj.get("debug") != null) { //Check if there's a debug string.
-                        RequestBuffer.request(() -> sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false)); //Post the message.
+                        sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false); //Post the message.
                     }
 
                     reactions.remove(event.getMessage()); //Remove it from the HashMap as we no longer need it there.
