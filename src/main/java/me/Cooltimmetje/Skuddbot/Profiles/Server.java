@@ -33,7 +33,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.2-ALPHA
  */
 
@@ -106,7 +106,7 @@ public class Server {
         this.serverInitialized = true;
         Logger.info(MessageFormat.format("Initialized {0} (ID: {1})",guild.getName(),guild.getStringID()));
 
-        MessagesUtils.addReaction(message, null, EmojiEnum.WHITE_CHECK_MARK);
+        MessagesUtils.addReaction(message, null, EmojiEnum.WHITE_CHECK_MARK, false);
 
         this.challengeHandler = new ChallengeHandler(serverID);
         this.ffaHandler = new FFAHandler(serverID);

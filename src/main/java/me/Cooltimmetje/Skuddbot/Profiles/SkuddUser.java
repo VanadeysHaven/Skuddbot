@@ -28,7 +28,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explaination imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 @Getter
@@ -66,6 +66,7 @@ public class SkuddUser {
     private int ffaWins;
     private int ffaLosses;
     private int ffaMostWin;
+    private int ffaKills;
     private int blackjackWins;
     private int blackjackPushes;
     private int blackjackTwentyOnes;
@@ -151,7 +152,7 @@ public class SkuddUser {
                 setLevel(level);
 
                 if(getLevelUpNotify() == 0){
-                    MessagesUtils.addReaction(message, MessageFormat.format("{0}, you leveled up! You are now **level {1}**! {2}", message.getAuthor().mention(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "), EmojiEnum.ARROW_UP);
+                    MessagesUtils.addReaction(message, MessageFormat.format("{0}, you leveled up! You are now **level {1}**! {2}", message.getAuthor().mention(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "), EmojiEnum.ARROW_UP, false);
                 } else if (getLevelUpNotify() == 1){
                     MessagesUtils.sendPM(message.getAuthor(), MessageFormat.format(EmojiEnum.ARROW_UP + " You leveled up in **{0}**! You are now **level {1}**! {2}", message.getGuild().getName(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "));
                 }
@@ -470,6 +471,9 @@ public class SkuddUser {
             case FFA_LOSSES:
                 this.ffaLosses = intValue;
                 return null;
+            case FFA_KILLS:
+                this.ffaKills = intValue;
+                return null;
             case FFA_MOST_WIN:
                 this.ffaMostWin = intValue;
                 return null;
@@ -516,6 +520,8 @@ public class SkuddUser {
                 return getFfaLosses()+"";
             case FFA_MOST_WIN:
                 return getFfaMostWin()+"";
+            case FFA_KILLS:
+                return getFfaKills()+"";
             case BLACKJACK_PUSHES:
                 return getBlackjackPushes()+"";
             case BLACKJACK_LOSSES:

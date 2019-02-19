@@ -16,7 +16,7 @@ public class ProfileManager {
 
     /**
      * This method is used to get the SkuddUser instance for a user on a server by Discord ID.
-     * First we check if the user exists in memory for the specifiedt server, if it does: return it.
+     * First we check if the user exists in memory for the specified server, if it does: return it.
      * Then we check if there is a entry in the database, if it does: load it into memory and return it.
      * Finally we just create a new one, given createNew is true.
      *

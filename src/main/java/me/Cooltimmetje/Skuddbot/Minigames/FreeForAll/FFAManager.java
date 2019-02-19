@@ -14,7 +14,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * Managing of the different FFA handlers.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.4-ALPHA
  */
 public class FFAManager {
@@ -30,7 +30,7 @@ public class FFAManager {
         if(args.length > 1){
             if(args[1].equalsIgnoreCase("-fix") && Constants.adminUser.contains(message.getAuthor().getStringID())){
                 ServerManager.getServer(message.getGuild().getStringID()).setFfaHandler(new FFAHandler(message.getGuild().getStringID()));
-                MessagesUtils.addReaction(message, "Created new FFA handler for this server.", EmojiEnum.WHITE_CHECK_MARK);
+                MessagesUtils.addReaction(message, "Created new FFA handler for this server.", EmojiEnum.WHITE_CHECK_MARK, false);
                 return;
             }
         }

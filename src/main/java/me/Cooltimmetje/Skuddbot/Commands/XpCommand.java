@@ -15,7 +15,7 @@ import java.text.MessageFormat;
  * This class shows the user their XP and levels.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 public class XpCommand {
@@ -37,17 +37,17 @@ public class XpCommand {
             }
 
             if (su == null) {
-                MessagesUtils.addReaction(message, "The user you defined has no XP or doesn't exist.", EmojiEnum.X);
+                MessagesUtils.addReaction(message, "The user you defined has no XP or doesn't exist.", EmojiEnum.X, false);
                 return;
             }
             if(su.isStatsPrivate()){
-                MessagesUtils.addReaction(message, "This user has set their XP to private.", EmojiEnum.X);
+                MessagesUtils.addReaction(message, "This user has set their XP to private.", EmojiEnum.X, false);
                 return;
             }
         } else {
             su = ProfileManager.getDiscord(message.getAuthor().getStringID(), message.getGuild().getStringID(), false);
             if(su == null){
-                MessagesUtils.addReaction(message ,"It seems you haven't been chatting. So you don't have any XP :(", EmojiEnum.X);
+                MessagesUtils.addReaction(message ,"It seems you haven't been chatting. So you don't have any XP :(", EmojiEnum.X, false);
                 return;
             }
         }

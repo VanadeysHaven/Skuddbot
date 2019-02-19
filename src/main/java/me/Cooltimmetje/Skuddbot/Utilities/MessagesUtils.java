@@ -20,7 +20,7 @@ import java.util.HashMap;
  * This class is used for message sending, there is a separate class for this so that I don't have try-catches all over my code. Keep it nice and tidy. SeemsGood
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 public class MessagesUtils {
@@ -32,13 +32,13 @@ public class MessagesUtils {
 
     /**
      * This adds a reaction to the specified message with the specified emoji. The debug string get's saved to recall later and will be posted upon reaction from the original author with the same emoji.
-     *
-     * @param message The message that we want to add the reaction to.
+     *  @param message The message that we want to add the reaction to.
      * @param debug   The message that will be saved. (Debug String, not mandatory)
      * @param emoji   The emoji that we want to add.
+     * @param ignoreUser
      */
     @SuppressWarnings("unchecked")
-    public static void addReaction(IMessage message, String debug, EmojiEnum emoji) {
+    public static void addReaction(IMessage message, String debug, EmojiEnum emoji, boolean ignoreUser) {
         try {
             RequestBuffer.request(() -> message.addReaction(EmojiManager.getForAlias(emoji.getAlias())));
         } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
@@ -50,6 +50,7 @@ public class MessagesUtils {
         obj.put("time", System.currentTimeMillis());
         obj.put("debug", debug);
         obj.put("emoji", emoji.getEmoji());
+        obj.put("ignoreUser", ignoreUser);
 
         reactions.put(message, obj);
     }
@@ -61,10 +62,11 @@ public class MessagesUtils {
      */
     @EventSubscriber
     public void onReaction(ReactionAddEvent event) {
-        if (reactions.containsKey(event.getMessage())) { //Check if the message is actually eligible for a "debug" string.
+        if(event.getUser().isBot()) return;
+        if(reactions.containsKey(event.getMessage())) { //Check if the message is actually eligible for a "debug" string.
+            JSONObject obj = reactions.get(event.getMessage()); //Save it for sake of code tidyness.
             if (event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())) { //Check if the bot reacted the same.
-                if (event.getReaction().getUserReacted(event.getMessage().getAuthor())) { //Check if the original author reacted.
-                    JSONObject obj = reactions.get(event.getMessage()); //Save it for sake of code tidyness.
+                if (event.getReaction().getUserReacted(event.getMessage().getAuthor()) || Boolean.parseBoolean(String.valueOf(obj.get("ignoreUser")))) { //Check if the original author reacted or if we should ignore users.
                     if (obj.get("debug") != null) { //Check if there's a debug string.
                         sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false); //Post the message.
                     }

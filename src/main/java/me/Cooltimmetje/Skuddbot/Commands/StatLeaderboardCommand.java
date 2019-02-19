@@ -18,7 +18,7 @@ import java.util.*;
  * This command generates a leaderboard of a given stat.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.6-ALPHA
  */
 public class StatLeaderboardCommand {
@@ -34,7 +34,7 @@ public class StatLeaderboardCommand {
         StringBuilder sb = new StringBuilder();
 
         if(args.length < 2){
-            MessagesUtils.addReaction(message, "You must specify a stat to be shown. Type `!statlb -list` to list all the available stats.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "You must specify a stat to be shown. Type `!statlb -list` to list all the available stats.", EmojiEnum.X, false);
             return;
         }
         if(args[1].equalsIgnoreCase("-list")){
@@ -64,7 +64,7 @@ public class StatLeaderboardCommand {
         try {
             stat = UserStats.valueOf(args[1].toUpperCase().replace("-", "_"));
         } catch (IllegalArgumentException e) {
-            MessagesUtils.addReaction(message, "This stat does not exist. Type `!statlb -list` to list all the available stats.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "This stat does not exist. Type `!statlb -list` to list all the available stats.", EmojiEnum.X, false);
             return;
         }
 

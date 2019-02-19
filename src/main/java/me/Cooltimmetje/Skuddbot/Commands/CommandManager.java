@@ -135,6 +135,7 @@ public class CommandManager {
                 case "!dogo":
                 case "!dogggo":
                 case "!doogo":
+                case "!dogoo":
                 case "!owo":
                 case "!doggerino":
                 case "!addit":

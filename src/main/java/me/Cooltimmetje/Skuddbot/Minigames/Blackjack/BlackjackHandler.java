@@ -13,7 +13,7 @@ import java.util.HashMap;
  * This handles all games of blackjack on a per-server basis.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.5-ALPHA
  */
 public class BlackjackHandler {
@@ -33,7 +33,7 @@ public class BlackjackHandler {
     public void startNewGame(IUser user, IMessage message){
         if(cooldowns.containsKey(user.getLongID())){
             if((System.currentTimeMillis() - cooldowns.get(user.getLongID())) < (cooldown * 1000)){
-                MessagesUtils.addReaction(message, "Hold on there, we don't want you to get a gambling addiction, you'll have to wait 5 minutes between games.", EmojiEnum.HOURGLASS_FLOWING_SAND);
+                MessagesUtils.addReaction(message, "Hold on there, we don't want you to get a gambling addiction, you'll have to wait 5 minutes between games.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
                 return;
             }
         }
@@ -44,7 +44,7 @@ public class BlackjackHandler {
                 games.put(user.getStringID(), blackjackGame);
             }
         } else {
-            MessagesUtils.addReaction(message, "You already have a game of blackjack in progress, please finish that first!", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "You already have a game of blackjack in progress, please finish that first!", EmojiEnum.X, false);
         }
     }
 

@@ -12,7 +12,7 @@ import sx.blah.discord.handle.obj.IMessage;
  * This command allows admins to clear all cooldowns that there are in the bot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.3-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.3-ALPHA
  */
 public class ClearCooldownCommand {
@@ -23,7 +23,7 @@ public class ClearCooldownCommand {
             FFAManager.clearCooldowns();
             BlackjackManager.clearCooldowns();
 
-            MessagesUtils.addReaction(message, "All cooldowns have been cleared.", EmojiEnum.WHITE_CHECK_MARK);
+            MessagesUtils.addReaction(message, "All cooldowns have been cleared.", EmojiEnum.WHITE_CHECK_MARK, false);
         }
     }
 

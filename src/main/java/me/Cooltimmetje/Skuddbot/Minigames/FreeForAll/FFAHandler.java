@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * This class handles the FFA command on a per-server basis.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.4.4-ALPHA
  */
 public class FFAHandler {
@@ -39,7 +39,8 @@ public class FFAHandler {
         Logger.info("Creating FFA handler for Server with ID: " + serverID);
     }
 
-    private int xpReward = 50;
+    private int winReward = 100;
+    private int killReward = 50;
     private int cooldown = 300;
 
     HashMap<IUser,Long> cooldowns = new HashMap<>();
@@ -54,7 +55,7 @@ public class FFAHandler {
         String[] args = message.getContent().split(" ");
         if(cooldowns.containsKey(message.getAuthor())){
             if((System.currentTimeMillis() - cooldowns.get(message.getAuthor())) < (cooldown * 1000)){
-                MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND);
+                MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
                 return;
             }
         }
@@ -157,27 +158,42 @@ public class FFAHandler {
     private void startFight(IChannel channel) {
         int entrantsAmount = entrants.size();
         IGuild guild = channel.getGuild();
-        IUser winner = entrants.get(MiscUtils.randomInt(0, entrantsAmount - 1));
         Server server = ServerManager.getServer(channel.getGuild().getStringID());
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-        StringBuilder sbEntrants = new StringBuilder();
-        for (IUser user : entrants) {
-            if (entrants.indexOf(user) == (entrantsAmount - 1)) {
-                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("**");
-            } else if (entrants.indexOf(user) == (entrantsAmount - 2)) {
-                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("** and ");
+        String entrantsString = formatNames(channel);
+
+        StringBuilder sbKillFeed = new StringBuilder();
+        ArrayList<IUser> tempEntrants = entrants;
+        HashMap<String,Integer> kills = new HashMap<>();
+        sbKillFeed.append("**Free for all killfeed:**\n");
+        while (tempEntrants.size() > 1){
+            IUser eliminated = tempEntrants.get(MiscUtils.randomInt(0, tempEntrants.size() - 1));
+            tempEntrants.remove(eliminated);
+            IUser killer = tempEntrants.get(MiscUtils.randomInt(0, tempEntrants.size() - 1));
+            if(kills.containsKey(killer.getStringID())){
+                kills.put(killer.getStringID(), kills.get(killer.getStringID()) + 1);
             } else {
-                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("**, ");
+                kills.put(killer.getStringID(), 1);
             }
+
+            sbKillFeed.append("**").append(killer.getDisplayName(channel.getGuild())).append("** eliminated **").append(eliminated.getDisplayName(channel.getGuild())).append("**\n");
         }
-        String entrantsString = sbEntrants.toString();
+        IUser winner = tempEntrants.get(0);
+
         StringBuilder sbRewards = new StringBuilder();
         SkuddUser suWinner = ProfileManager.getDiscord(winner.getStringID(), guild.getStringID(), true);
-        sbRewards.append(winner.getDisplayName(guild)).append(": *+").append(xpReward * entrantsAmount).append("* ").append(EmojiHelper.getEmoji("xp_icon"));
+        sbRewards.append(winner.getDisplayName(guild)).append(": *+").append(winReward + (killReward * kills.get(winner.getStringID()))).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(winner.getStringID())).append(" kills)");
         if(suWinner.getFfaMostWin() < entrantsAmount){
             sbRewards.append(" - **New highest entrants win:** *").append(entrantsAmount).append(" people*");
         }
+        sbRewards.append("\n");
+        for(String s : kills.keySet()){
+            if(!s.equals(winner.getStringID()))
+            sbRewards.append(channel.getGuild().getUserByID(Long.parseLong(s)).getDisplayName(guild)).append(": *+").append(killReward * kills.get(s)).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(s)).append(" kills)\n");
+        }
+        sbRewards.append("*Click the ").append(EmojiEnum.NOTEPAD_SPIRAL.getEmoji()).append(" reaction to view the kill feed.*");
         String rewards = sbRewards.toString();
+
 
         if(MessagesUtils.getMessageByID(messageHost) != null) {
             MessagesUtils.getMessageByID(messageHost).delete();
@@ -192,18 +208,43 @@ public class FFAHandler {
         channel.toggleTypingStatus();
 
         exec.schedule(() -> {
-            MessagesUtils.sendPlain(MessageFormat.format("{0} A furious battle is going on in {1}, bodies are dropping... It looks like **{2}** has won the fight!\n\n{3}",
+            IMessage messageFinal = MessagesUtils.sendPlain(MessageFormat.format("{0} A furious battle is going on in {1}, bodies are dropping... It looks like **{2}** has won the fight!\n\n{3}",
                     EmojiEnum.CROSSED_SWORDS.getString(), server.getArenaName(), winner.getDisplayName(channel.getGuild()), rewards), channel, false);
 
-            suWinner.setXp(suWinner.getXp() + (xpReward * entrantsAmount));
+            MessagesUtils.addReaction(messageFinal, sbKillFeed.toString().trim(), EmojiEnum.NOTEPAD_SPIRAL, true);
+
+            suWinner.setXp(suWinner.getXp() + winReward + (killReward * kills.get(winner.getStringID())));
             suWinner.setFfaWins(suWinner.getFfaWins() + 1);
             if(suWinner.getFfaMostWin() < entrantsAmount){
                 suWinner.setFfaMostWin(entrantsAmount);
+            }
+            for(String s : kills.keySet()){
+                SkuddUser su = ProfileManager.getDiscord(s, guild.getStringID(), true);
+                su.setFfaKills(su.getFfaKills() + kills.get(s));
+                if(guild.getUserByID(Long.parseLong(s)) != winner){
+                    su.setXp(su.getXp() + kills.get(s) * killReward);
+                }
             }
 
             finishFight(winner, guild);
         }, 5, TimeUnit.SECONDS);
 
+    }
+
+    private String formatNames(IChannel channel){
+        int entrantsAmount = entrants.size();
+        StringBuilder sbEntrants = new StringBuilder();
+        for (IUser user : entrants) {
+            if (entrants.indexOf(user) == (entrantsAmount - 1)) {
+                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("**");
+            } else if (entrants.indexOf(user) == (entrantsAmount - 2)) {
+                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("** and ");
+            } else {
+                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("**, ");
+            }
+        }
+
+        return sbEntrants.toString().trim();
     }
 
     private void finishFight(IUser winner, IGuild guild){
