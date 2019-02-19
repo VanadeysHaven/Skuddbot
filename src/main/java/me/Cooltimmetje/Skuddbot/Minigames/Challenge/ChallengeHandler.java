@@ -353,7 +353,7 @@ public class ChallengeHandler {
         } else { //Challenge was not accepted
             outstandingChallengesTwitch.put(sender, args[1]);
 
-            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} has challenged {1} to a fight!  Type s!challenge {0} to accept.", sender, args[1]), twitchChannel);
+            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} has challenged {1} to a fight!  Type \"s!challenge {0}\" to accept.", sender, args[1]), twitchChannel);
         }
     }
 

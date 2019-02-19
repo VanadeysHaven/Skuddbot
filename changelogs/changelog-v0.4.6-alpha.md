@@ -11,5 +11,8 @@
 - The stats command now shows stats neatly sorted into their category.
 - Free for all fights are now simulated and feature a kill feed and xp for kills!
 
+## Removed
+- PogoGravesend stuff.
+
 ## Backend changes
 - Refeactoring
