@@ -269,7 +269,7 @@ public class FFAHandler {
     // ---- TWITCH ----
     private ArrayList<String> twitchEntrants = new ArrayList<>();
     public HashMap<String, Long> twitchCooldowns = new HashMap<>();
-    private int startDelay = 180;
+    private int startDelay = 120;
     private boolean fightRunning = false;
     ScheduledThreadPoolExecutor execTwitch = new ScheduledThreadPoolExecutor(1);
 
@@ -334,7 +334,7 @@ public class FFAHandler {
         }
 
         exec.schedule(() -> {
-            Main.getSkuddbotTwitch().send(MessageFormat.format(sb.toString(), server.getArenaName(), winner), channel);
+            Main.getSkuddbotTwitch().send(MessageFormat.format(sb.toString().substring(0, sb.toString().length() - 2), server.getArenaName(), winner), channel);
             if(suWinner.getFfaMostWin() < entrants){
                 suWinner.setFfaMostWin(entrants);
             }
