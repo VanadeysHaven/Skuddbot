@@ -354,6 +354,7 @@ public class FFAHandler {
             }
 
             twitchEntrants.clear();
+            fightRunning = false;
         }, 5, TimeUnit.SECONDS);
     }
 
