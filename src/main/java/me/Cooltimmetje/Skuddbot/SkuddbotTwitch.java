@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot;
 
 import me.Cooltimmetje.Skuddbot.Commands.TwitchLinkCommand;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
+import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
@@ -19,7 +20,7 @@ import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
  * Everything Twitch happens here!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 public class SkuddbotTwitch extends PircBot{
@@ -154,6 +155,9 @@ public class SkuddbotTwitch extends PircBot{
         switch (message.toLowerCase().split(" ")[0]){
             case "s!challenge":
                 ChallengeManager.run(sender, message, channel);
+                break;
+            case "s!ffa":
+                FFAManager.run(sender, message, channel);
                 break;
         }
     }

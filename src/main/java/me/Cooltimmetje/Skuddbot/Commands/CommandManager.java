@@ -6,7 +6,6 @@ import me.Cooltimmetje.Skuddbot.Commands.Useless.*;
 import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackManager;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
-import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.SetupCommand;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -17,7 +16,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 public class CommandManager {
@@ -139,6 +138,7 @@ public class CommandManager {
                 case "!owo":
                 case "!doggerino":
                 case "!addit":
+                case "!doggy":
                     PuppyCommand.run(event.getMessage());
                     break;
                 case "!ffa":
@@ -164,12 +164,6 @@ public class CommandManager {
                     break;
                 case "!statlb":
                     StatLeaderboardCommand.run(event.getMessage());
-                    break;
-
-                //Pogo Gravesend
-                case "!pogo_setup":
-                    SetupCommand.run(event.getMessage());
-                    break;
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {

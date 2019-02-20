@@ -21,10 +21,13 @@ public class FFAManager {
 
     public static void clearCooldowns(){
         for(Server server : ServerManager.servers.values()){
-            server.getFfaHandler().cooldowns.clear();
+            FFAHandler ffaHandler = server.getFfaHandler();
+            ffaHandler.cooldowns.clear();
+            ffaHandler.twitchCooldowns.clear();
         }
     }
 
+    // ---- DISCORD ----
     public static void run(IMessage message){
         String[] args = message.getContent().split(" ");
         if(args.length > 1){
@@ -49,6 +52,11 @@ public class FFAManager {
         if(!event.getChannel().isPrivate()) {
             ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionRemove(event);
         }
+    }
+
+    // ---- TWITCH ----
+    public static void run(String sender, String message, String channel) {
+        ServerManager.getTwitch(channel.substring(1)).getFfaHandler().run(sender, message, channel);
     }
 
 }

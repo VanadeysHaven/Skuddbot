@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Minigames.FreeForAll;
 
 import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
@@ -39,10 +40,11 @@ public class FFAHandler {
         Logger.info("Creating FFA handler for Server with ID: " + serverID);
     }
 
-    private int winReward = 100;
-    private int killReward = 50;
-    private int cooldown = 300;
+    private static final int winReward = 100;
+    private static final int killReward = 50;
+    private static final int cooldown = 300;
 
+    // ---- DISCORD ----
     HashMap<IUser,Long> cooldowns = new HashMap<>();
     private ArrayList<IUser> entrants = new ArrayList<>();
 
@@ -163,7 +165,7 @@ public class FFAHandler {
         String entrantsString = formatNames(channel);
 
         StringBuilder sbKillFeed = new StringBuilder();
-        ArrayList<IUser> tempEntrants = entrants;
+        ArrayList<IUser> tempEntrants = new ArrayList<>(entrants);
         HashMap<String,Integer> kills = new HashMap<>();
         sbKillFeed.append("**Free for all killfeed:**\n");
         while (tempEntrants.size() > 1){
@@ -262,5 +264,98 @@ public class FFAHandler {
         messageSent = 0;
         messageHost = 0;
     }
+
+
+    // ---- TWITCH ----
+    private ArrayList<String> twitchEntrants = new ArrayList<>();
+    public HashMap<String, Long> twitchCooldowns = new HashMap<>();
+    private int startDelay = 180;
+    private boolean fightRunning = false;
+    ScheduledThreadPoolExecutor execTwitch = new ScheduledThreadPoolExecutor(1);
+
+    public void run(String sender, String message, String channel) {
+        if(fightRunning) return;
+        if(twitchCooldowns.containsKey(sender)){
+            if(System.currentTimeMillis() - twitchCooldowns.get(sender) < cooldown * 1000){
+                return;
+            }
+        }
+
+        if(twitchEntrants.isEmpty()) {
+            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} is looking to host a free for all fight, anyone can participate! Type \"s!ffa\" to enter, the fight will start in {1} minutes.", sender, startDelay / 60), channel);
+            execTwitch.schedule(() -> startFightTwitch(channel), startDelay, TimeUnit.SECONDS);
+        }
+        if(!twitchEntrants.contains(sender)) twitchEntrants.add(sender);
+    }
+
+    public void startFightTwitch(String channel){
+        fightRunning = true;
+        ArrayList<String> orignalEntrants = new ArrayList<>(twitchEntrants);
+        int entrants = twitchEntrants.size();
+        if(twitchEntrants.size() < 3){
+            Main.getSkuddbotTwitch().send("The fight has been called off, there were not enough participants!", channel);
+            twitchEntrants.clear();
+            fightRunning = false;
+            return;
+        }
+        for(String string : twitchEntrants){
+            twitchCooldowns.put(string, System.currentTimeMillis());
+        }
+        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
+        Server server = ServerManager.getTwitch(channel);
+
+        Main.getSkuddbotTwitch().send(MessageFormat.format("The combatants step into {0} for a epic free for all battle! Only one can emerge victorious! 3... 2... 1... FIGHT!", server.getArenaName()), channel);
+        HashMap<String,Integer> kills = new HashMap<>();
+        while(twitchEntrants.size() > 1){
+            String eliminated = twitchEntrants.get(MiscUtils.randomInt(0, twitchEntrants.size() - 1));
+            twitchEntrants.remove(eliminated);
+            String killer = twitchEntrants.get(MiscUtils.randomInt(0, twitchEntrants.size() - 1));
+            if(kills.containsKey(killer)){
+                kills.put(killer, kills.get(killer) + 1);
+            } else {
+                kills.put(killer, 1);
+            }
+        }
+        String winner = twitchEntrants.get(0);
+        SkuddUser suWinner = ProfileManager.getTwitch(winner, channel, true);
+        twitchEntrants.clear();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("A furious battle is going on in {0}, bodies are dropping.... It looks like {1} has won the fight! | ");
+        sb.append(winner).append(": +").append(winReward + (kills.get(winner) * killReward)).append(" XP (").append(kills.get(winner)).append(" kills)");
+        if(suWinner.getFfaMostWin() < entrants){
+            sb.append(" - New highest entrants win: ").append(entrants).append(" entrants");
+        }
+        sb.append(" | ");
+        for(String string : kills.keySet()){
+            if(!string.equals(winner)) {
+                sb.append(string).append(":9 +").append(kills.get(string) * killReward).append(" XP (").append(kills.get(string)).append(" kills) | ");
+            }
+        }
+
+        exec.schedule(() -> {
+            Main.getSkuddbotTwitch().send(MessageFormat.format(sb.toString(), server.getArenaName(), winner), channel);
+            if(suWinner.getFfaMostWin() < entrants){
+                suWinner.setFfaMostWin(entrants);
+            }
+            for(String string : orignalEntrants){
+                SkuddUser su = ProfileManager.getTwitch(string, channel, true);
+                if(!string.equals(winner)){
+                    su.setFfaLosses(su.getFfaLosses() + 1);
+                } else {
+                    su.setFfaWins(su.getFfaWins() + 1);
+                }
+            }
+            for(String string : kills.keySet()){
+                SkuddUser su = ProfileManager.getTwitch(string, channel, true);
+                su.setFfaKills(su.getFfaKills() + kills.get(string));
+                int xpGain = (string.equals(winner) ? winReward : 0) + (kills.get(string) * killReward);
+                su.setXp(su.getXp() + xpGain);
+            }
+
+            twitchEntrants.clear();
+        }, 5, TimeUnit.SECONDS);
+    }
+
 
 }

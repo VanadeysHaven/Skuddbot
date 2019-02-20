@@ -11,7 +11,6 @@ import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
-import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.RoleAdder;
 import me.Cooltimmetje.Skuddbot.Utilities.*;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
@@ -56,7 +55,7 @@ public class Skuddbot {
             MiscUtils.setPlaying(true);
 
             skuddbot.getDispatcher().registerListeners(new CommandManager(), new XPGiver(), new JoinQuitListener(), new TwitchLiveListener(), new MessagesUtils(),
-            new ChallengeManager(), new RoleAdder(), new FFAManager(), new BlackjackManager());
+            new ChallengeManager(), new FFAManager(), new BlackjackManager());
 
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();

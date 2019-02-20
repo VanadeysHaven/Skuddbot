@@ -1,7 +1,6 @@
 package me.Cooltimmetje.Skuddbot;
 
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
-import me.Cooltimmetje.Skuddbot.ServerSpecific.PogoGravesend.PogoConstants;
 import me.Cooltimmetje.Skuddbot.Utilities.ActivityChecker;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import org.jibble.pircbot.IrcException;
@@ -16,7 +15,7 @@ import java.util.Timer;
  * This is the bot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -58,7 +57,6 @@ public class Main {
         MySqlManager.loadAwesomeData();
         MySqlManager.loadWhitelistedCommands();
         MySqlManager.loadGlobal();
-        PogoConstants.messageID = Long.parseLong(Constants.config.get("pogo_message_id"));
 
         log.info("All systems operational. Ready to connect to Discord.");
         try {

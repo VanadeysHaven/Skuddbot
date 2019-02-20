@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Used for handling servers.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.61-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerManager {
@@ -52,6 +52,7 @@ public class ServerManager {
      * @return The server instance.
      */
     public static Server getTwitch(String twitchChannel){
+        if(twitchChannel.startsWith("#")) twitchChannel = twitchChannel.substring(1);
         return twitchServers.get(twitchChannel);
     }
 
