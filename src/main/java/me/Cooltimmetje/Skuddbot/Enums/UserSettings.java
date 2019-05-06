@@ -17,7 +17,8 @@ public enum UserSettings {
     ANALYTICS_MENTION     ("analytics_mention", "Defines if the bot will mention you when you are on the analytics leaderboard!.",                              "true",  "Boolean"),
     STATS_PRIVATE         ("xp_private",        "This setting will turn off other users being able to see your stats using the !xp and !stats command",         "false", "Boolean"),
     MENTION_ME            ("mention_me",        "Defines if you will be mentioned in so called \"useless\" commands.",                                          "false", "Boolean"),
-    BLACKJACK_SIMPLE_VIEW ("bj_simple_view",    "Defines if you want simple or advanced view, in blackjack.",                                                   "true",  "Boolean");
+    BLACKJACK_SIMPLE_VIEW ("bj_simple_view",    "Defines if you want simple or advanced view, in blackjack.",                                                   "true",  "Boolean"),
+    FFA_REMINDERS         ("ffa_reminders",     "Defines if you want to be reminded about pending free for all's.",                                             "true",  "Boolean");
 
     private String jsonReference;
     private String description;

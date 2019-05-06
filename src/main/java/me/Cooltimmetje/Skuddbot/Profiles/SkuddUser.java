@@ -54,6 +54,7 @@ public class SkuddUser {
     private boolean statsPrivate;
     private boolean mentionMe;
     private boolean bjSimpleMode;
+    private boolean ffaReminders;
 
     //---- USER STATS ----
     private int xpStreak;
@@ -283,6 +284,8 @@ public class SkuddUser {
                 return isMentionMe()+"";
             case BLACKJACK_SIMPLE_VIEW:
                 return isBjSimpleMode()+"";
+            case FFA_REMINDERS:
+                return isFfaReminders()+"";
         }
         return null;
     }
@@ -355,6 +358,9 @@ public class SkuddUser {
                 return null;
             case BLACKJACK_SIMPLE_VIEW:
                 this.bjSimpleMode = booleanValue;
+                return null;
+            case FFA_REMINDERS:
+                this.ffaReminders = booleanValue;
                 return null;
         }
     }

@@ -35,8 +35,11 @@ public class Main {
             log.info("Setting up...");
             skuddbot = new Skuddbot(args[0]);
 
+            String mysqlPass = args[2];
+            if(mysqlPass.equals("-nopass")) mysqlPass = ""; //This is for my local instance, the database has no password there and I am too lazy to set one.
+
             log.info("Making database connection...");
-            MySqlManager.setupHikari(args[1],args[2]);
+            MySqlManager.setupHikari(args[1], mysqlPass);
             Constants.twitchBot = args[3];
             Constants.twitchOauth = args[4];
         }

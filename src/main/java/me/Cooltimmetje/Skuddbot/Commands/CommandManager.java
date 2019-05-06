@@ -105,6 +105,9 @@ public class CommandManager {
                     PanicCommand.run(event.getMessage());
                     break;
                 case "!challenge":
+                case "!duel":
+                case "!fight":
+                case "!1v1":
                     ChallengeManager.run(event.getMessage());
                     break;
                 case "!clearcooldowns":
@@ -142,6 +145,7 @@ public class CommandManager {
                     PuppyCommand.run(event.getMessage());
                     break;
                 case "!ffa":
+                case "!freeforall":
                     FFAManager.run(event.getMessage());
                     break;
                 case "!stats":

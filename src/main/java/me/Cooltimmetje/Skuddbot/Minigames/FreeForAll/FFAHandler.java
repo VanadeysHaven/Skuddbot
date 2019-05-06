@@ -42,7 +42,10 @@ public class FFAHandler {
 
     private static final int winReward = 100;
     private static final int killReward = 50;
-    private static final int cooldown = 300;
+    private static final int cooldown = 300; //in seconds
+    public static final int remindDelay = 6; //in hours
+
+
 
     // ---- DISCORD ----
     HashMap<IUser,Long> cooldowns = new HashMap<>();
@@ -52,6 +55,7 @@ public class FFAHandler {
     private long messageSent;
     private long messageHost;
     private boolean startReact;
+    private long lastReminder;
 
     void enter(IMessage message){
         String[] args = message.getContent().split(" ");
@@ -83,6 +87,7 @@ public class FFAHandler {
             RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
             entrants.add(message.getAuthor());
             startReact = false;
+            lastReminder = System.currentTimeMillis();
         } else {
             RequestBuffer.request(message::delete);
         }
@@ -263,6 +268,18 @@ public class FFAHandler {
         host = null;
         messageSent = 0;
         messageHost = 0;
+        lastReminder = 0;
+    }
+
+    public void remind(){
+        if(host == null) return;
+        if(!ProfileManager.getDiscord(host.getStringID(), serverID, true).isFfaReminders()) return;
+        if((System.currentTimeMillis() - lastReminder) < (remindDelay * 60 * 60 * 1000)) return;
+
+        IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageSent);
+        MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a free for all with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", entrants.size(), message.getChannel().mention(), message.getGuild().getName()), host.getOrCreatePMChannel(), false);
+
+        lastReminder = System.currentTimeMillis();
     }
 
 

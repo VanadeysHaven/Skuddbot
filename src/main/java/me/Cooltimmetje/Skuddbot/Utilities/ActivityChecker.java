@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
@@ -71,6 +72,8 @@ public class ActivityChecker extends TimerTask {
         for(IMessage message : temp){
             MessagesUtils.reactions.remove(message);
         }
+
+        FFAManager.runReminders();
     }
 
 }

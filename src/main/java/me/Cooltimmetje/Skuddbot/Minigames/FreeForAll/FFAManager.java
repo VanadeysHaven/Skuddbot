@@ -40,6 +40,12 @@ public class FFAManager {
         ServerManager.getServer(message.getGuild().getStringID()).getFfaHandler().enter(message);
     }
 
+    public static void runReminders(){
+        for(Server server : ServerManager.servers.values()){
+            server.getFfaHandler().remind();
+        }
+    }
+
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
         if(!event.getChannel().isPrivate()) {
@@ -53,6 +59,8 @@ public class FFAManager {
             ServerManager.getServer(event.getMessage().getGuild().getStringID()).getFfaHandler().reactionRemove(event);
         }
     }
+
+
 
     // ---- TWITCH ----
     public static void run(String sender, String message, String channel) {
