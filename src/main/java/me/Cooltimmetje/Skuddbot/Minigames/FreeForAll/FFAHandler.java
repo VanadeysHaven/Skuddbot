@@ -290,7 +290,7 @@ public class FFAHandler {
     private boolean fightRunning = false;
     ScheduledThreadPoolExecutor execTwitch = new ScheduledThreadPoolExecutor(1);
 
-    public void run(String sender, String message, String channel) {
+    public void run(String sender, String channel) {
         if(fightRunning) return;
         if(twitchCooldowns.containsKey(sender)){
             if(System.currentTimeMillis() - twitchCooldowns.get(sender) < cooldown * 1000){

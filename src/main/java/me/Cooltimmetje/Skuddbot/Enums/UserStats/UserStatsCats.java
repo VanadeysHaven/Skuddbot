@@ -3,7 +3,7 @@ package me.Cooltimmetje.Skuddbot.Enums.UserStats;
 import lombok.Getter;
 
 /**
- * Devides the statistics in categories.
+ * Divides the statistics in categories.
  *
  * @author Tim (Cooltimmetje)
  * @version v0.4.6-ALPHA

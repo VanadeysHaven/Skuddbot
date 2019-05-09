@@ -64,7 +64,7 @@ public class FFAManager {
 
     // ---- TWITCH ----
     public static void run(String sender, String message, String channel) {
-        ServerManager.getTwitch(channel.substring(1)).getFfaHandler().run(sender, message, channel);
+        ServerManager.getTwitch(channel.substring(1)).getFfaHandler().run(sender, channel);
     }
 
 }
