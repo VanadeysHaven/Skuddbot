@@ -27,6 +27,7 @@ public class SkuddbotTwitch extends PircBot{
 
     private boolean terminated = false;
     private static HashMap<String,Long> cooldown = new HashMap<>();
+    private static HashMap<String,Long> playCooldown = new HashMap<>();
 
     public SkuddbotTwitch() {
         this.setName(Constants.twitchBot);
@@ -113,7 +114,7 @@ public class SkuddbotTwitch extends PircBot{
                             (user.isLinked() ? " | NOTE: Because your account is linked to Discord, tracking has also been " + (currentlyEnabled ? "disabled" : "enabled") + " on Discord." : ""));
                     cooldown.put(sender, System.currentTimeMillis());
                 }
-            } else if(message.toLowerCase().startsWith("s!")) {
+            } else if(message.toLowerCase().startsWith("s!") || message.startsWith("!")) {
                 commands(sender, message, channel);
             } else {
                 if (!Constants.bannedUsers.contains(sender)) {
@@ -159,7 +160,21 @@ public class SkuddbotTwitch extends PircBot{
             case "s!ffa":
                 FFAManager.run(sender, message, channel);
                 break;
+            case "!play":
+                play(channel);
+                break;
         }
+    }
+
+    private void play(String channel){
+        if(playCooldown.containsKey(channel)) {
+            if((System.currentTimeMillis() - playCooldown.get(channel)) < 60 * 1000){
+                return;
+            }
+        }
+
+        sendMessage(channel, "!play");
+        playCooldown.put(channel, System.currentTimeMillis());
     }
 
     private void reverseCommand(String message, String channel, String sender) {
