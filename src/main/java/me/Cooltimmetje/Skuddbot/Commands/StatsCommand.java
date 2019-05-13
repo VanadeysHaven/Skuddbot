@@ -121,11 +121,7 @@ public class StatsCommand {
 
                 for (UserStats stat : UserStats.values()) {
                     if (stat.isShow() && stat.getCategory() == category) {
-                        if(user.getStringID().equals("91949596737011712") && stat == UserStats.BLACKJACK_WINS && su.getStat(stat).equals("69")){
-                            eb.appendField("__" + stat.getDescription() + ":__", "68 " + stat.getStatSuffix(), true);
-                        } else {
-                            eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
-                        }
+                        eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
                     }
                 }
             }
