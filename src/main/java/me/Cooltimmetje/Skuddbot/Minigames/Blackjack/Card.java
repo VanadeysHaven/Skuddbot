@@ -40,4 +40,12 @@ public class Card {
         }
     }
 
+    @Override
+    public boolean equals(Object object){
+        if(!(object instanceof Card)) return false;
+        Card card = (Card) object;
+
+        return card.getRank() == this.rank && card.getSuit() == this.suit;
+    }
+
 }

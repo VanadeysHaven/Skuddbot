@@ -33,6 +33,7 @@ public class BlackjackGame {
     private ArrayList<Card> playerHand;
     private ArrayList<Card> dealerHand;
     private Card holeCard;
+    private ArrayList<Card> cardsInGame;
 
     private String userDisplayName;
     private int dealerHandValue;
@@ -58,14 +59,15 @@ public class BlackjackGame {
         this.user = user;
         this.guild = channel.getGuild();
         this.gameState = GameStates.PLAYER_PLAYING;
+        this.cardsInGame = new ArrayList<>();
 
         playerHand = new ArrayList<>();
-        playerHand.add(new Card());
-        playerHand.add(new Card());
+        playerHand.add(drawNewCard());
+        playerHand.add(drawNewCard());
 
         dealerHand = new ArrayList<>();
-        dealerHand.add(new Card());
-        holeCard = new Card();
+        dealerHand.add(drawNewCard());
+        holeCard = drawNewCard();
 
         updateGameStats();
         this.message = MessagesUtils.sendPlain(buildMessage(), channel, false);
@@ -190,7 +192,7 @@ public class BlackjackGame {
         if(gameState != GameStates.PLAYER_PLAYING){
             return;
         }
-        playerHand.add(new Card());
+        playerHand.add(drawNewCard());
         updateGameStats();
 
         RequestBuffer.request(() -> message.edit(buildMessage()));
@@ -213,7 +215,7 @@ public class BlackjackGame {
         dealerHand.add(holeCard);
 
         while(calculateHandValue(dealerHand) < 17){
-            dealerHand.add(new Card());
+            dealerHand.add(drawNewCard());
         }
 
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
@@ -229,6 +231,25 @@ public class BlackjackGame {
 
     public IMessage getMessage(){
         return message;
+    }
+
+    private boolean cardExistsInGame(Card card){
+        for(Card cardInGame : cardsInGame){
+            if(card.equals(cardInGame)) return true;
+        }
+        return false;
+    }
+
+    private Card drawNewCard(){
+        Card card;
+        boolean duplicate;
+        do {
+            card = new Card();
+            duplicate = cardExistsInGame(card);
+        } while (duplicate);
+
+        cardsInGame.add(card);
+        return card;
     }
 
 }
