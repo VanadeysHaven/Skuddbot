@@ -95,12 +95,9 @@ public class StatLeaderboardCommand {
                 i++;
                 sb.append(i).append(". ");
             }
-            if(su.getId().equals("91949596737011712") && stat == UserStats.BLACKJACK_WINS && top.get(string) == 69){
-                sb.append(name).append(StringUtils.repeat(" ", longestName - name.length())).append(" | ").append(68).append(" ").append(stat.getStatSuffix());
-            } else {
-                sb.append(name).append(StringUtils.repeat(" ", longestName - name.length())).append(" | ").append(top.get(string)).append(" ").append(stat.getStatSuffix());
 
-            }
+            sb.append(name).append(StringUtils.repeat(" ", longestName - name.length())).append(" | ").append(top.get(string)).append(" ").append(stat.getStatSuffix());
+
             if(!su.isLinked()){
                 sb.append(" - ");
                 if(su.getTwitchUsername() != null) {

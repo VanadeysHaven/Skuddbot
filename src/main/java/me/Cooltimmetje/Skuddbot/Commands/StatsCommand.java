@@ -12,6 +12,8 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 
+import java.text.MessageFormat;
+
 /**
  * Command that will generate a stats overview and print it out.
  *
@@ -21,7 +23,71 @@ import sx.blah.discord.util.EmbedBuilder;
  */
 public class StatsCommand {
 
-    public static void run(IMessage message) {
+    public static void run(IMessage message) { //!stats <user> <stat> <add/remove/set> <amount>
+        String[] args = message.getContent().split(" ");
+        if(args.length <= 2) {
+            printStats(message);
+        } else if(args.length > 4) {
+            changeStat(message);
+        } else {
+            MessagesUtils.addReaction(message, "Incorrect arguments. Usage: !stats <user> [stat] [add/remove/set] [amount]", EmojiEnum.X, false);
+        }
+    }
+
+    public static void changeStat(IMessage message){
+        if(!ProfileManager.getDiscord(message.getAuthor(), message.getGuild(), true).hasElevatedPermissions()){
+            MessagesUtils.addReaction(message, "You do not have permission to do that.", EmojiEnum.X, false);
+            return;
+        }
+
+        String[] args = message.getContent().split(" ");
+        if(message.getMentions().isEmpty()){
+            MessagesUtils.addReaction(message, "No user specified.", EmojiEnum.X, false);
+        }
+        IUser user = message.getMentions().get(0);
+        IGuild guild = message.getGuild();
+        SkuddUser su = ProfileManager.getDiscord(user, guild, true);
+        UserStats stat = null;
+        try {
+            stat = UserStats.valueOf(args[2].toUpperCase().replace("-", "_"));
+        } catch (IllegalArgumentException e){
+            MessagesUtils.addReaction(message, "This stat does not exist.", EmojiEnum.X, false);
+            return;
+        }
+        String operation = args[3].toLowerCase();
+        if(!operation.equals("add") && !operation.equals("remove") && !operation.equals("set")){
+            MessagesUtils.addReaction(message, "The operation specified is not valid.", EmojiEnum.X, false);
+            return;
+        }
+        if(!MiscUtils.isInt(args[4])){
+            MessagesUtils.addReaction(message, "The amount specified is not a number.", EmojiEnum.X, false);
+            return;
+        }
+        int amount = Integer.parseInt(args[4]);
+
+        switch (operation){
+            case "add":
+                int initialAmount = Integer.parseInt(su.getStat(stat));
+                int newAmount = initialAmount + amount;
+                su.setStat(stat, newAmount+"");
+                MessagesUtils.addReaction(message, MessageFormat.format("`{0}` has been added to stat `{1}` for user `{2}`.", amount, stat.toString(), user.getDisplayName(guild)), EmojiEnum.WHITE_CHECK_MARK, false);
+                break;
+            case "remove":
+                initialAmount = Integer.parseInt(su.getStat(stat));
+                newAmount = initialAmount - amount;
+                su.setStat(stat, newAmount+"");
+                MessagesUtils.addReaction(message, MessageFormat.format("`{0}` has been removed from stat `{1}` for user `{2}`.", amount, stat.toString(), user.getDisplayName(guild)), EmojiEnum.WHITE_CHECK_MARK, false);
+                break;
+            case "set":
+                su.setStat(stat, amount+"");
+                MessagesUtils.addReaction(message, MessageFormat.format("Stat `{1}` has been set to `{0}` for user `{2}`.", amount, stat.toString(), user.getDisplayName(guild)), EmojiEnum.WHITE_CHECK_MARK, false);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static void printStats(IMessage message){
         IUser user = message.getAuthor();
         IGuild guild = message.getGuild();
         SkuddUser su = ProfileManager.getDiscord(user.getStringID(), guild.getStringID(), false);
@@ -55,11 +121,7 @@ public class StatsCommand {
 
                 for (UserStats stat : UserStats.values()) {
                     if (stat.isShow() && stat.getCategory() == category) {
-                        if(user.getStringID().equals("91949596737011712") && stat == UserStats.BLACKJACK_WINS && su.getStat(stat).equals("69")){
-                            eb.appendField("__" + stat.getDescription() + ":__", "68 " + stat.getStatSuffix(), true);
-                        } else {
-                            eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
-                        }
+                        eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
                     }
                 }
             }

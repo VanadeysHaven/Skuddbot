@@ -56,6 +56,7 @@ public class FFAHandler {
     private long messageHost;
     private boolean startReact;
     private long lastReminder;
+    private int lastEntrants;
 
     void enter(IMessage message){
         String[] args = message.getContent().split(" ");
@@ -269,6 +270,7 @@ public class FFAHandler {
         messageSent = 0;
         messageHost = 0;
         lastReminder = 0;
+        lastEntrants = 0;
     }
 
     public void remind(){
@@ -276,10 +278,15 @@ public class FFAHandler {
         if(!ProfileManager.getDiscord(host.getStringID(), serverID, true).isFfaReminders()) return;
         if((System.currentTimeMillis() - lastReminder) < (remindDelay * 60 * 60 * 1000)) return;
 
-        IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageSent);
-        MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a free for all with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", entrants.size(), message.getChannel().mention(), message.getGuild().getName()), host.getOrCreatePMChannel(), false);
+        if(lastEntrants != entrants.size() || entrants.size() < 3) {
+            IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageSent);
+            MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a free for all with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", entrants.size(), message.getChannel().mention(), message.getGuild().getName()), host.getOrCreatePMChannel(), false);
+        } else {
+            startFight(Main.getInstance().getSkuddbot().getMessageByID(messageSent).getChannel());
+        }
 
         lastReminder = System.currentTimeMillis();
+        lastEntrants = entrants.size();
     }
 
 
