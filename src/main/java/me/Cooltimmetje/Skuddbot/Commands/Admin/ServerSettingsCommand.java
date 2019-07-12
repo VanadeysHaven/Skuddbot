@@ -10,7 +10,9 @@ import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import org.apache.commons.lang3.StringUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableArrayGenerator;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableDrawer;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableRow;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.text.MessageFormat;
@@ -19,7 +21,7 @@ import java.text.MessageFormat;
  * This class allows server owners to view and alter settings to their liking.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.4.62-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerSettingsCommand {
@@ -123,27 +125,13 @@ public class ServerSettingsCommand {
 
         sb.append(MessageFormat.format("Server Settings for **{0}** {1} | ID: `{2}`\n\n```".trim(), message.getGuild().getName(), category != null ? "*(category: " + category.toString() + ")*" : "",message.getGuild().getStringID()));
 
-        int longest = 0;
+        TableArrayGenerator tag = new TableArrayGenerator();
+        tag.addRow(new TableRow("Setting", "Value"));
+        for(ServerSettings setting : ServerSettings.values()){
+            tag.addRow(new TableRow(setting.toString(), server.getSetting(setting)));
+        }
 
-        for(ServerSettings setting : ServerSettings.values()){
-            if(category == null || category == setting.getCategory()) {
-                int i = setting.toString().length();
-                if (i > longest) {
-                    longest = i;
-                }
-            }
-        }
-        if("Setting".length() > longest){
-            longest = "Setting".length();
-        }
-        sb.append("Setting").append(StringUtils.repeat(" ", longest - "Setting".length())).append(" | Value\n");
-        sb.append(StringUtils.repeat("-", longest)).append("-|-").append(StringUtils.repeat("-", longest)).append("\n");
-        for(ServerSettings setting : ServerSettings.values()){
-            if(category == null || category == setting.getCategory()) {
-                sb.append(MessageFormat.format("{0} | {1}\n", setting.toString() + StringUtils.repeat(" ", longest - setting.toString().length()),
-                        ((((setting == ServerSettings.WELCOME_MESSAGE || setting == ServerSettings.GOODBYE_MESSAGE) && server.getSetting(setting) != null) && server.getSetting(setting).length() > longest) ? "<hidden - view info>" : server.getSetting(setting))));
-            }
-        }
+        sb.append(new TableDrawer(tag.generateArray()).drawTable());
 
         sb.append("```\nType `!serversettings <name>` to view more info about it. Type `!serversettings <name> <value>` to change it's value!");
 
