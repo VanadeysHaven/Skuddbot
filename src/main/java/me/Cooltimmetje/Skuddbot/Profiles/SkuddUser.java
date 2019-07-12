@@ -22,6 +22,8 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 /**
@@ -72,6 +74,8 @@ public class SkuddUser {
     private int blackjackPushes;
     private int blackjackTwentyOnes;
     private int blackjackLosses;
+
+    private ArrayList<Currency> currencies;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
