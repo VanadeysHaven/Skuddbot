@@ -1,12 +1,13 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
-import com.vdurmont.emoji.EmojiParser;
-import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableArrayGenerator;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableDrawer;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableRow;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class LeaderboardCommand {
         HashMap<Integer,SkuddUser> discord = MySqlManager.getTopDiscord(message.getGuild().getStringID());
         HashMap<Integer,SkuddUser> twitch = MySqlManager.getTopTwitch(message.getGuild().getStringID());
 
-        TreeMap<Integer,SkuddUser> top = new TreeMap<>(); //topkek
+        TreeMap<Integer,SkuddUser> top = new TreeMap<>();
         for(int i : discord.keySet()){
             top.put(i,discord.get(i));
         }
@@ -41,31 +42,14 @@ public class LeaderboardCommand {
             top.put(i,twitch.get(i));
         }
 
-        StringBuilder sb = new StringBuilder();
+
         int i = 0;
-
-        int lengthName = 0;
-
+        TableArrayGenerator tag = new TableArrayGenerator(new TableRow("Pos", "Name", "Level", "Progress", "Account Type"));
         for(int i2 : top.descendingKeySet()){
-            SkuddUser user = top.get(i2);
-            String name = user.getId() == null ? user.getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() :
-                    (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getNicknameForGuild(message.getGuild())));
-
-            if(name == null){
-                name = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName();
-            }
-
-            if(user.getTwitchUsername() != null){
-                if(user.getTwitchUsername().equals("jaschmedia")){
-                    name = "JuiceMedia";
-                }
-            }
-
-            name = EmojiParser.removeAllEmojis(name);
-
-            if(name.length() > lengthName){
-                lengthName = name.length();
-            }
+            SkuddUser su = top.get(i2);
+            int[] levelInfo = su.calcXP(false, null);
+            int progress = (int) (((double)levelInfo[0] / (double)levelInfo[2])*100);
+            tag.addRow(new TableRow((i+1)+"", su.getFullName(), levelInfo[3]+"", progress + "%", su.getAccountType().getFullName()));
 
             if(i<9){
                 i++;
@@ -74,20 +58,7 @@ public class LeaderboardCommand {
             }
         }
 
-        int i3 = 0;
-        for(int i2 : top.descendingKeySet()){
-            if(i3<9){
-                sb.append(" ");
-            }
-            sb.append(i3+1).append(". ").append(top.get(i2).calcXpLB(lengthName)).append("\n");
-            if(i3<9){
-                i3++;
-            } else {
-                break;
-            }
-        }
-
-        String leaderboard = sb.toString();
+        String leaderboard = new TableDrawer(tag).drawTable();
         boolean displayLinkInfo = leaderboard.contains("(not linked)");
 
         MessagesUtils.sendPlain(EmojiHelper.getEmoji("xp_icon") + "** Leaderboard** | **" + message.getGuild().getName() + "**\n\n```\n" + leaderboard + "```\n" + (displayLinkInfo ? "**PRO-TIP:** You might have more XP if you are marked as \"not linked\", type `!twitch` to get started with linking your accounts! It's really easy to do, promise, and you'll get a nice tasty 1000xp free! Woo!\n" : "") + "Generated in `" + (System.currentTimeMillis() - startTime) + " ms`", message.getChannel(), false);

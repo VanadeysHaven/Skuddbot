@@ -7,6 +7,9 @@ import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableArrayGenerator;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableDrawer;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableRow;
 import org.apache.commons.lang3.StringUtils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
@@ -72,45 +75,29 @@ public class StatLeaderboardCommand {
         LinkedHashMap<String,Integer> top = getTop(stat, guild);
 
         sb.append("**").append(stat.getDescription()).append(" leaderboard** | **").append(guild.getName()).append("**\n```\n");
-        int longestName = 0;
-
-        for (String string : top.keySet()) {
-            String name = getName(string, guild);
-            if(name.length() > longestName){
-                longestName = name.length();
-            }
-        }
 
         int i = 0;
         int lastValue = -1;
+        TableArrayGenerator tag = new TableArrayGenerator(new TableRow("Pos", "Name", StringUtils.capitalize(stat.getStatSuffix()), "Account Type"));
         for(String string : top.keySet()){
-            if(i<10){
-                sb.append(" ");
-            }
+            TableRow tr = new TableRow();
             String name = getName(string, guild);
             SkuddUser su = ProfileManager.getByString(string, guild.getStringID(), true);
             if(lastValue == top.get(string)){
-                sb.append("   ");
+                tr.addString(" ");
             } else {
                 i++;
-                sb.append(i).append(". ");
+                tr.addString(i+"");
             }
+            tr.addString(name);
+            tr.addString(su.getStat(stat));
+            tr.addString(su.getAccountType().getFullName());
+            tag.addRow(tr);
 
-            sb.append(name).append(StringUtils.repeat(" ", longestName - name.length())).append(" | ").append(top.get(string)).append(" ").append(stat.getStatSuffix());
-
-            if(!su.isLinked()){
-                sb.append(" - ");
-                if(su.getTwitchUsername() != null) {
-                    sb.append("Twitch");
-                } else {
-                    sb.append("Discord");
-                }
-                sb.append(" (not linked)");
-            }
-            sb.append("\n");
             lastValue = top.get(string);
         }
 
+        sb.append(new TableDrawer(tag).drawTable());
         MessagesUtils.sendPlain(sb.append("```").append("\n").append("Generated in `").append(System.currentTimeMillis() - startTime).append("ms`").toString().trim(), channel, false);
     }
 

@@ -26,7 +26,7 @@ public class XPGiver {
                 Server server = ServerManager.getServer(event.getMessage().getGuild().getStringID());
                 int xpAwarded = MiscUtils.randomInt(server.getMinXP(), server.getMaxXP());
                 user.setXp(user.getXp() + xpAwarded);
-                user.calcXP(false, event.getMessage());
+                user.calcXP(true, event.getMessage());
             }
         }
     }

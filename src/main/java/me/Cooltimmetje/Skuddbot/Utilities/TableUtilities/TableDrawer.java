@@ -45,6 +45,18 @@ public class TableDrawer {
         this(data, DEFAULT_DRAW_HEADER, DEFAULT_PADDING);
     }
 
+    public TableDrawer(TableArrayGenerator tag, boolean drawHeader){
+        this(tag.generateArray(), drawHeader,DEFAULT_PADDING);
+    }
+
+    public TableDrawer(TableArrayGenerator tag, int padding){
+        this(tag.generateArray(), DEFAULT_DRAW_HEADER, padding);
+    }
+
+    public TableDrawer(TableArrayGenerator tag){
+        this(tag.generateArray(), DEFAULT_DRAW_HEADER, DEFAULT_PADDING);
+    }
+
     public String drawTable(){
         StringBuilder sb = new StringBuilder();
         sb.append(drawHorizontalDivider(TableDividers.DOWN_RIGHT, TableDividers.HORIZONTAL_DOWN, TableDividers.DOWN_LEFT));

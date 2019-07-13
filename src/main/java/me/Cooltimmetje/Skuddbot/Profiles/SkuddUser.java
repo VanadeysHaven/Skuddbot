@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.Cooltimmetje.Skuddbot.Enums.AccountType;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.UserSettings;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
@@ -9,7 +10,6 @@ import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -116,7 +116,7 @@ public class SkuddUser {
             e.printStackTrace();
         } finally {
             if(id != null) {
-                calcXP(true, null);
+                calcXP(false, null);
             }
 
             Constants.PROFILES_IN_MEMORY++;
@@ -132,7 +132,8 @@ public class SkuddUser {
         }
     }
 
-    public int[] calcXP(boolean load, IMessage message){
+    public int[] calcXP(boolean showLevelUp, IMessage message){
+        if(showLevelUp && message == null) throw new IllegalArgumentException("We need a message to find the channel where we should post the level up message.");
         Server server = ServerManager.getServer(getServerID());
         int exp,level,needed;
         exp = getXp();
@@ -145,7 +146,7 @@ public class SkuddUser {
             needed = (int) (server.getXpBase() * Math.pow(server.getXpMultiplier(), level - 1));
         }
 
-        if(load){
+        if(!showLevelUp){
             setLevel(level);
         } else {
             if(level > getLevel()){
@@ -161,36 +162,6 @@ public class SkuddUser {
         }
 
         return new int[]{exp, getXp(), needed, level};
-    }
-
-    public String calcXpLB(int length){
-        Server server = ServerManager.getServer(getServerID());
-        int exp,level,needed;
-        exp = getXp();
-        level = 1;
-        needed = server.getXpBase();
-
-        while (exp >= needed) {
-            exp = exp - needed;
-            level++;
-            needed = (int) (server.getXpBase() * Math.pow(server.getXpMultiplier(), level - 1));
-        }
-
-        String nameUser = (id == null ? getTwitchUsername() : (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(getId())) == null ? name : (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(getId())).getNicknameForGuild(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(getServerID()))))));
-
-        if(nameUser == null){
-            nameUser = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(getId())).getName();
-        }
-        if(this.getTwitchUsername() != null){
-            if(this.getTwitchUsername().equals("jaschmedia")){
-                nameUser = "JuiceMedia";
-            }
-        }
-
-        int progress = (int) (((double)exp / (double)needed)*100); //We don't really care about rounding here. Ain't nobody noticing that shit... Unless your name is Jasch.
-
-        return nameUser + StringUtils.repeat(" ", length - nameUser.length()) + " | Level " + (level < 10 ? " " + level : level) + " (" + (progress < 10 ? " " : "") + progress+ ("%) " +
-                (getId() == null ? "- Twitch (not linked)" : (getTwitchUsername() == null ? "- Discord (not linked)" : " ")));
     }
 
     public void save(){
@@ -582,6 +553,20 @@ public class SkuddUser {
         }
 
         return elevatedPerms;
+    }
+
+    public String getFullName(){
+        if(id == null){
+            return twitchUsername;
+        } else {
+            return Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id)).getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)));
+        }
+    }
+
+    public AccountType getAccountType(){
+        if(twitchUsername == null) return AccountType.DISCORD;
+        if(id == null) return AccountType.TWITCH;
+        return AccountType.DISCORD_TWITCH;
     }
 
 }

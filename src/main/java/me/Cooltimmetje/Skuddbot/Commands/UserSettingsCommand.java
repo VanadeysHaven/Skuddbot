@@ -5,7 +5,9 @@ import me.Cooltimmetje.Skuddbot.Enums.UserSettings;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import org.apache.commons.lang3.StringUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableArrayGenerator;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableDrawer;
+import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableRow;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.text.MessageFormat;
@@ -34,23 +36,12 @@ public class UserSettingsCommand {
 
             sb.append(MessageFormat.format("User Settings for **{0}#{1}** | ID: `{2}`\n\n```\n", message.getAuthor().getName(), message.getAuthor().getDiscriminator(), message.getAuthor().getStringID()));
 
-            int longest = 0;
+            TableArrayGenerator tag = new TableArrayGenerator(new TableRow("Setting", "Value"));
+            for(UserSettings setting : UserSettings.values()){
+                tag.addRow(new TableRow(setting.toString(), user.getSetting(setting)));
+            }
+            sb.append(new TableDrawer(tag).drawTable());
 
-            for(UserSettings setting : UserSettings.values()){
-                int i = setting.toString().length();
-                if(i > longest){
-                    longest = i;
-                }
-            }
-            if("Setting".length() > longest){
-                longest = "Setting".length();
-            }
-            sb.append("Setting").append(StringUtils.repeat(" ", longest - "Setting".length())).append(" | Value\n");
-            sb.append(StringUtils.repeat("-", longest)).append("-|-").append(StringUtils.repeat("-", longest)).append("\n");
-            for(UserSettings setting : UserSettings.values()){
-                assert user != null;
-                sb.append(MessageFormat.format("{0} | {1}\n", setting.toString() + StringUtils.repeat(" ", longest - setting.toString().length()), user.getSetting(setting)));
-            }
             sb.append("```\nType `!usersettings <name>` to view more info about it. Type `!usersettings <name> <value>` to change it's value!");
 
             MessagesUtils.sendPlain(sb.toString().trim(), message.getChannel(), false);

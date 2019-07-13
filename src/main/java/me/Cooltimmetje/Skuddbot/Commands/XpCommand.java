@@ -60,7 +60,7 @@ public class XpCommand {
             }
         }
 
-        int[] stats = su.calcXP(!mention, message);
+        int[] stats = su.calcXP(mention, message);
         int progress = (int) (((double) stats[0] / (double) stats[2]) * 100);
         MessagesUtils.sendPlain(MessageFormat.format("{0} **{1} | Level: {2} | Level progress: {3}/{4} ({5}%) | Total XP: {6}**",
                 EmojiHelper.getEmoji("xp_icon"), name, stats[3]+"", stats[0]+"", stats[2]+"", progress+"", stats[1]+""), message.getChannel(), false);
