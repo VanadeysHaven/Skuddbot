@@ -1,4 +1,4 @@
-# The "WE WANT LEADERBOARDS" update (v0.4.61-ALPHA)
+# The "WE WANT LEADERBOARDS" update (v0.4.62-ALPHA)
 
 ## Added
 - STATISTICS LEADERBOARD
@@ -15,6 +15,7 @@
 - Free for all fights are now simulated and feature a kill feed and xp for kills!
 - Made some Twitch messages more clear!
 - Blackjack games are now played with only one deck of cards.
+- New fancy looking leaderboards and tables!
 
 ## Removed
 - PogoGravesend stuff.
