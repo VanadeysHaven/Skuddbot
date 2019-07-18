@@ -559,7 +559,9 @@ public class SkuddUser {
         if(id == null){
             return twitchUsername;
         } else {
-            return Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id)).getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)));
+            IUser user = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id));
+            if(user != null) return user.getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)));
+            return name;
         }
     }
 
