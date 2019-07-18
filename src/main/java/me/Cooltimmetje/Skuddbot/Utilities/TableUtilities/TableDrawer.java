@@ -1,5 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Utilities.TableUtilities;
 
+import com.vdurmont.emoji.EmojiParser;
+
 /**
  * This is a class to draw neatly looking tables easily.
  *
@@ -126,9 +128,11 @@ public class TableDrawer {
 
     private void cleanData() {
         for(int i=0; i < data.length; i++)
-            for(int j=0; j < data[i].length; j++)
-                if(data[i][j] == null)
+            for(int j=0; j < data[i].length; j++) {
+                if (data[i][j] == null)
                     data[i][j] = "null";
+                data[i][j] = EmojiParser.removeAllEmojis(data[i][j]);
+            }
     }
 
 
