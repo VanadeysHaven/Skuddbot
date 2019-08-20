@@ -142,6 +142,7 @@ public class CommandManager {
                 case "!doggerino":
                 case "!addit":
                 case "!doggy":
+                case "!defectius":
                     PuppyCommand.run(event.getMessage());
                     break;
                 case "!ffa":

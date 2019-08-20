@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Picks an random active user, and punches it.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.62-ALPHA
  * @since v0.4.32-ALPHA
  */
 public class PunchCommand {
@@ -51,6 +51,10 @@ public class PunchCommand {
 
         if(user.getLongID() == Constants.JASCH_ID){
             MessagesUtils.sendPlain("*lights " + userMention + " on fire*", channel, false);
+            return;
+        }
+        if(user.getLongID() == 131382094457733120L){
+            MessagesUtils.sendPlain("*" + user.getDisplayName(guild) + " unleashes his lightning punch on " + userMention + "* :zap:" , channel, false);
             return;
         }
 
