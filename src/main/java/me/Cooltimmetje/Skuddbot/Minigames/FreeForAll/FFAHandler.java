@@ -274,6 +274,7 @@ public class FFAHandler {
     }
 
     public void remind(){
+        if(entrants.size() < 3) return;
         if(host == null) return;
         if(!ProfileManager.getDiscord(host.getStringID(), serverID, true).isFfaReminders()) return;
         if((System.currentTimeMillis() - lastReminder) < (remindDelay * 60 * 60 * 1000)) return;
