@@ -32,13 +32,14 @@ public class MessagesUtils {
 
     /**
      * This adds a reaction to the specified message with the specified emoji. The debug string get's saved to recall later and will be posted upon reaction from the original author with the same emoji.
-     *  @param message The message that we want to add the reaction to.
+     * @param message The message that we want to add the reaction to.
      * @param debug   The message that will be saved. (Debug String, not mandatory)
      * @param emoji   The emoji that we want to add.
-     * @param ignoreUser
+     * @param ignoreUser If this is true, any user can click the emoji to display the debug.
+     * @param expireTime (optional, default=1800000) This sets the the time for how long the debug string will be stored for in the HashMap.
      */
     @SuppressWarnings("unchecked")
-    public static void addReaction(IMessage message, String debug, EmojiEnum emoji, boolean ignoreUser) {
+    public static void addReaction(IMessage message, String debug, EmojiEnum emoji, boolean ignoreUser, long expireTime) {
         try {
             RequestBuffer.request(() -> message.addReaction(EmojiManager.getForAlias(emoji.getAlias())));
         } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
@@ -51,8 +52,14 @@ public class MessagesUtils {
         obj.put("debug", debug);
         obj.put("emoji", emoji.getEmoji());
         obj.put("ignoreUser", ignoreUser);
+        obj.put("expireTime", expireTime);
 
         reactions.put(message, obj);
+    }
+
+
+    public static void addReaction(IMessage message, String debug, EmojiEnum emoji, boolean ignoreUser){
+        addReaction(message, debug, emoji, ignoreUser, 30*60*1000);
     }
 
     /**

@@ -219,7 +219,7 @@ public class FFAHandler {
             IMessage messageFinal = MessagesUtils.sendPlain(MessageFormat.format("{0} A furious battle is going on in {1}, bodies are dropping... It looks like **{2}** has won the fight!\n\n{3}",
                     EmojiEnum.CROSSED_SWORDS.getString(), server.getArenaName(), winner.getDisplayName(channel.getGuild()), rewards), channel, false);
 
-            MessagesUtils.addReaction(messageFinal, sbKillFeed.toString().trim(), EmojiEnum.NOTEPAD_SPIRAL, true);
+            MessagesUtils.addReaction(messageFinal, sbKillFeed.toString().trim(), EmojiEnum.NOTEPAD_SPIRAL, true, 6*60*60*1000);
 
             suWinner.setXp(suWinner.getXp() + winReward + (killReward * kills.get(winner.getStringID())));
             suWinner.setFfaWins(suWinner.getFfaWins() + 1);

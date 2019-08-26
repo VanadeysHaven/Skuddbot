@@ -65,7 +65,8 @@ public class ActivityChecker extends TimerTask {
         ArrayList<IMessage> temp = new ArrayList<>();
         for (IMessage message : MessagesUtils.reactions.keySet()){
             long time = Long.parseLong(MessagesUtils.reactions.get(message).get("time")+"");
-            if((System.currentTimeMillis() - time) > (30*60*1000)){
+            long expireTime = Long.parseLong(MessagesUtils.reactions.get(message).get("expireTime")+"");
+            if((System.currentTimeMillis() - time) > expireTime){
                 temp.add(message);
             }
         }
