@@ -307,7 +307,7 @@ public class FFAHandler {
         }
 
         if(twitchEntrants.isEmpty()) {
-            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} is looking to host a free for all fight, anyone can participate! Type \"s!ffa\" to enter, the fight will start in {1} minutes.", sender, startDelay / 60), channel);
+            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} is looking to host a free for all fight, anyone can participate! Type \"!ffa\" to enter, the fight will start in {1} minutes.", sender, startDelay / 60), channel);
             execTwitch.schedule(() -> startFightTwitch(channel), startDelay, TimeUnit.SECONDS);
         }
         if(!twitchEntrants.contains(sender)) twitchEntrants.add(sender);

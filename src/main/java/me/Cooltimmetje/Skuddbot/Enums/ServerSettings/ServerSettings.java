@@ -38,12 +38,12 @@ public enum ServerSettings {
     private String type;
     private ServerSettingsCats category;
 
-    ServerSettings(String s, String s1, String s2, String s3, ServerSettingsCats ssc){
-        this.jsonReference = s;
-        this.description = s1;
-        this.defaultValue = s2;
-        this.type = s3;
-        this.category = ssc;
+    ServerSettings(String jsonReference, String description, String defaultValue, String type, ServerSettingsCats category){
+        this.jsonReference = jsonReference;
+        this.description = description;
+        this.defaultValue = defaultValue;
+        this.type = type;
+        this.category = category;
     }
 
 

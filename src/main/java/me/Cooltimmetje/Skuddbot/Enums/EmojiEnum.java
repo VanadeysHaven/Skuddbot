@@ -45,9 +45,9 @@ public enum EmojiEnum {
     private String emoji;
     private String alias;
 
-    EmojiEnum(String s, String s1){
-        this.emoji = s;
-        this.alias = s1;
+    EmojiEnum(String emoji, String alias){
+        this.emoji = emoji;
+        this.alias = alias;
     }
 
     public String getString(){

@@ -25,11 +25,11 @@ public enum UserSettings {
     private String defaultValue;
     private String type;
 
-    UserSettings(String s, String s1, String s2, String s3){
-        this.jsonReference = s;
-        this.description = s1;
-        this.defaultValue = s2;
-        this.type = s3;
+    UserSettings(String jsonReference, String description, String defaultValue, String type){
+        this.jsonReference = jsonReference;
+        this.description = description;
+        this.defaultValue = defaultValue;
+        this.type = type;
     }
 
 }

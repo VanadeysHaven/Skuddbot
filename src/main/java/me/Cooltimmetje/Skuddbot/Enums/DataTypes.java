@@ -23,8 +23,8 @@ public enum DataTypes {
 
     private int maxLength;
 
-    DataTypes(int i){
-        this.maxLength = i;
+    DataTypes(int maxLength){
+        this.maxLength = maxLength;
     }
 
 }
