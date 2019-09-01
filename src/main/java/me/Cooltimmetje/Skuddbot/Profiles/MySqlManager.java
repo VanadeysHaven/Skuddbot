@@ -7,13 +7,10 @@ import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +21,7 @@ import java.util.HashMap;
  * This class handles everything to do with the database, and contains all operations we can run on the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.4.62-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -66,11 +63,15 @@ public class MySqlManager {
         ResultSet rs = null;
         SkuddUser user = null;
 
-        String query = "SELECT * FROM " + serverID + "_discord WHERE twitch_username = '" + twitchUsername + "';";
+        String query = "SELECT * FROM discord WHERE server_id=? AND twitch_username=?;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(query);
+
+            ps.setString(1, serverID);
+            ps.setString(2, twitchUsername);
+
             rs = ps.executeQuery();
             if(rs.next()){
                 user = new SkuddUser(rs.getString("discord_id"), serverID, rs.getString("discord_username"), rs.getInt("xp"), rs.getString("twitch_username"), rs.getString("settings"), rs.getString("userstats"));
@@ -112,11 +113,16 @@ public class MySqlManager {
         ResultSet rs = null;
         SkuddUser user = null;
 
-        String query = "SELECT * FROM " + serverID + "_twitch WHERE twitch_user = '" + twitchUsername + "';";
+
+        String query = "SELECT * FROM twitch WHERE server_id=? AND twitch_user=?;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(query);
+
+            ps.setString(1, serverID);
+            ps.setString(2, twitchUsername);
+
             rs = ps.executeQuery();
             if(rs.next()){
                 user = new SkuddUser(null, serverID, null,rs.getInt("xp"), rs.getString("twitch_user"), rs.getString("settings"), rs.getString("userstats"));
@@ -155,19 +161,20 @@ public class MySqlManager {
     public static void saveTwitch(SkuddUser user){
         Connection c = null;
         PreparedStatement ps = null;
-        String create = "INSERT INTO " + user.getServerID() + "_twitch VALUES(?,?,?,?)ON DUPLICATE KEY UPDATE xp=?,settings=?,userstats=?";
+        String create = "INSERT INTO twitch VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE xp=?,settings=?,userstats=?;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(create);
 
-            ps.setString(1, user.getTwitchUsername());
-            ps.setInt(2, user.getXp());
-            ps.setString(3, user.jsonSettings());
-            ps.setString(4, user.jsonStats());
-            ps.setInt(5, user.getXp());
-            ps.setString(6, user.jsonSettings());
-            ps.setString(7, user.jsonStats());
+            ps.setString(1, user.getServerID());
+            ps.setString(2, user.getTwitchUsername());
+            ps.setInt(3, user.getXp());
+            ps.setString(4, user.jsonSettings());
+            ps.setString(5, user.jsonStats());
+            ps.setInt(6, user.getXp());
+            ps.setString(7, user.jsonSettings());
+            ps.setString(8, user.jsonStats());
 
             ps.execute();
         } catch (SQLException e) {
@@ -196,11 +203,15 @@ public class MySqlManager {
         ResultSet rs = null;
         SkuddUser user = null;
 
-        String query = "SELECT * FROM " + serverID + "_discord WHERE discord_id = '" + id + "';";
+        String query = "SELECT * FROM discord WHERE server_id=? AND discord_id=?;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(query);
+
+            ps.setString(1, serverID);
+            ps.setString(2, id);
+
             rs = ps.executeQuery();
 
             if(rs.next()){
@@ -240,23 +251,24 @@ public class MySqlManager {
     public static void saveProfile(SkuddUser user) {
         Connection c = null;
         PreparedStatement ps = null;
-        String create = "INSERT INTO " + user.getServerID() + "_discord VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE discord_username=?,xp=?,twitch_username=?,settings=?,userstats=?";
+        String create = "INSERT INTO discord VALUES(?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE discord_username=?,xp=?,twitch_username=?,settings=?,userstats=?;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(create);
 
-            ps.setString(1, user.getId());
-            ps.setString(2, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
-            ps.setInt(3, user.getXp());
-            ps.setString(4, user.getTwitchUsername());
-            ps.setString(5, user.jsonSettings());
-            ps.setString(6, user.jsonStats());
-            ps.setString(7, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
-            ps.setInt(8, user.getXp());
-            ps.setString(9, user.getTwitchUsername());
-            ps.setString(10, user.jsonSettings());
-            ps.setString(11, user.jsonStats());
+            ps.setString(1, user.getServerID());
+            ps.setString(2, user.getId());
+            ps.setString(3, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
+            ps.setInt(4, user.getXp());
+            ps.setString(5, user.getTwitchUsername());
+            ps.setString(6, user.jsonSettings());
+            ps.setString(7, user.jsonStats());
+            ps.setString(8, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
+            ps.setInt(9, user.getXp());
+            ps.setString(10, user.getTwitchUsername());
+            ps.setString(11, user.jsonSettings());
+            ps.setString(12, user.jsonStats());
 
             ps.execute();
         } catch (SQLException e) {
@@ -282,13 +294,14 @@ public class MySqlManager {
     public static void deleteTwitch(String username, String serverID){
         Connection c = null;
         PreparedStatement ps = null;
-        String create = "DELETE FROM " + serverID + "_twitch WHERE twitch_user=?";
+        String delete = "DELETE FROM twitch WHERE server_id=? AND twitch_user=?;";
 
         try {
             c = hikari.getConnection();
-            ps = c.prepareStatement(create);
+            ps = c.prepareStatement(delete);
 
-            ps.setString(1, username);
+            ps.setString(1, serverID);
+            ps.setString(2, username);
 
             ps.execute();
         } catch (SQLException e) {
@@ -319,11 +332,14 @@ public class MySqlManager {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String query = "SELECT * FROM " + serverID + "_discord ORDER BY xp DESC;";
+        String query = "SELECT * FROM discord WHERE server_id=? ORDER BY xp DESC LIMIT 10;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(query);
+
+            ps.setString(1, serverID);
+
             rs = ps.executeQuery();
 
             int i = 0;
@@ -369,11 +385,14 @@ public class MySqlManager {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String query = "SELECT * FROM " + serverID + "_twitch ORDER BY xp DESC;";
+        String query = "SELECT * FROM twitch WHERE server_id=? ORDER BY xp DESC LIMIT 10;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(query);
+
+            ps.setString(1, serverID);
+
             rs = ps.executeQuery();
 
             int i = 0;
@@ -496,202 +515,6 @@ public class MySqlManager {
 
         }
 
-    }
-
-    public static void createServerTables(String serverID){
-        createDiscordTable(serverID);
-        createTwitchTable(serverID);
-    }
-
-    private static void createDiscordTable(String serverID){
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        String query = "CREATE TABLE " + serverID + "_discord (discord_id VARCHAR(25),discord_username VARCHAR(100) NOT NULL,xp INT(11) DEFAULT 0 NOT NULL,twitch_username VARCHAR(100) NULL DEFAULT NULL, settings VARCHAR(2048) NOT NULL DEFAULT '{}', userstats VARCHAR(2048) NOT NULL DEFAULT '{}', PRIMARY KEY (discord_id));";
-
-        try {
-            c = hikari.getConnection();
-            ps = c.prepareStatement(query);
-
-            ps.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if(c != null){
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(ps != null){
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
-
-    private static void createTwitchTable(String serverID){
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        String query = "CREATE TABLE " + serverID + "_twitch (twitch_user VARCHAR(100),xp INT(11) DEFAULT 0 NOT NULL, settings VARCHAR(2048) NOT NULL DEFAULT '{}', userstats VARCHAR(2048) NOT NULL DEFAULT '{}', PRIMARY KEY (twitch_user));";
-
-        try {
-            c = hikari.getConnection();
-            ps = c.prepareStatement(query);
-
-            ps.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if(c != null){
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(ps != null){
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static JSONArray dumpDiscord(){
-        JSONArray dump = new JSONArray();
-
-        Connection c = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        String query = "SELECT * FROM users;";
-
-        try {
-            c = hikari.getConnection();
-            ps = c.prepareStatement(query);
-            rs = ps.executeQuery();
-
-            while(rs.next()){
-                JSONObject obj = new JSONObject();
-                obj.put("id", rs.getString("discord_id"));
-                obj.put("name", rs.getString("discord_username"));
-                obj.put("discrim", Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(rs.getString("discord_id"))).getDiscriminator());
-                obj.put("avatar_url", Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(rs.getString("discord_id"))).getAvatarURL());
-                obj.put("xp", rs.getInt("xp"));
-                obj.put("twitch_username", rs.getString("twitch_username"));
-
-                dump.add(obj);
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        } finally {
-            if(c != null){
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(ps != null){
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(rs != null){
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return dump;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static JSONArray dumpTwitch(){
-        JSONArray dump = new JSONArray();
-
-        Connection c = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        String query = "SELECT * FROM twitch_users;";
-
-        try {
-            c = hikari.getConnection();
-            ps = c.prepareStatement(query);
-            rs = ps.executeQuery();
-
-            while(rs.next()){
-                JSONObject obj = new JSONObject();
-                obj.put("twitch_username", rs.getString("twitch_user"));
-                obj.put("xp", rs.getInt("xp"));
-
-                dump.add(obj);
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        } finally {
-            if(c != null){
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(ps != null){
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(rs != null){
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return dump;
-    }
-
-    @SuppressWarnings("ignored")
-    public static void dumpDataToJSON(){
-        JSONObject obj = new JSONObject();
-        JSONArray discord = dumpDiscord();
-        JSONArray twitch = dumpTwitch();
-
-        //noinspection unchecked
-        obj.put("Discord", discord);
-        //noinspection unchecked
-        obj.put("Twitch", twitch);
-
-
-        try (FileWriter file = new FileWriter("dump.json")) {
-            file.write(obj.toJSONString());
-            System.out.println("Successfully Copied JSON Object to File...");
-            System.out.println("\nJSON Object: " + obj);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void loadGlobal(){
@@ -1405,12 +1228,16 @@ public class MySqlManager {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        String queryDiscord = "SELECT discord_id,userstats FROM " + serverId + "_discord WHERE userstats LIKE '%" + stat.getJsonReference() + "%';";
-        String queryTwitch = "SELECT twitch_user,userstats FROM " + serverId + "_twitch WHERE userstats LIKE '%" + stat.getJsonReference() + "%';";
+        String queryDiscord = "SELECT discord_id,userstats FROM discord WHERE server_id=? AND userstats LIKE ?;";
+        String queryTwitch = "SELECT twitch_user,userstats FROM twitch WHERE server_id=? AND userstats LIKE ?;";
 
         try {
             c = hikari.getConnection();
             ps = c.prepareStatement(queryDiscord);
+
+            ps.setString(1, serverId);
+            ps.setString(2, "%" + stat.getJsonReference() + "%");
+
             rs = ps.executeQuery();
 
             while(rs.next()){
@@ -1423,6 +1250,10 @@ public class MySqlManager {
             }
 
             ps = c.prepareStatement(queryTwitch);
+
+            ps.setString(1, serverId);
+            ps.setString(2, "%" + stat.getJsonReference() + "%");
+
             rs = ps.executeQuery();
 
             while (rs.next()){
