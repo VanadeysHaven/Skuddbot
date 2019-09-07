@@ -102,7 +102,6 @@ public class Server {
 
         Logger.info(MessageFormat.format("Initializing {0} (ID: {1})",guild.getName(),guild.getStringID()));
         this.clearProfiles();
-        MySqlManager.createServerTables(serverID);
         this.serverInitialized = true;
         Logger.info(MessageFormat.format("Initialized {0} (ID: {1})",guild.getName(),guild.getStringID()));
 
