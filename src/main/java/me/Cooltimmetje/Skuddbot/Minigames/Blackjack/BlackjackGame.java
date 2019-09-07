@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * This is a game of blackjack, with all the needed functions to carry out an game.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.7-ALPHA
  * @since v0.4.5-ALPHA
  */
 public class BlackjackGame {
@@ -182,7 +182,7 @@ public class BlackjackGame {
         SkuddUser su = ProfileManager.getDiscord(user, guild, true);
 
         for(Card card : cards){
-            sb.append(card.toString(su.isBjSimpleMode())).append(" | ");
+            sb.append(card.toString()).append(" | ");
         }
 
         if(cards.size() == 1){

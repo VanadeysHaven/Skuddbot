@@ -25,10 +25,10 @@ import java.text.MessageFormat;
 import java.util.List;
 
 /**
- * Holds user data. Doesn't need much explaination imo...
+ * Holds user data. Doesn't need much explanation imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.4.7-ALPHA
  * @since v0.1-ALPHA
  */
 @Getter
@@ -53,7 +53,6 @@ public class SkuddUser {
     private boolean analyticsMention;
     private boolean statsPrivate;
     private boolean mentionMe;
-    private boolean bjSimpleMode;
     private boolean ffaReminders;
 
     //---- USER STATS ----
@@ -253,8 +252,6 @@ public class SkuddUser {
                 return isStatsPrivate()+"";
             case MENTION_ME:
                 return isMentionMe()+"";
-            case BLACKJACK_SIMPLE_VIEW:
-                return isBjSimpleMode()+"";
             case FFA_REMINDERS:
                 return isFfaReminders()+"";
         }
@@ -326,9 +323,6 @@ public class SkuddUser {
                 return null;
             case MENTION_ME:
                 this.mentionMe = booleanValue;
-                return null;
-            case BLACKJACK_SIMPLE_VIEW:
-                this.bjSimpleMode = booleanValue;
                 return null;
             case FFA_REMINDERS:
                 this.ffaReminders = booleanValue;

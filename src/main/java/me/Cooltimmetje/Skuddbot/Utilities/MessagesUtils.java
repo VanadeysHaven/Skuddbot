@@ -35,7 +35,7 @@ public class MessagesUtils {
      * @param message The message that we want to add the reaction to.
      * @param debug   The message that will be saved. (Debug String, not mandatory)
      * @param emoji   The emoji that we want to add.
-     * @param ignoreUser If this is true, any user can click the emoji to display the debug.
+     * @param ignoreUser (optional, default=false) If this is true, any user can click the emoji to display the debug.
      * @param expireTime (optional, default=1800000) This sets the the time for how long the debug string will be stored for in the HashMap.
      */
     @SuppressWarnings("unchecked")
@@ -60,6 +60,10 @@ public class MessagesUtils {
 
     public static void addReaction(IMessage message, String debug, EmojiEnum emoji, boolean ignoreUser){
         addReaction(message, debug, emoji, ignoreUser, 30*60*1000);
+    }
+
+    public static void addReaction(IMessage message, String debug, EmojiEnum emoji){
+        addReaction(message, debug, emoji, false, 30*60*1000);
     }
 
     /**

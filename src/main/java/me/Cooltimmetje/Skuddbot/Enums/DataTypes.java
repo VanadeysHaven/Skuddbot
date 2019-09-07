@@ -19,7 +19,8 @@ public enum DataTypes {
     ALIVE            (512),
     PUPPY            (512),
     BACON            (512),
-    KITTY            (512);
+    KITTY            (512),
+    AI_NAME          (64 );
 
     private int maxLength;
 

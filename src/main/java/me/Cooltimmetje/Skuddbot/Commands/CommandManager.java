@@ -6,6 +6,7 @@ import me.Cooltimmetje.Skuddbot.Commands.Useless.*;
 import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackManager;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.TdManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -169,6 +170,11 @@ public class CommandManager {
                     break;
                 case "!statlb":
                     StatLeaderboardCommand.run(event.getMessage());
+                    break;
+                case "!teamdeathmatch":
+                case "!td":
+                    TdManager.run(event.getMessage());
+                    break;
             }
         } else {
             switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {

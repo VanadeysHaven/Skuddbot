@@ -7,7 +7,7 @@ import lombok.Setter;
  * This represents a regular playing card.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.4.7-ALPHA
  * @since v0.4.5-ALPHA
  */
 @Getter
@@ -30,14 +30,6 @@ public class Card {
     @Override
     public String toString(){
         return rank.getEmoji().getEmoji() + " " + suit.getEmoji().getEmoji();
-    }
-
-    public String toString(boolean simpleMode){
-        if(simpleMode){
-            return rank.getEmoji().getEmoji() + " " + suit.getEmoji().getEmoji();
-        } else {
-            return suit.getEmoji().getEmoji() + " " + rank.getRankName() + " of " + suit.getSuitName();
-        }
     }
 
     @Override

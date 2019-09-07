@@ -27,6 +27,7 @@ public class BlackjackManager {
 
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
+        if(event.getMessage().getChannel().isPrivate()) return;
         ServerManager.getServer(event.getGuild().getStringID()).getBlackjackHandler().onReaction(event);
     }
 
