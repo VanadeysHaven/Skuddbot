@@ -12,21 +12,26 @@ import lombok.Getter;
 @Getter
 public enum UserStats {
 
-    MESSAGES_POSTED_STREAK   ("message_streak",           "0", "Integer", false, "",                           "",         UserStatsCats.NO_CATEGORY ),
-    XP_GAIN_STREAK           ("xp_streak",                "0", "Integer", false, "",                           "",         UserStatsCats.NO_CATEGORY ),
-    CHAT_WALL_STREAK         ("chat_wall_streak",         "0", "Integer", false, "",                           "",         UserStatsCats.NO_CATEGORY ),
-    CHALLENGE_WINS           ("challenge_wins",           "0", "Integer", true,  "Challenge wins",             "wins",     UserStatsCats.CHALLENGE   ),
-    CHALLENGE_LOSSES         ("challenge_losses",         "0", "Integer", true,  "Challenge losses",           "losses",   UserStatsCats.CHALLENGE   ),
-    CHALLENGE_WIN_STREAK     ("challenge_win_streak",     "0", "Integer", true,  "Current challenge winstreak","wins",     UserStatsCats.CHALLENGE   ),
-    CHALLENGE_LONGEST_STREAK ("challenge_longest_streak", "0", "Integer", true,  "Longest challenge winstreak","wins",     UserStatsCats.CHALLENGE   ),
-    FFA_WINS                 ("ffa_wins",                 "0", "Integer", true,  "Free for all wins",          "wins",     UserStatsCats.FREE_FOR_ALL),
-    FFA_LOSSES               ("ffa_losses",               "0", "Integer", true,  "Free for all losses",        "losses",   UserStatsCats.FREE_FOR_ALL),
-    FFA_MOST_WIN             ("ffa_most_win",             "0", "Integer", true,  "FFA highest entrants win",   "entrants", UserStatsCats.FREE_FOR_ALL),
-    FFA_KILLS                ("ffa_kills",                "0", "Integer", true,  "Free for all kills",         "kills",    UserStatsCats.FREE_FOR_ALL),
-    BLACKJACK_WINS           ("blackjack_wins",           "0", "Integer", true,  "Blackjack wins",             "wins",     UserStatsCats.BLACKJACK   ),
-    BLACKJACK_PUSHES         ("blackjack_pushes",         "0", "Integer", true,  "Blackjack pushes",           "pushes",   UserStatsCats.BLACKJACK   ),
-    BLACKJACK_TWENTY_ONES    ("blackjack_twenty_one",     "0", "Integer", true,  "Blackjack 21's",             "21's",     UserStatsCats.BLACKJACK   ),
-    BLACKJACK_LOSSES         ("blackjack_losses",         "0", "Integer", true,  "Blackjack losses",           "losses",   UserStatsCats.BLACKJACK   );
+    MESSAGES_POSTED_STREAK   ("message_streak",           "0", "Integer", false, "",                           "",         UserStatsCats.NO_CATEGORY    ),
+    XP_GAIN_STREAK           ("xp_streak",                "0", "Integer", false, "",                           "",         UserStatsCats.NO_CATEGORY    ),
+    CHAT_WALL_STREAK         ("chat_wall_streak",         "0", "Integer", false, "",                           "",         UserStatsCats.NO_CATEGORY    ),
+    CHALLENGE_WINS           ("challenge_wins",           "0", "Integer", true,  "Challenge wins",             "wins",     UserStatsCats.CHALLENGE      ),
+    CHALLENGE_LOSSES         ("challenge_losses",         "0", "Integer", true,  "Challenge losses",           "losses",   UserStatsCats.CHALLENGE      ),
+    CHALLENGE_WIN_STREAK     ("challenge_win_streak",     "0", "Integer", true,  "Current challenge winstreak","wins",     UserStatsCats.CHALLENGE      ),
+    CHALLENGE_LONGEST_STREAK ("challenge_longest_streak", "0", "Integer", true,  "Longest challenge winstreak","wins",     UserStatsCats.CHALLENGE      ),
+    FFA_WINS                 ("ffa_wins",                 "0", "Integer", true,  "Free for all wins",          "wins",     UserStatsCats.FREE_FOR_ALL   ),
+    FFA_LOSSES               ("ffa_losses",               "0", "Integer", true,  "Free for all losses",        "losses",   UserStatsCats.FREE_FOR_ALL   ),
+    FFA_MOST_WIN             ("ffa_most_win",             "0", "Integer", true,  "FFA highest entrants win",   "entrants", UserStatsCats.FREE_FOR_ALL   ),
+    FFA_KILLS                ("ffa_kills",                "0", "Integer", true,  "Free for all kills",         "kills",    UserStatsCats.FREE_FOR_ALL   ),
+    BJ_WINS                  ("blackjack_wins",           "0", "Integer", true,  "Blackjack wins",             "wins",     UserStatsCats.BLACKJACK      ),
+    BJ_PUSHES                ("blackjack_pushes",         "0", "Integer", true,  "Blackjack pushes",           "pushes",   UserStatsCats.BLACKJACK      ),
+    BJ_TWENTY_ONES           ("blackjack_twenty_one",     "0", "Integer", true,  "Blackjack 21's",             "21's",     UserStatsCats.BLACKJACK      ),
+    BJ_LOSSES                ("blackjack_losses",         "0", "Integer", true,  "Blackjack losses",           "losses",   UserStatsCats.BLACKJACK      ),
+    TD_WINS                  ("td_wins",                  "0", "Integer", true,  "Team Deathmatch wins",       "wins",     UserStatsCats.TEAM_DEATHMATCH),
+    TD_LOSSES                ("td_losses",                "0", "Integer", true,  "Team Deathmatch losses",     "losses",   UserStatsCats.TEAM_DEATHMATCH),
+    TD_SAVES                 ("td_saves",                 "0", "Integer", true,  "TD teammate defences",       "defences", UserStatsCats.TEAM_DEATHMATCH),
+    TD_MOST_WIN              ("td_most_win",              "0", "Integer", true,  "TD highest entrants win",    "entrants", UserStatsCats.TEAM_DEATHMATCH),
+    TD_KILLS                 ("td_kills",                 "0", "Integer", true,  "Team Deathmatch kills",      "kills",    UserStatsCats.TEAM_DEATHMATCH);
 
     private String jsonReference;
     private String defaultValue;

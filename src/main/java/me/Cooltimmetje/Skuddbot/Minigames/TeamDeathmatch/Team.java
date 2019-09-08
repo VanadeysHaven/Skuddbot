@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
 
 import java.util.ArrayList;
 
@@ -20,16 +21,16 @@ public class Team {
     private int maxTeamSize;
     private ArrayList<TeamMember> teamMemebers;
 
-    public Team (int teamNumber, int maxTeamSize, TeamMember firstMember){
+    public Team (int teamNumber, int maxTeamSize) {
         this.teamNumber = teamNumber;
         this.maxTeamSize = maxTeamSize;
         this.teamMemebers = new ArrayList<>();
-        this.teamMemebers.add(firstMember);
     }
 
     public boolean joinTeam(TeamMember member){
         if(teamMemebers.size() < maxTeamSize){
             this.teamMemebers.add(member);
+            member.setTeam(this);
             return true;
         } else {
             return false;
@@ -42,12 +43,12 @@ public class Team {
         sb.append(teamNumber).append(":");
 
         for(TeamMember member : teamMemebers){
-            sb.append(" ").append(member.getName()).append(" |");
+            sb.append(" **").append(member.getName()).append("** |");
         }
 
         if(teamMemebers.size() < maxTeamSize){
             for(int i = 0; i < (maxTeamSize - teamMemebers.size()); i++){
-                sb.append(" *open spot* |");
+                sb.append(" [open spot] |");
             }
         }
 
@@ -59,4 +60,19 @@ public class Team {
         return maxTeamSize == teamMemebers.size();
     }
 
+    public boolean allMembersAlive(){
+        if(teamMemebers.size() == 0) return false;
+        for (TeamMember member : teamMemebers)
+            if(!member.isAlive())
+                return false;
+        return true;
+    }
+
+    public boolean hasAliveMembers(){
+        if(teamMemebers.size() == 0) return false;
+        for(TeamMember member : teamMemebers)
+            if(member.isAlive())
+                return true;
+        return false;
+    }
 }

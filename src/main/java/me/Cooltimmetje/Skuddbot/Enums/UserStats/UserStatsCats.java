@@ -12,10 +12,11 @@ import lombok.Getter;
 @Getter
 public enum UserStatsCats {
 
-    NO_CATEGORY  ("No category",  false),
-    CHALLENGE    ("Challenge",    true ),
-    FREE_FOR_ALL ("Free for all", true ),
-    BLACKJACK    ("Blackjack",    true );
+    NO_CATEGORY     ("No category",    false),
+    CHALLENGE       ("Challenge",      true ),
+    FREE_FOR_ALL    ("Free for all",   true ),
+    BLACKJACK       ("Blackjack",      true ),
+    TEAM_DEATHMATCH ("Team Deathmatch", true);
 
     private String name;
     private boolean show;

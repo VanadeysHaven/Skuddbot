@@ -27,13 +27,13 @@ public class TdManager {
                 TeamDeathmatch game = new TeamDeathmatch(message);
                 teamDeathmatches.put(message.getGuild().getLongID(), game);
             }
-        } else if (args.length == 3) {
+        } else if (args.length >= 2) {
             switch (args[1]){
                 case "join":
                     teamDeathmatches.get(message.getGuild().getLongID()).joinTeam(message);
                     break;
                 case "start":
-
+                    teamDeathmatches.get(message.getGuild().getLongID()).startMatch(message);
                     break;
             }
         } else {

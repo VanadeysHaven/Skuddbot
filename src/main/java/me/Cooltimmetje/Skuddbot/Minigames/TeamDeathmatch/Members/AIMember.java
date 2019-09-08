@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
+package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members;
 
 /**
  * This class represents a AI team member.
@@ -7,7 +7,7 @@ package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
  * @version v0.4.7-ALPHA
  * @since v0.4.7-ALPHA
  */
-public class AIMember implements TeamMember {
+public class AIMember extends TeamMember {
 
     private String name;
 
@@ -17,11 +17,16 @@ public class AIMember implements TeamMember {
 
     @Override
     public String getName() {
-        return "[AI]" + this.name;
+        return "[AI] " + this.name;
     }
 
     @Override
     public boolean isAI() {
         return true;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return this.name;
     }
 }

@@ -1,4 +1,4 @@
-package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
+package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members;
 
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.IUser;
  * @version v0.4.7-ALPHA
  * @since v0.4.7-ALPHA
  */
-public class UserMember implements TeamMember {
+public class UserMember extends TeamMember {
 
     private IUser user;
     private IGuild guild;
@@ -28,5 +28,10 @@ public class UserMember implements TeamMember {
     @Override
     public boolean isAI() {
         return false;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return user.getStringID();
     }
 }

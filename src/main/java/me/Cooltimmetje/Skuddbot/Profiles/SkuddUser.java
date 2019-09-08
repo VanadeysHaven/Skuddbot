@@ -71,6 +71,11 @@ public class SkuddUser {
     private int blackjackPushes;
     private int blackjackTwentyOnes;
     private int blackjackLosses;
+    private int teamDeathmatchWins;
+    private int teamDeathmatchLosses;
+    private int teamDeathmatchSaves;
+    private int teamDeathmatchMostWin;
+    private int teamDeathmatchKills;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
@@ -448,17 +453,32 @@ public class SkuddUser {
             case FFA_MOST_WIN:
                 this.ffaMostWin = intValue;
                 return null;
-            case BLACKJACK_WINS:
+            case BJ_WINS:
                 this.blackjackWins = intValue;
                 return null;
-            case BLACKJACK_LOSSES:
+            case BJ_LOSSES:
                 this.blackjackLosses = intValue;
                 return null;
-            case BLACKJACK_PUSHES:
+            case BJ_PUSHES:
                 this.blackjackPushes = intValue;
                 return null;
-            case BLACKJACK_TWENTY_ONES:
+            case BJ_TWENTY_ONES:
                 this.blackjackTwentyOnes = intValue;
+                return null;
+            case TD_WINS:
+                this.teamDeathmatchWins = intValue;
+                return null;
+            case TD_LOSSES:
+                this.teamDeathmatchLosses = intValue;
+                return null;
+            case TD_SAVES:
+                this.teamDeathmatchSaves = intValue;
+                return null;
+            case TD_MOST_WIN:
+                this.teamDeathmatchMostWin = intValue;
+                return null;
+            case TD_KILLS:
+                this.teamDeathmatchKills = intValue;
                 return null;
         }
     }
@@ -493,14 +513,24 @@ public class SkuddUser {
                 return getFfaMostWin()+"";
             case FFA_KILLS:
                 return getFfaKills()+"";
-            case BLACKJACK_PUSHES:
+            case BJ_PUSHES:
                 return getBlackjackPushes()+"";
-            case BLACKJACK_LOSSES:
+            case BJ_LOSSES:
                 return getBlackjackLosses()+"";
-            case BLACKJACK_WINS:
+            case BJ_WINS:
                 return getBlackjackWins()+"";
-            case BLACKJACK_TWENTY_ONES:
+            case BJ_TWENTY_ONES:
                 return getBlackjackTwentyOnes()+"";
+            case TD_WINS:
+                return getTeamDeathmatchWins()+"";
+            case TD_LOSSES:
+                return getTeamDeathmatchLosses()+"";
+            case TD_SAVES:
+                return getTeamDeathmatchSaves()+"";
+            case TD_MOST_WIN:
+                return getTeamDeathmatchMostWin()+"";
+            case TD_KILLS:
+                return getTeamDeathmatchKills()+"";
             default:
                 return null;
         }

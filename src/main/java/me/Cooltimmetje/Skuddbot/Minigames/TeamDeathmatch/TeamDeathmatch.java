@@ -1,9 +1,14 @@
 package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
+import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.AIMember;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.UserMember;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
+import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -20,8 +25,17 @@ import java.util.ArrayList;
  */
 public class TeamDeathmatch {
 
-    private static final String MESSAGE_FORMAT = "[BETA] **TEAM DEATHMATCH** | *{0}*\n\n" + "**TEAMS:**\n" + "{1}\n" + "*{2}*";
-    private static final String PLAYING_INSTRUCTIONS = "(doesn't work) Join a existing team by using `!td join [number]`, to create and join a new team use `!td join -new`. {0} can start the match by using `!td start`.";
+    private static final String HEADER = "[BETA] **TEAM DEATHMATCH** | *{0}*";
+
+    private static final String JOIN_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "**TEAMS:**\n" + "{1}\n" + "> *{2}*";
+    private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join -new`. {0} can start the match by using `!td start`.";
+
+    private static final String PLAY_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "*The teams have been decided:*\n" + "{1}\n" + "> ~~*The match is starting soon...*~~";
+
+    private static final int WIN_REWARD = 100;
+    private static final int KILL_REWARD = 50;
+    private static final int SAVE_REWARD = 75;
+    private static final int FULL_TEAM_ALIVE_BONUS = 300;
 
     private IUser host;
     private IGuild guild;
@@ -34,7 +48,9 @@ public class TeamDeathmatch {
         this.host = message.getAuthor();
         this.guild = message.getGuild();
         this.teams = new ArrayList<>();
-        Team team = new Team(getNextTeamNumber(), 2, new UserMember(host, guild));
+        Team team = new Team(getNextTeamNumber(), 2);
+        TeamMember member = new UserMember(host, guild);
+        team.joinTeam(member);
         this.teams.add(team);
 
         this.messageId = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false).getLongID();
@@ -47,13 +63,20 @@ public class TeamDeathmatch {
             MessagesUtils.addReaction(message, "You are already participating in this Team Deathmatch!", EmojiEnum.X);
             return;
         }
+        if(message.getContent().split(" ").length < 3){
+            MessagesUtils.addReaction(message, "Please specify a team number to join or use -new to join a new team.", EmojiEnum.X);
+            return;
+        }
+
         String teamString = message.getContent().split(" ")[2];
         if(!MiscUtils.isInt(teamString) && !teamString.equalsIgnoreCase("-new")) {
             MessagesUtils.addReaction(message, "Please specify a team number to join or use -new to join a new team.", EmojiEnum.X);
             return;
         }
         if (teamString.equalsIgnoreCase("-new")) {
-            teams.add(new Team(getNextTeamNumber(), maxTeamSize, member));
+            Team team = new Team(getNextTeamNumber(), maxTeamSize);
+            teams.add(team);
+            team.joinTeam(member);
             message.delete();
             updateMessage();
             return;
@@ -75,9 +98,30 @@ public class TeamDeathmatch {
             }
         }
     }
+    
+    public void startMatch(IMessage message) {
+        IChannel channel = message.getChannel();
+        message.delete();
+        fillTeams();
+        Main.getInstance().getSkuddbot().getMessageByID(messageId).delete();
+
+
+        MessagesUtils.sendPlain(MessageFormat.format(PLAY_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(true)), channel, false);
+    } 
 
     private void fillTeams(){
+        for(Team team : teams) while(!team.isFull())
+            team.joinTeam(new AIMember(getAIName()));
+    }
 
+    private String getAIName(){
+        String name;
+
+        do {
+            name = MiscUtils.getRandomMessage(DataTypes.AI_NAME);
+        } while (isInGame(new AIMember(name)));
+
+        return name;
     }
 
     private void updateMessage(){
@@ -85,8 +129,12 @@ public class TeamDeathmatch {
     }
 
     private String formatMessage(){
-        String playingInstructions = MessageFormat.format(PLAYING_INSTRUCTIONS, host.mention());
-        return MessageFormat.format(MESSAGE_FORMAT, guild.getName(), printTeams(), playingInstructions);
+        String playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, host.getDisplayName(guild));
+        return MessageFormat.format(JOIN_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(false), playingInstructions);
+    }
+
+    private String getHeader() {
+        return MessageFormat.format(HEADER, guild.getName());
     }
 
     private Team getTeamByNumber(int number){
@@ -115,16 +163,29 @@ public class TeamDeathmatch {
     }
 
     private boolean isInGame(TeamMember member){
-        //TODO: REDO
+        for(Team team : teams)
+            for(TeamMember teamMember : team.getTeamMemebers())
+                if(teamMember.getIdentifier().equalsIgnoreCase(member.getIdentifier()))
+                    return true;
         return false;
     }
 
-    private String printTeams() {
+    private String printTeams(boolean matchStarted) {
         StringBuilder sb = new StringBuilder();
 
         for(Team team : teams)
             sb.append(team.toString()).append("\n");
 
+        if(allTeamsFull() && !matchStarted){
+            sb.append(getNextTeamNumber()).append(": `!td join -new`").append("\n");
+        }
         return sb.toString();
+    }
+
+    private boolean allTeamsFull(){
+        for(Team team : teams)
+            if(!team.isFull())
+                return false;
+        return true;
     }
 }
