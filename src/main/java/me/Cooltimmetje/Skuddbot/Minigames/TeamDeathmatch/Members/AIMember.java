@@ -16,8 +16,17 @@ public class AIMember extends TeamMember {
     }
 
     @Override
+    public String getName(boolean withTeamNumber) {
+        String name = "[AI] " + this.name;
+        if(withTeamNumber)
+            name = "[" + team.getTeamNumber() + "]" + name;
+
+        return name;
+    }
+
+    @Override
     public String getName() {
-        return "[AI] " + this.name;
+        return getName(false);
     }
 
     @Override

@@ -15,16 +15,18 @@ import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Team;
 @Setter
 public abstract class TeamMember {
 
-    private int kills;
-    private int saves;
+    protected int kills;
+    protected int saves;
     private boolean alive;
-    private Team team;
+    protected Team team;
 
     public TeamMember() {
         this.kills = 0;
         this.saves = 0;
         this.alive = true;
     }
+
+    public abstract String getName(boolean withTeamNumber);
 
     public abstract String getName();
 
@@ -40,4 +42,24 @@ public abstract class TeamMember {
         this.saves += amount;
     }
 
+    public boolean isTeammate(TeamMember member){
+        return member.getTeam().getTeamNumber() == this.getTeam().getTeamNumber();
+    }
+
+    public TeamMember getAliveTeammate(){
+        TeamMember member;
+
+        do {
+            member = team.getRandomAliveTeamMember();
+        } while (member.getIdentifier().equals(this.getIdentifier()));
+
+        return member;
+    }
+
+    public boolean hasAliveTeammate() {
+        for(TeamMember teamMember : team.getTeamMemebers())
+            if(teamMember.isAlive() && !teamMember.getIdentifier().equals(this.getIdentifier()))
+                return true;
+        return false;
+    }
 }

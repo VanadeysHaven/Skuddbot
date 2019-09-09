@@ -6,6 +6,8 @@ import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.AIMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.UserMember;
+import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import sx.blah.discord.handle.obj.IChannel;
@@ -15,6 +17,8 @@ import sx.blah.discord.handle.obj.IUser;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This represents a instance of a Team Deathmatch game.
@@ -30,18 +34,16 @@ public class TeamDeathmatch {
     private static final String JOIN_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "**TEAMS:**\n" + "{1}\n" + "> *{2}*";
     private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join -new`. {0} can start the match by using `!td start`.";
 
-    private static final String PLAY_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "*The teams have been decided:*\n" + "{1}\n" + "> ~~*The match is starting soon...*~~";
+    private static final String PLAY_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "*The teams have been decided:*\n" + "{1}\n" + "> *The match is starting soon...*";
 
-    private static final int WIN_REWARD = 100;
-    private static final int KILL_REWARD = 50;
-    private static final int SAVE_REWARD = 75;
-    private static final int FULL_TEAM_ALIVE_BONUS = 300;
+    private static final int SAVE_CHANCE = 25; //in %
 
     private IUser host;
     private IGuild guild;
     private ArrayList<Team> teams;
     private long messageId;
     private int maxTeamSize;
+    private String killFeed;
 
     public TeamDeathmatch(IMessage message) {
         this.maxTeamSize = 2;
@@ -98,16 +100,77 @@ public class TeamDeathmatch {
             }
         }
     }
-    
+
     public void startMatch(IMessage message) {
+        if(teams.size() < 2){
+            MessagesUtils.addReaction(message, "There must be atleast 2 teams to start.", EmojiEnum.X);
+            return;
+        }
         IChannel channel = message.getChannel();
         message.delete();
         fillTeams();
         Main.getInstance().getSkuddbot().getMessageByID(messageId).delete();
-
-
+        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
         MessagesUtils.sendPlain(MessageFormat.format(PLAY_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(true)), channel, false);
-    } 
+
+        Team winningTeam = simulateFight();
+        winningTeam.setWinner(true);
+
+        channel.setTypingStatus(true);
+
+        exec.schedule(() -> {
+            MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " The teams go into " + ServerManager.getServer(guild.getStringID()).getArenaName() + " for a EPIC Team Deathmatch! Who will win? *3*... *2*... *1*... **FIGHT!**", channel, false);
+            channel.setTypingStatus(true);
+        }, 5, TimeUnit.SECONDS);
+        exec.schedule(() -> {
+            StringBuilder sb = new StringBuilder();
+
+            for(Team team : teams){
+                for(TeamMember member : team.getTeamMemebers()){
+                    if(!member.isAI()){
+                        UserMember userMember = (UserMember) member;
+                        String rewards = userMember.getRewardString(getPlayerCount());
+                        if(rewards != null) {
+                            sb.append(rewards).append("\n");
+                        }
+                        userMember.awardRewards(getPlayerCount());
+                    }
+                }
+            }
+
+            IMessage sent = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " It looks like the battle has finished, and **team " + winningTeam.getTeamNumber() + "** has won! \n\n" + sb.toString().trim() + "\n*Click the " + EmojiEnum.NOTEPAD_SPIRAL.getEmoji() + " reaction to view the kill feed.*", channel, false);
+            MessagesUtils.addReaction(sent, "**Team Deathmatch kill feed:**\n" + killFeed, EmojiEnum.NOTEPAD_SPIRAL, true, 6*60*60*1000);
+            TdManager.clean(guild.getLongID());
+        }, 10, TimeUnit.SECONDS);
+    }
+
+    private Team simulateFight(){
+        StringBuilder sb = new StringBuilder();
+        while(getAliveTeamCount() > 1){
+            TeamMember killer,victim;
+
+            do {
+                killer = getRandomAliveTeam().getRandomAliveTeamMember();
+                victim = getRandomAliveTeam().getRandomAliveTeamMember();
+            } while (killer.isTeammate(victim));
+
+            if(MiscUtils.randomInt(1,100) <= SAVE_CHANCE && victim.hasAliveTeammate()){
+                TeamMember saver = victim.getAliveTeammate();
+                saver.addSaves(1);
+                Logger.info("save");
+                sb.append("**").append(saver.getName(true)).append("** defended **").append(victim.getName(true)).append("** from getting killed by **").append(killer.getName(true)).append("**\n");
+            } else {
+                victim.setAlive(false);
+                killer.addKills(1);
+                Logger.info("kill");
+                sb.append("**").append(killer.getName(true)).append("** eliminated **").append(victim.getName(true)).append("**\n");
+            }
+
+        }
+
+        killFeed = sb.toString().trim();
+        return getRandomAliveTeam(); //This is fine, because at this point there should only be 1 team alive.
+    }
 
     private void fillTeams(){
         for(Team team : teams) while(!team.isFull())
@@ -187,5 +250,36 @@ public class TeamDeathmatch {
             if(!team.isFull())
                 return false;
         return true;
+    }
+
+    private Team getRandomAliveTeam(){
+        if(getAliveTeamCount() == 0) {
+            Logger.info("there are no alive teams");
+        }
+        Team team;
+
+        do {
+            team = teams.get(MiscUtils.randomInt(0, teams.size() - 1));
+        } while (!team.hasAliveMembers());
+
+        return team;
+    }
+
+    private int getAliveTeamCount(){
+        int amount = 0;
+        for(Team team : teams)
+            if(team.hasAliveMembers())
+                amount++;
+
+        return amount;
+    }
+
+    private int getPlayerCount(){
+        int playerCount = 0;
+
+        for(Team team : teams)
+            playerCount += team.getTeamMemebers().size();
+
+        return playerCount;
     }
 }

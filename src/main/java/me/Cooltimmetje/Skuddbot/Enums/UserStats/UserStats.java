@@ -6,7 +6,7 @@ import lombok.Getter;
  * This holds data about user statistics.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.4.7-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
@@ -31,6 +31,7 @@ public enum UserStats {
     TD_LOSSES                ("td_losses",                "0", "Integer", true,  "Team Deathmatch losses",     "losses",   UserStatsCats.TEAM_DEATHMATCH),
     TD_SAVES                 ("td_saves",                 "0", "Integer", true,  "TD teammate defences",       "defences", UserStatsCats.TEAM_DEATHMATCH),
     TD_MOST_WIN              ("td_most_win",              "0", "Integer", true,  "TD highest entrants win",    "entrants", UserStatsCats.TEAM_DEATHMATCH),
+    TD_ALL_SURVIVED          ("td_all_survived",          "0", "Integer", true,  "TD entire team survived",    "times",    UserStatsCats.TEAM_DEATHMATCH),
     TD_KILLS                 ("td_kills",                 "0", "Integer", true,  "Team Deathmatch kills",      "kills",    UserStatsCats.TEAM_DEATHMATCH);
 
     private String jsonReference;

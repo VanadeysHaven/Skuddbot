@@ -41,4 +41,8 @@ public class TdManager {
         }
     }
 
+    public static void clean(long serverID){
+        teamDeathmatches.remove(serverID);
+    }
+
 }

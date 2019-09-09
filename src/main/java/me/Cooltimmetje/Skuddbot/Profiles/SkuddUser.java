@@ -75,6 +75,7 @@ public class SkuddUser {
     private int teamDeathmatchLosses;
     private int teamDeathmatchSaves;
     private int teamDeathmatchMostWin;
+    private int teamDeathmatchAllSurvived;
     private int teamDeathmatchKills;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
@@ -477,6 +478,8 @@ public class SkuddUser {
             case TD_MOST_WIN:
                 this.teamDeathmatchMostWin = intValue;
                 return null;
+            case TD_ALL_SURVIVED:
+                this.teamDeathmatchAllSurvived = intValue;
             case TD_KILLS:
                 this.teamDeathmatchKills = intValue;
                 return null;
@@ -529,6 +532,8 @@ public class SkuddUser {
                 return getTeamDeathmatchSaves()+"";
             case TD_MOST_WIN:
                 return getTeamDeathmatchMostWin()+"";
+            case TD_ALL_SURVIVED:
+                return getTeamDeathmatchAllSurvived()+"";
             case TD_KILLS:
                 return getTeamDeathmatchKills()+"";
             default:
