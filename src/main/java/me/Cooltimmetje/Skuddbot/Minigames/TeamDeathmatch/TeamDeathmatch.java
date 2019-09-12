@@ -34,7 +34,9 @@ public class TeamDeathmatch {
     private static final String HEADER = "[BETA] **TEAM DEATHMATCH** | *{0}*";
 
     private static final String JOIN_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "**TEAMS:**\n" + "{1}\n" + "> *{2}*";
-    private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join new`, to join the AutoMatch queue click the {0} reaction. {1} can start the match by clicking the {2} reaction.";
+    private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join new`, to join the AutoMatch queue click the {0} reaction. {1} can start the match {2}.";
+    private static final String NOT_ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS = "when there are enough players/teams";
+    private static final String ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS = "by clicking the " + EmojiEnum.WHITE_CHECK_MARK.getEmoji() + " reaction";
 
     private static final String PLAY_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "*The teams have been decided:*\n" + "{1}\n" + "> *The match is starting soon...*";
 
@@ -258,7 +260,12 @@ public class TeamDeathmatch {
     }
 
     private String formatMessage(){
-        String playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getEmoji(), host.getDisplayName(guild), EmojiEnum.WHITE_CHECK_MARK.getEmoji());
+        String playingInstructions;
+        if(canStart()) {
+            playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getEmoji(), host.getDisplayName(guild), ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS);
+        } else {
+            playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getEmoji(), host.getDisplayName(guild), NOT_ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS);
+        }
         return MessageFormat.format(JOIN_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(false), playingInstructions);
     }
 
