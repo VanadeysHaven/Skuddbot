@@ -2,6 +2,8 @@ package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.HashMap;
@@ -49,7 +51,7 @@ public class TdManager {
                     teamDeathmatches.get(message.getGuild().getLongID()).startMatch(message);
                     break;
                 default:
-                    MessagesUtils.addReaction(message,"The arguments you used are invalid. Usage: `!td [join/start] [teamnumber/-new]`", EmojiEnum.X);
+                    MessagesUtils.addReaction(message,"The arguments you used are invalid. Usage: `!td [join/start] [teamnumber/new]`", EmojiEnum.X);
                     break;
             }
         }
@@ -57,6 +59,13 @@ public class TdManager {
 
     public static void clean(long serverID){
         teamDeathmatches.remove(serverID);
+    }
+
+    @EventSubscriber
+    public void onReaction(ReactionAddEvent event){
+        if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.CROSSED_SWORDS){
+            teamDeathmatches.get(event.getGuild().getLongID()).joinTeam(event);
+        }
     }
 
 }

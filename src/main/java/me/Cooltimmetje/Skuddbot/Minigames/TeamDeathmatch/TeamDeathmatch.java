@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
+import com.vdurmont.emoji.EmojiManager;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
@@ -10,6 +11,7 @@ import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
+import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
@@ -32,7 +34,7 @@ public class TeamDeathmatch {
     private static final String HEADER = "[BETA] **TEAM DEATHMATCH** | *{0}*";
 
     private static final String JOIN_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "**TEAMS:**\n" + "{1}\n" + "> *{2}*";
-    private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join -new`. {0} can start the match by using `!td start`.";
+    private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join new`, to join the AutoMatch queue click the {0} reaction. {1} can start the match by using `!td start`.";
 
     private static final String PLAY_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "*The teams have been decided:*\n" + "{1}\n" + "> *The match is starting soon...*";
 
@@ -41,6 +43,7 @@ public class TeamDeathmatch {
     private IUser host;
     private IGuild guild;
     private ArrayList<Team> teams;
+    private ArrayList<TeamMember> joinQueue;
     private long messageId;
     private int maxTeamSize;
     private String killFeed;
@@ -50,12 +53,15 @@ public class TeamDeathmatch {
         this.host = message.getAuthor();
         this.guild = message.getGuild();
         this.teams = new ArrayList<>();
+        this.joinQueue = new ArrayList<>();
         Team team = new Team(getNextTeamNumber(), 2);
         TeamMember member = new UserMember(host, guild);
         team.joinTeam(member);
         this.teams.add(team);
 
-        this.messageId = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false).getLongID();
+        IMessage msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false);
+        msg.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias()));
+        this.messageId = msg.getLongID();
         message.delete();
     }
 
@@ -66,19 +72,21 @@ public class TeamDeathmatch {
             return;
         }
         if(message.getContent().split(" ").length < 3){
-            MessagesUtils.addReaction(message, "Please specify a team number to join or use -new to join a new team.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "Please specify a team number to join or use new to join a new team.", EmojiEnum.X);
             return;
         }
 
         String teamString = message.getContent().split(" ")[2];
-        if(!MiscUtils.isInt(teamString) && !teamString.equalsIgnoreCase("-new")) {
-            MessagesUtils.addReaction(message, "Please specify a team number to join or use -new to join a new team.", EmojiEnum.X);
-            return;
-        }
-        if (teamString.equalsIgnoreCase("-new")) {
+        if (teamString.equalsIgnoreCase("-new") || teamString.equalsIgnoreCase("new")) {
             Team team = new Team(getNextTeamNumber(), maxTeamSize);
             teams.add(team);
             team.joinTeam(member);
+            message.delete();
+            updateMessage();
+            return;
+        }
+        if(teamString.equalsIgnoreCase("-queue") || teamString.equalsIgnoreCase("queue")){
+            joinQueue.add(member);
             message.delete();
             updateMessage();
             return;
@@ -99,11 +107,23 @@ public class TeamDeathmatch {
                 MessagesUtils.addReaction(message, "Team " + teamNumber + " is full.", EmojiEnum.X);
             }
         }
+
+        MessagesUtils.addReaction(message, "Please specify a team number to join or use new to join a new team.", EmojiEnum.X);
+        return;
+    }
+
+    public void joinTeam(ReactionAddEvent event){
+        TeamMember member = new UserMember(event.getUser(), guild);
+        if(isInGame(member)) return;
+        if(event.getUser().isBot()) return;
+
+        joinQueue.add(member);
+        updateMessage();
     }
 
     public void startMatch(IMessage message) {
-        if(teams.size() < 2){
-            MessagesUtils.addReaction(message, "There must be atleast 2 teams to start.", EmojiEnum.X);
+        if(canStart()){
+            MessagesUtils.addReaction(message, "There must be atleast 2 teams or 3 players to start.", EmojiEnum.X);
             return;
         }
         IChannel channel = message.getChannel();
@@ -184,6 +204,19 @@ public class TeamDeathmatch {
     }
 
     private void fillTeams(){
+        while(!joinQueue.isEmpty()){
+            TeamMember member = joinQueue.get(MiscUtils.randomInt(0, joinQueue.size()));
+            Team team = getRandomOpenTeam();
+            if(team == null){
+                team = new Team(getNextTeamNumber(), maxTeamSize);
+                team.joinTeam(member);
+            } else {
+                team.joinTeam(member);
+            }
+
+            joinQueue.remove(member);
+        }
+
         for(Team team : teams) while(!team.isFull())
             team.joinTeam(new AIMember(getAIName()));
     }
@@ -203,7 +236,7 @@ public class TeamDeathmatch {
     }
 
     private String formatMessage(){
-        String playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, host.getDisplayName(guild));
+        String playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getEmoji(), host.getDisplayName(guild));
         return MessageFormat.format(JOIN_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(false), playingInstructions);
     }
 
@@ -241,6 +274,11 @@ public class TeamDeathmatch {
             for(TeamMember teamMember : team.getTeamMemebers())
                 if(teamMember.getIdentifier().equalsIgnoreCase(member.getIdentifier()))
                     return true;
+
+        for(TeamMember teamMember : joinQueue)
+            if(teamMember.getIdentifier().equalsIgnoreCase(member.getIdentifier()))
+                return true;
+
         return false;
     }
 
@@ -250,8 +288,17 @@ public class TeamDeathmatch {
         for(Team team : teams)
             sb.append(team.toString()).append("\n");
 
-        if(allTeamsFull() && !matchStarted){
+        if(allTeamsFull() && !matchStarted)
             sb.append(getNextTeamNumber()).append(": `!td join -new`").append("\n");
+
+        if(!joinQueue.isEmpty()){
+            sb.append("\n").append("**AUTOMATCH QUEUE:**\n");
+            StringBuilder sb2 = new StringBuilder();
+            for(TeamMember member : joinQueue){
+                sb2.append("**").append(member.getName()).append("** |");
+            }
+            String str = sb2.toString().trim();
+            sb.append(str, 0, str.length() - 2).append("\n");
         }
         return sb.toString();
     }
@@ -266,14 +313,36 @@ public class TeamDeathmatch {
     private Team getRandomAliveTeam(){
         if(getAliveTeamCount() == 0) {
             Logger.info("there are no alive teams");
+            return null;
         }
         Team team;
 
         do {
-            team = teams.get(MiscUtils.randomInt(0, teams.size() - 1));
+            team = getRandomTeam();
         } while (!team.hasAliveMembers());
 
         return team;
+    }
+
+    private Team getRandomOpenTeam(){
+        if(getOpenTeamCount() == 0 ) return null;
+
+        Team team;
+        do {
+            team = getRandomTeam();
+        } while (team.isFull());
+
+        return team;
+    }
+
+    private Team getRandomTeam(){
+        return teams.get(MiscUtils.randomInt(0, teams.size() - 1));
+    }
+
+    private int getOpenTeamCount(){
+        int amount = 0;
+        for(Team team : teams) if(!team.isFull()) amount++;
+        return amount;
     }
 
     private int getAliveTeamCount(){
@@ -292,5 +361,10 @@ public class TeamDeathmatch {
             playerCount += team.getTeamMemebers().size();
 
         return playerCount;
+    }
+
+    private boolean canStart(){
+        if(teams.size() >= 2) return true;
+        return joinQueue.size() >= (3 - getPlayerCount());
     }
 }
