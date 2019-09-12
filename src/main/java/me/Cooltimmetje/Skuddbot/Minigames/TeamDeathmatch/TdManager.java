@@ -2,7 +2,6 @@ package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sun.misc.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.HashMap;
@@ -38,6 +37,10 @@ public class TdManager {
                 teamDeathmatches.put(message.getGuild().getLongID(), game);
             }
         } else if (args.length >= 2) {
+            if(!teamDeathmatches.containsKey(message.getGuild().getLongID())){
+                MessagesUtils.addReaction(message, "There is no game active in this server. Start one with `!td`!", EmojiEnum.X);
+                return;
+            }
             switch (args[1]){
                 case "join":
                     teamDeathmatches.get(message.getGuild().getLongID()).joinTeam(message);
@@ -45,9 +48,10 @@ public class TdManager {
                 case "start":
                     teamDeathmatches.get(message.getGuild().getLongID()).startMatch(message);
                     break;
+                default:
+                    MessagesUtils.addReaction(message,"The arguments you used are invalid. Usage: `!td [join/start] [teamnumber/-new]`", EmojiEnum.X);
+                    break;
             }
-        } else {
-            //invalid args
         }
     }
 
