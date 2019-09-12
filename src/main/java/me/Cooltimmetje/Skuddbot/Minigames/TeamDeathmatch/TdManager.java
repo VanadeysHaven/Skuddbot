@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import sun.misc.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.HashMap;
@@ -15,12 +16,21 @@ import java.util.HashMap;
  */
 public class TdManager {
 
+    private static final int COOLDOWN = 300;
+
     private static HashMap<Long,TeamDeathmatch> teamDeathmatches = new HashMap<>();
+    public static HashMap<Long,Long> cooldowns = new HashMap<>();
 
     public static void run(IMessage message){
         String[] args = message.getContent().toLowerCase().split(" ");
 
         if(args.length == 1){ //start new
+            if(cooldowns.containsKey(message.getAuthor().getLongID())){
+                if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getLongID()) < COOLDOWN)){
+                    MessagesUtils.addReaction(message, "The arena is still being cleaned up, hold up.", EmojiEnum.HOURGLASS_FLOWING_SAND);
+                    return;
+                }
+            }
             if(teamDeathmatches.containsKey(message.getGuild().getLongID())) {
                 MessagesUtils.addReaction(message, "There's already a Team Deathmatch active in this server!", EmojiEnum.X);
             } else {

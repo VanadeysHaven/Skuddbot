@@ -140,8 +140,19 @@ public class TeamDeathmatch {
 
             IMessage sent = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " It looks like the battle has finished, and **team " + winningTeam.getTeamNumber() + "** has won! \n\n" + sb.toString().trim() + "\n*Click the " + EmojiEnum.NOTEPAD_SPIRAL.getEmoji() + " reaction to view the kill feed.*", channel, false);
             MessagesUtils.addReaction(sent, "**Team Deathmatch kill feed:**\n" + killFeed, EmojiEnum.NOTEPAD_SPIRAL, true, 6*60*60*1000);
+            applyCooldown();
             TdManager.clean(guild.getLongID());
         }, 10, TimeUnit.SECONDS);
+    }
+
+    private void applyCooldown() {
+        for(Team team : teams)
+            for(TeamMember teamMember : team.getTeamMemebers()){
+                if(!teamMember.isAI()){
+                    UserMember member = (UserMember) teamMember;
+                    TdManager.cooldowns.put(member.getID(), System.currentTimeMillis());
+                }
+            }
     }
 
     private Team simulateFight(){
