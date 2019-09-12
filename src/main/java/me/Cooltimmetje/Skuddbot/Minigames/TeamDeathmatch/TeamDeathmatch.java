@@ -34,7 +34,7 @@ public class TeamDeathmatch {
     private static final String HEADER = "[BETA] **TEAM DEATHMATCH** | *{0}*";
 
     private static final String JOIN_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "**TEAMS:**\n" + "{1}\n" + "> *{2}*";
-    private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join new`, to join the AutoMatch queue click the {0} reaction. {1} can start the match by using `!td start`.";
+    private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join new`, to join the AutoMatch queue click the {0} reaction. {1} can start the match by clicking the {2} reaction.";
 
     private static final String PLAY_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "*The teams have been decided:*\n" + "{1}\n" + "> *The match is starting soon...*";
 
@@ -47,6 +47,7 @@ public class TeamDeathmatch {
     private long messageId;
     private int maxTeamSize;
     private String killFeed;
+    private boolean startReact;
 
     public TeamDeathmatch(IMessage message) {
         this.maxTeamSize = 2;
@@ -58,6 +59,7 @@ public class TeamDeathmatch {
         TeamMember member = new UserMember(host, guild);
         team.joinTeam(member);
         this.teams.add(team);
+        this.startReact = false;
 
         IMessage msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false);
         msg.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias()));
@@ -121,13 +123,30 @@ public class TeamDeathmatch {
         updateMessage();
     }
 
-    public void startMatch(IMessage message) {
-        if(canStart()){
+    public void start(IMessage message){
+        if(!canStart()){
             MessagesUtils.addReaction(message, "There must be atleast 2 teams or 3 players to start.", EmojiEnum.X);
             return;
         }
+        if(message.getAuthor().getLongID() != host.getLongID()){
+            MessagesUtils.addReaction(message, "Only the host can start the match!", EmojiEnum.X);
+        }
         IChannel channel = message.getChannel();
         message.delete();
+        startMatch(channel);
+    }
+
+    public void start(ReactionAddEvent event){
+        IChannel channel = event.getChannel();
+        if(!canStart() || event.getUser().getLongID() != host.getLongID()){
+            event.getMessage().removeReaction(event.getUser(), event.getReaction().getEmoji());
+            return;
+        }
+
+        startMatch(channel);
+    }
+
+    public void startMatch(IChannel channel) {
         fillTeams();
         Main.getInstance().getSkuddbot().getMessageByID(messageId).delete();
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
@@ -205,10 +224,11 @@ public class TeamDeathmatch {
 
     private void fillTeams(){
         while(!joinQueue.isEmpty()){
-            TeamMember member = joinQueue.get(MiscUtils.randomInt(0, joinQueue.size()));
+            TeamMember member = joinQueue.get(MiscUtils.randomInt(0, joinQueue.size() - 1));
             Team team = getRandomOpenTeam();
             if(team == null){
                 team = new Team(getNextTeamNumber(), maxTeamSize);
+                teams.add(team);
                 team.joinTeam(member);
             } else {
                 team.joinTeam(member);
@@ -232,11 +252,13 @@ public class TeamDeathmatch {
     }
 
     private void updateMessage(){
-        Main.getInstance().getSkuddbot().getMessageByID(messageId).edit(formatMessage());
+        IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageId);
+        message.edit(formatMessage());
+        if(!startReact && canStart()) message.addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias()));
     }
 
     private String formatMessage(){
-        String playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getEmoji(), host.getDisplayName(guild));
+        String playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getEmoji(), host.getDisplayName(guild), EmojiEnum.WHITE_CHECK_MARK.getEmoji());
         return MessageFormat.format(JOIN_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(false), playingInstructions);
     }
 
@@ -298,7 +320,7 @@ public class TeamDeathmatch {
                 sb2.append("**").append(member.getName()).append("** | ");
             }
             String str = sb2.toString().trim();
-            sb.append(str, 0, str.length() - 3).append("\n");
+            sb.append(str, 0, str.length() - 2).append("\n");
         }
         return sb.toString();
     }
@@ -325,7 +347,7 @@ public class TeamDeathmatch {
     }
 
     private Team getRandomOpenTeam(){
-        if(getOpenTeamCount() == 0 ) return null;
+        if(getOpenTeamCount() == 0) return null;
 
         Team team;
         do {
@@ -365,6 +387,6 @@ public class TeamDeathmatch {
 
     private boolean canStart(){
         if(teams.size() >= 2) return true;
-        return joinQueue.size() >= 3;
+        return getPlayerCount() >= 3;
     }
 }

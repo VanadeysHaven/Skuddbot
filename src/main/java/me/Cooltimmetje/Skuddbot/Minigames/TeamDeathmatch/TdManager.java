@@ -27,8 +27,8 @@ public class TdManager {
 
         if(args.length == 1){ //start new
             if(cooldowns.containsKey(message.getAuthor().getLongID())){
-                if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getLongID()) < COOLDOWN)){
-                    MessagesUtils.addReaction(message, "The arena is still being cleaned up, hold up.", EmojiEnum.HOURGLASS_FLOWING_SAND);
+                if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getLongID()) < COOLDOWN*1000)){
+                    MessagesUtils.addReaction(message, "The arena is still being cleaned up, please wait.", EmojiEnum.HOURGLASS_FLOWING_SAND);
                     return;
                 }
             }
@@ -48,7 +48,7 @@ public class TdManager {
                     teamDeathmatches.get(message.getGuild().getLongID()).joinTeam(message);
                     break;
                 case "start":
-                    teamDeathmatches.get(message.getGuild().getLongID()).startMatch(message);
+                    teamDeathmatches.get(message.getGuild().getLongID()).start(message);
                     break;
                 default:
                     MessagesUtils.addReaction(message,"The arguments you used are invalid. Usage: `!td [join/start] [teamnumber/new]`", EmojiEnum.X);
@@ -61,10 +61,16 @@ public class TdManager {
         teamDeathmatches.remove(serverID);
     }
 
+    public static void clearCooldowns() {
+        cooldowns.clear();
+    }
+
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
         if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.CROSSED_SWORDS){
             teamDeathmatches.get(event.getGuild().getLongID()).joinTeam(event);
+        } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.WHITE_CHECK_MARK){
+            teamDeathmatches.get(event.getGuild().getLongID()).start(event);
         }
     }
 

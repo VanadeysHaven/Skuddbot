@@ -4,6 +4,7 @@ import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackManager;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.TdManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.obj.IMessage;
@@ -22,6 +23,7 @@ public class ClearCooldownCommand {
             ChallengeManager.clearCooldowns();
             FFAManager.clearCooldowns();
             BlackjackManager.clearCooldowns();
+            TdManager.clearCooldowns();
 
             MessagesUtils.addReaction(message, "All cooldowns have been cleared.", EmojiEnum.WHITE_CHECK_MARK, false);
         }
