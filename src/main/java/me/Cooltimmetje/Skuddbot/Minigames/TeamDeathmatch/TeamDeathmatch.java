@@ -295,10 +295,10 @@ public class TeamDeathmatch {
             sb.append("\n").append("**AUTOMATCH QUEUE:**\n");
             StringBuilder sb2 = new StringBuilder();
             for(TeamMember member : joinQueue){
-                sb2.append("**").append(member.getName()).append("** |");
+                sb2.append("**").append(member.getName()).append("** | ");
             }
             String str = sb2.toString().trim();
-            sb.append(str, 0, str.length() - 2).append("\n");
+            sb.append(str, 0, str.length() - 3).append("\n");
         }
         return sb.toString();
     }
@@ -360,11 +360,11 @@ public class TeamDeathmatch {
         for(Team team : teams)
             playerCount += team.getTeamMemebers().size();
 
-        return playerCount;
+        return playerCount + joinQueue.size();
     }
 
     private boolean canStart(){
         if(teams.size() >= 2) return true;
-        return joinQueue.size() >= (3 - getPlayerCount());
+        return joinQueue.size() >= 3;
     }
 }
