@@ -318,7 +318,7 @@ public class TeamDeathmatch {
             sb.append(team.toString()).append("\n");
 
         if(allTeamsFull() && !matchStarted)
-            sb.append(getNextTeamNumber()).append(": `!td join -new`").append("\n");
+            sb.append(getNextTeamNumber()).append(": `!td join new`").append("\n");
 
         if(!joinQueue.isEmpty()){
             sb.append("\n").append("**AUTOMATCH QUEUE:**\n");
