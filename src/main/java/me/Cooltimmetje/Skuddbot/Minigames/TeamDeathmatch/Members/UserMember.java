@@ -105,4 +105,8 @@ public class UserMember extends TeamMember {
 
         return sb.toString();
     }
+
+    public long getID(){
+        return user.getLongID();
+    }
 }

@@ -9,11 +9,12 @@
   - Features:
     - Form teams, and head to battle with your friends.
     - AI players.
+    - AutoMatch Queue
     
   - New Commands:
     - `!td`
     - `!teamdeathmatch`
-      - Command usage: `!td [start/join] [teamnumber/-new]`
+      - Command usage: `!td [start/join] [(teamnumber)/new/queue]`
       
   - New stats:
     - `TD_WINS`
