@@ -69,7 +69,8 @@ public class TdManager {
     public void onReaction(ReactionAddEvent event){
         if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.CROSSED_SWORDS){
             teamDeathmatches.get(event.getGuild().getLongID()).joinTeam(event);
-        } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.WHITE_CHECK_MARK){
+        } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.WHITE_CHECK_MARK ||
+                EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.EYES){
             teamDeathmatches.get(event.getGuild().getLongID()).start(event);
         }
     }

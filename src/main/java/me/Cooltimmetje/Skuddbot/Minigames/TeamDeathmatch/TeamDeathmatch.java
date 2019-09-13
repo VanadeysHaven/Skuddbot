@@ -7,6 +7,7 @@ import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.AIMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.UserMember;
+import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -120,6 +121,7 @@ public class TeamDeathmatch {
         TeamMember member = new UserMember(event.getUser(), guild);
         if(isInGame(member)) return;
         if(event.getUser().isBot()) return;
+        if(event.getMessage().getLongID() != messageId) return;
 
         joinQueue.add(member);
         updateMessage();
@@ -130,8 +132,9 @@ public class TeamDeathmatch {
             MessagesUtils.addReaction(message, "There must be atleast 2 teams or 3 players to start.", EmojiEnum.X);
             return;
         }
-        if(message.getAuthor().getLongID() != host.getLongID()){
+        if(message.getAuthor().getLongID() != host.getLongID() && !ProfileManager.getDiscord(message.getAuthor(), message.getGuild(), true).hasElevatedPermissions()){
             MessagesUtils.addReaction(message, "Only the host can start the match!", EmojiEnum.X);
+            return;
         }
         IChannel channel = message.getChannel();
         message.delete();
@@ -139,8 +142,15 @@ public class TeamDeathmatch {
     }
 
     public void start(ReactionAddEvent event){
+        EmojiEnum emoji = EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName());
+        if(event.getMessage().getLongID() != messageId) return;
         IChannel channel = event.getChannel();
-        if(!canStart() || event.getUser().getLongID() != host.getLongID()){
+
+        if((!canStart() || event.getUser().getLongID() != host.getLongID()) && emoji == EmojiEnum.WHITE_CHECK_MARK){
+            event.getMessage().removeReaction(event.getUser(), event.getReaction().getEmoji());
+            return;
+        }
+        if((!canStart() || !ProfileManager.getDiscord(event.getUser(), event.getGuild(), true).hasElevatedPermissions()) && emoji == EmojiEnum.EYES){
             event.getMessage().removeReaction(event.getUser(), event.getReaction().getEmoji());
             return;
         }
