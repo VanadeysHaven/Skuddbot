@@ -652,6 +652,7 @@ public class SkuddUser {
     }
 
     public String getFavouriteTeammates(){
+        if(teamDeathmatchFavTeammate.isEmpty()) return "Nobody yet :(";
         ArrayList<String> names = new ArrayList<>();
         int amount = -1;
         for(String key : teamDeathmatchFavTeammate.keySet()){
