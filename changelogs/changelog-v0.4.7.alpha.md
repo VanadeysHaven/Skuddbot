@@ -39,6 +39,9 @@
   - New donator data type:
     - `AI_NAME`
       - This data type is for the AI names, the names get picked at random from this list.
+  - New donator feature:
+     - You can pick your teamnumber.
+       - Use `!td join [number]` with a teamnumber that doesn't exist yet, to pick that number as your teamnumber.
       
   - Elevated permission users:
     - You can start every match, even when you are not the host.

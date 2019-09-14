@@ -9,6 +9,7 @@ import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.UserMember;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
@@ -58,10 +59,6 @@ public class TeamDeathmatch {
         this.guild = message.getGuild();
         this.teams = new ArrayList<>();
         this.joinQueue = new ArrayList<>();
-        Team team = new Team(getNextTeamNumber(), 2);
-        TeamMember member = new UserMember(host, guild);
-        team.joinTeam(member);
-        this.teams.add(team);
         this.startReact = false;
 
         IMessage msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false);
@@ -99,9 +96,14 @@ public class TeamDeathmatch {
         if(MiscUtils.isInt(teamString)) {
             int teamNumber = Integer.parseInt(teamString);
             Team team = getTeamByNumber(teamNumber);
-            if (team == null) {
+            if (team == null && !Constants.awesomeUser.contains(message.getAuthor().getStringID())) {
                 MessagesUtils.addReaction(message, "Team " + teamNumber + " doesn't exist.", EmojiEnum.X);
                 return;
+            }
+
+            if(team == null){
+                team = new Team(teamNumber, maxTeamSize);
+                teams.add(team);
             }
 
             if (team.joinTeam(new UserMember(message.getAuthor(), message.getGuild()))) {
@@ -324,11 +326,23 @@ public class TeamDeathmatch {
     private String printTeams(boolean matchStarted) {
         StringBuilder sb = new StringBuilder();
 
-        for(Team team : teams)
-            sb.append(team.toString()).append("\n");
+        int teamsPrinted = 0;
+        int i = 1;
+        while (teams.size() != teamsPrinted) {
+            Team team = getTeamByNumber(i);
+            if (team != null) {
+                sb.append(team.toString()).append("\n");
+                teamsPrinted++;
+            } else if (getNextTeamNumber() == i && allTeamsFull() && !matchStarted) {
+                sb.append(getNextTeamNumber()).append(": `!td join new`").append("\n");
+            }
 
-        if(allTeamsFull() && !matchStarted)
+            i++;
+        }
+
+        if(teamsPrinted == 0){
             sb.append(getNextTeamNumber()).append(": `!td join new`").append("\n");
+        }
 
         if(!joinQueue.isEmpty()){
             sb.append("\n").append("**AUTOMATCH QUEUE:**\n");
