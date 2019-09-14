@@ -51,7 +51,7 @@ public class StatLeaderboardCommand {
 
                     StringBuilder sb1 = new StringBuilder();
                     for(UserStats userStats : UserStats.values()){
-                        if(userStats.isShow() && userStats.getCategory() == category){
+                        if(userStats.isShow() && userStats.getCategory() == category && userStats.isHasLeaderboard()){
                             sb1.append("`").append(userStats.toString().toLowerCase().replace("_", "-")).append("` | ");
 
                         }
@@ -68,6 +68,11 @@ public class StatLeaderboardCommand {
             stat = UserStats.valueOf(args[1].toUpperCase().replace("-", "_"));
         } catch (IllegalArgumentException e) {
             MessagesUtils.addReaction(message, "This stat does not exist. Type `!statlb -list` to list all the available stats.", EmojiEnum.X, false);
+            return;
+        }
+
+        if(!stat.isHasLeaderboard()){
+            MessagesUtils.addReaction(message, "This stat does not have a leaderboard.", EmojiEnum.X);
             return;
         }
 

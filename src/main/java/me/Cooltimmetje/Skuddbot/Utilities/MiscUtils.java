@@ -372,4 +372,25 @@ public class MiscUtils {
         }
         return true;
     }
+
+    public static String glueStrings(String prefix, String defGlue, String lastGlue, String suffix, String[] strings){
+        if(strings.length == 1) return prefix + strings[0] + suffix;
+        StringBuilder sb = new StringBuilder();
+
+        int currentIndex = 0;
+        for(String str : strings){
+            if (currentIndex == 0) {
+                sb.append(prefix).append(strings[currentIndex]).append(defGlue);
+            } else if(currentIndex == strings.length - 1) {
+                sb.append(strings[currentIndex]).append(suffix);
+            } else if(currentIndex == strings.length - 2) {
+                sb.append(strings[currentIndex]).append(lastGlue);
+            } else {
+                sb.append(strings[currentIndex]).append(defGlue);
+            }
+            currentIndex++;
+        }
+
+        return sb.toString();
+    }
 }
