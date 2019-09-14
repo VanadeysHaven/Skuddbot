@@ -7,9 +7,12 @@ import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.UserSettings;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
 import me.Cooltimmetje.Skuddbot.Main;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
+import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Team;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -22,6 +25,9 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -77,6 +83,7 @@ public class SkuddUser {
     private int teamDeathmatchMostWin;
     private int teamDeathmatchAllSurvived;
     private int teamDeathmatchKills;
+    private HashMap<String,Integer> teamDeathmatchFavTeammate;
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
@@ -483,7 +490,28 @@ public class SkuddUser {
             case TD_KILLS:
                 this.teamDeathmatchKills = intValue;
                 return null;
+            case TD_FAV_TEAMMATE:
+                loadFavTeammate(value);
+                return null;
         }
+    }
+
+    private void loadFavTeammate(String json){
+        JSONObject object = null;
+        teamDeathmatchFavTeammate = new HashMap<>();
+        try {
+            object = (JSONObject) parser.parse(json);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        for(Object obj : object.keySet()){
+            String s = (String) obj;
+            Long l = (Long) object.get(obj);
+            teamDeathmatchFavTeammate.put(s, l.intValue());
+        }
+
+
     }
 
     /**
@@ -536,9 +564,19 @@ public class SkuddUser {
                 return getTeamDeathmatchAllSurvived()+"";
             case TD_KILLS:
                 return getTeamDeathmatchKills()+"";
+            case TD_FAV_TEAMMATE:
+                return getFavTeammateString();
             default:
                 return null;
         }
+    }
+
+    private String getFavTeammateString(){
+        JSONObject object = new JSONObject();
+        for(String s : teamDeathmatchFavTeammate.keySet()){
+            object.put(s, teamDeathmatchFavTeammate.get(s));
+        }
+        return object.toString();
     }
 
     /**
@@ -598,6 +636,35 @@ public class SkuddUser {
         if(twitchUsername == null) return AccountType.DISCORD;
         if(id == null) return AccountType.TWITCH;
         return AccountType.DISCORD_TWITCH;
+    }
+
+    public void countTeammates(Team team){
+        for(TeamMember member : team.getTeamMemebers()){
+            if(!member.isAI() && !member.getIdentifier().equals(id)){
+                if(teamDeathmatchFavTeammate.containsKey(member.getIdentifier())){
+                    int teammateStat = teamDeathmatchFavTeammate.get(member.getIdentifier());
+                    teamDeathmatchFavTeammate.put(member.getIdentifier(), teammateStat + 1);
+                } else {
+                    teamDeathmatchFavTeammate.put(member.getIdentifier(), 1);
+                }
+            }
+        }
+    }
+
+    public String getFavouriteTeammates(){
+        if(teamDeathmatchFavTeammate.isEmpty()) return "Nobody yet :(";
+        ArrayList<String> names = new ArrayList<>();
+        int amount = -1;
+        for(String key : teamDeathmatchFavTeammate.keySet()){
+            if(amount < teamDeathmatchFavTeammate.get(key)){
+                names.clear();
+                amount = teamDeathmatchFavTeammate.get(key);
+                names.add(Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(key)).getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID))));
+            } else if(amount == teamDeathmatchFavTeammate.get(key)){
+                names.add(Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(key)).getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID))));
+            }
+        }
+        return MiscUtils.glueStrings("", ", ", " and ", "", Arrays.copyOf(names.toArray(), names.size(), String[].class));
     }
 
 }

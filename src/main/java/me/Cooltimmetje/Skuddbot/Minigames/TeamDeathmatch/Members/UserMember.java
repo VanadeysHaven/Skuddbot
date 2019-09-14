@@ -81,6 +81,7 @@ public class UserMember extends TeamMember {
         su.setXp(su.getXp() + getXpReward());
         su.setTeamDeathmatchKills(su.getTeamDeathmatchKills() + kills);
         su.setTeamDeathmatchSaves(su.getTeamDeathmatchSaves() + saves);
+        su.countTeammates(team);
     }
 
     public String getRewardString(int playerCount){

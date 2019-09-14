@@ -30,10 +30,22 @@
       - Keeps track of how often the entire team of the user has survived.
     - `TD_KILLS`
       - Keeps track of the amount of kills the user has gotten.
+    - `TD_FAV_TEAMMATE`
+      - This will show your favourite teammate.
+        - This person you have teamed up the most with.
+        - Can show multiple people.
+      - This stat does not have a leaderboard.
       
   - New donator data type:
     - `AI_NAME`
       - This data type is for the AI names, the names get picked at random from this list.
+  - New donator feature:
+     - You can pick your teamnumber.
+       - Use `!td join [number]` with a teamnumber that doesn't exist yet, to pick that number as your teamnumber.
+      
+  - Elevated permission users:
+    - You can start every match, even when you are not the host.
+       - Use `!td start` or add the :eyes: reaction to the message.
 
 ## Removed
 - User setting:

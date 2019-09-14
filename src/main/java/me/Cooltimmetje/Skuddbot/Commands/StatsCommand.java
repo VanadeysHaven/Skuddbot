@@ -121,7 +121,11 @@ public class StatsCommand {
 
                 for (UserStats stat : UserStats.values()) {
                     if (stat.isShow() && stat.getCategory() == category) {
-                        eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
+                        if (stat == UserStats.TD_FAV_TEAMMATE) {
+                            eb.appendField("__" + stat.getDescription() + ":__", su.getFavouriteTeammates(), true);
+                        } else {
+                            eb.appendField("__" + stat.getDescription() + ":__", su.getStat(stat) + " " + stat.getStatSuffix(), true);
+                        }
                     }
                 }
             }

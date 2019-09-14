@@ -7,7 +7,9 @@ import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.AIMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.UserMember;
+import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
+import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
@@ -57,10 +59,6 @@ public class TeamDeathmatch {
         this.guild = message.getGuild();
         this.teams = new ArrayList<>();
         this.joinQueue = new ArrayList<>();
-        Team team = new Team(getNextTeamNumber(), 2);
-        TeamMember member = new UserMember(host, guild);
-        team.joinTeam(member);
-        this.teams.add(team);
         this.startReact = false;
 
         IMessage msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false);
@@ -98,9 +96,14 @@ public class TeamDeathmatch {
         if(MiscUtils.isInt(teamString)) {
             int teamNumber = Integer.parseInt(teamString);
             Team team = getTeamByNumber(teamNumber);
-            if (team == null) {
+            if (team == null && !Constants.awesomeUser.contains(message.getAuthor().getStringID())) {
                 MessagesUtils.addReaction(message, "Team " + teamNumber + " doesn't exist.", EmojiEnum.X);
                 return;
+            }
+
+            if(team == null){
+                team = new Team(teamNumber, maxTeamSize);
+                teams.add(team);
             }
 
             if (team.joinTeam(new UserMember(message.getAuthor(), message.getGuild()))) {
@@ -120,6 +123,7 @@ public class TeamDeathmatch {
         TeamMember member = new UserMember(event.getUser(), guild);
         if(isInGame(member)) return;
         if(event.getUser().isBot()) return;
+        if(event.getMessage().getLongID() != messageId) return;
 
         joinQueue.add(member);
         updateMessage();
@@ -130,8 +134,9 @@ public class TeamDeathmatch {
             MessagesUtils.addReaction(message, "There must be atleast 2 teams or 3 players to start.", EmojiEnum.X);
             return;
         }
-        if(message.getAuthor().getLongID() != host.getLongID()){
+        if(message.getAuthor().getLongID() != host.getLongID() && !ProfileManager.getDiscord(message.getAuthor(), message.getGuild(), true).hasElevatedPermissions()){
             MessagesUtils.addReaction(message, "Only the host can start the match!", EmojiEnum.X);
+            return;
         }
         IChannel channel = message.getChannel();
         message.delete();
@@ -139,8 +144,15 @@ public class TeamDeathmatch {
     }
 
     public void start(ReactionAddEvent event){
+        EmojiEnum emoji = EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName());
+        if(event.getMessage().getLongID() != messageId) return;
         IChannel channel = event.getChannel();
-        if(!canStart() || event.getUser().getLongID() != host.getLongID()){
+
+        if((!canStart() || event.getUser().getLongID() != host.getLongID()) && emoji == EmojiEnum.WHITE_CHECK_MARK){
+            event.getMessage().removeReaction(event.getUser(), event.getReaction().getEmoji());
+            return;
+        }
+        if((!canStart() || !ProfileManager.getDiscord(event.getUser(), event.getGuild(), true).hasElevatedPermissions()) && emoji == EmojiEnum.EYES){
             event.getMessage().removeReaction(event.getUser(), event.getReaction().getEmoji());
             return;
         }
@@ -225,6 +237,10 @@ public class TeamDeathmatch {
     }
 
     private void fillTeams(){
+        int amountNeeded = (int)Math.ceil((double)getPlayerCount()/maxTeamSize);
+        while(amountNeeded != teams.size()){
+            teams.add(new Team(getNextTeamNumber(), maxTeamSize));
+        }
         while(!joinQueue.isEmpty()){
             TeamMember member = joinQueue.get(MiscUtils.randomInt(0, joinQueue.size() - 1));
             Team team = getRandomOpenTeam();
@@ -314,11 +330,23 @@ public class TeamDeathmatch {
     private String printTeams(boolean matchStarted) {
         StringBuilder sb = new StringBuilder();
 
-        for(Team team : teams)
-            sb.append(team.toString()).append("\n");
+        int teamsPrinted = 0;
+        int i = 1;
+        while (teams.size() != teamsPrinted) {
+            Team team = getTeamByNumber(i);
+            if (team != null) {
+                sb.append(team.toString()).append("\n");
+                teamsPrinted++;
+            } else if (getNextTeamNumber() == i && allTeamsFull() && !matchStarted) {
+                sb.append(getNextTeamNumber()).append(": `!td join new`").append("\n");
+            }
 
-        if(allTeamsFull() && !matchStarted)
+            i++;
+        }
+
+        if(teamsPrinted == 0){
             sb.append(getNextTeamNumber()).append(": `!td join new`").append("\n");
+        }
 
         if(!joinQueue.isEmpty()){
             sb.append("\n").append("**AUTOMATCH QUEUE:**\n");
