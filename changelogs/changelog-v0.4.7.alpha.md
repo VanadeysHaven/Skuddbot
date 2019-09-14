@@ -31,7 +31,7 @@
     - `TD_KILLS`
       - Keeps track of the amount of kills the user has gotten.
     - `TD_FAV_TEAMMATE`
-      - This will show your favourite teamate.
+      - This will show your favourite teammate.
         - This person you have teamed up the most with.
         - Can show multiple people.
       - This stat does not have a leaderboard.
