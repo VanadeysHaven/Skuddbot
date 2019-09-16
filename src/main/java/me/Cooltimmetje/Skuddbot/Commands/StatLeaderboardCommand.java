@@ -79,7 +79,7 @@ public class StatLeaderboardCommand {
         channel.setTypingStatus(true);
         LinkedHashMap<String,Integer> top = getTop(stat, guild);
 
-        sb.append("**").append(stat.getDescription()).append(" leaderboard** | **").append(guild.getName()).append("**\n```\n");
+        sb.append("**").append(stat.getCategory().getName()).append(": ").append(stat.getDescription()).append(" leaderboard** | **").append(guild.getName()).append("**\n```\n");
 
         int i = 0;
         int lastValue = -1;
