@@ -55,6 +55,3 @@
 ## Removed
 - User setting:
   - `BLACKJACK_SIMPLE_VIEW`
-  
-
-
