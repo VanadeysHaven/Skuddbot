@@ -238,7 +238,7 @@ public class TeamDeathmatch {
 
     private void fillTeams(){
         int amountNeeded = (int)Math.ceil((double)getPlayerCount()/maxTeamSize);
-        while(amountNeeded < teams.size()){
+        while(amountNeeded > teams.size()){
             teams.add(new Team(getNextTeamNumber(), maxTeamSize));
         }
         while(!joinQueue.isEmpty()){
