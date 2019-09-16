@@ -47,6 +47,11 @@
     - You can start every match, even when you are not the host.
        - Use `!td start` or add the :eyes: reaction to the message.
 
+
+## Changed
+- Removed the redundant information from `!stats`.
+- An attempt at improving randomness. 
+ 
 ## Removed
 - User setting:
   - `BLACKJACK_SIMPLE_VIEW`
