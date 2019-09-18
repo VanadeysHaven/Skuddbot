@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TeamDeathmatch {
 
-    private static final String HEADER = "[BETA] **TEAM DEATHMATCH** | *{0}*";
+    private static final String HEADER = "**TEAM DEATHMATCH** | *{0}*";
 
     private static final String JOIN_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "**TEAMS:**\n" + "{1}\n" + "> *{2}*";
     private static final String JOIN_PHASE_PLAYING_INSTRUCTIONS = "Join a existing team by using `!td join [number]`, to create and join a new team use `!td join new`, to join the AutoMatch queue click the {0} reaction. {1} can start the match {2}.";
