@@ -18,6 +18,7 @@ import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -62,9 +63,9 @@ public class TeamDeathmatch {
         this.startReact = false;
 
         IMessage msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false);
-        msg.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias()));
+        RequestBuffer.request(() -> msg.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
         this.messageId = msg.getLongID();
-        message.delete();
+        RequestBuffer.request(message::delete);
     }
 
     public void joinTeam(IMessage message){
@@ -83,13 +84,13 @@ public class TeamDeathmatch {
             Team team = new Team(getNextTeamNumber(), maxTeamSize);
             teams.add(team);
             team.joinTeam(member);
-            message.delete();
+            RequestBuffer.request(message::delete);
             updateMessage();
             return;
         }
         if(teamString.equalsIgnoreCase("-queue") || teamString.equalsIgnoreCase("queue")){
             joinQueue.add(member);
-            message.delete();
+            RequestBuffer.request(message::delete);
             updateMessage();
             return;
         }
@@ -107,7 +108,7 @@ public class TeamDeathmatch {
             }
 
             if (team.joinTeam(new UserMember(message.getAuthor(), message.getGuild()))) {
-                message.delete();
+                RequestBuffer.request(message::delete);
                 updateMessage();
                 return;
             } else {
@@ -139,7 +140,7 @@ public class TeamDeathmatch {
             return;
         }
         IChannel channel = message.getChannel();
-        message.delete();
+        RequestBuffer.request(message::delete);
         startMatch(channel);
     }
 
@@ -169,7 +170,7 @@ public class TeamDeathmatch {
         Team winningTeam = simulateFight();
         winningTeam.setWinner(true);
 
-        channel.setTypingStatus(true);
+        RequestBuffer.request(() -> channel.setTypingStatus(true));
 
         exec.schedule(() -> {
             MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " The teams go into " + ServerManager.getServer(guild.getStringID()).getArenaName() + " for a EPIC Team Deathmatch! Who will win? *3*... *2*... *1*... **FIGHT!**", channel, false);
@@ -271,8 +272,8 @@ public class TeamDeathmatch {
 
     private void updateMessage(){
         IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageId);
-        message.edit(formatMessage());
-        if(!startReact && canStart()) message.addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias()));
+        RequestBuffer.request(() -> message.edit(formatMessage()));
+        if(!startReact && canStart()) RequestBuffer.request(() -> message.addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
     }
 
     private String formatMessage(){
