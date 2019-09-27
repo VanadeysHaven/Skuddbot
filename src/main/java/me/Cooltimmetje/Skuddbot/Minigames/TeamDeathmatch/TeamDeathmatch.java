@@ -204,7 +204,7 @@ public class TeamDeathmatch {
             for(TeamMember teamMember : team.getTeamMemebers()){
                 if(!teamMember.isAI()){
                     UserMember member = (UserMember) teamMember;
-                    TdManager.cooldowns.put(member.getID(), System.currentTimeMillis());
+                    TdManager.applyCooldown(member.getIdentifier(), guild.getLongID());
                 }
             }
     }

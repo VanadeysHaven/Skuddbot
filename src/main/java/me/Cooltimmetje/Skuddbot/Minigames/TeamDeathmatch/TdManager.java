@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Utilities.CooldownManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
@@ -20,17 +21,15 @@ public class TdManager {
     private static final int COOLDOWN = 300;
 
     private static HashMap<Long,TeamDeathmatch> teamDeathmatches = new HashMap<>();
-    public static HashMap<Long,Long> cooldowns = new HashMap<>();
+    public static HashMap<Long,CooldownManager> cooldowns = new HashMap<>();
 
     public static void run(IMessage message){
         String[] args = message.getContent().toLowerCase().split(" ");
 
         if(args.length == 1){ //start new
-            if(cooldowns.containsKey(message.getAuthor().getLongID())){
-                if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getLongID()) < COOLDOWN*1000)){
-                    MessagesUtils.addReaction(message, "The arena is still being cleaned up, please wait.", EmojiEnum.HOURGLASS_FLOWING_SAND);
-                    return;
-                }
+            if(!isCooldownExpired(message.getAuthor().getStringID(), message.getGuild().getLongID())){
+                MessagesUtils.addReaction(message, "The arena is still being cleaned up, please wait.", EmojiEnum.HOURGLASS_FLOWING_SAND);
+                return;
             }
             if(teamDeathmatches.containsKey(message.getGuild().getLongID())) {
                 MessagesUtils.addReaction(message, "There's already a Team Deathmatch active in this server!", EmojiEnum.X);
@@ -73,6 +72,25 @@ public class TdManager {
                 EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.EYES){
             teamDeathmatches.get(event.getGuild().getLongID()).start(event);
         }
+    }
+
+    public static void applyCooldown(String userID, Long serverID){
+        CooldownManager cm = cooldowns.get(serverID);
+        if(cm == null){
+            cm = new CooldownManager(COOLDOWN);
+            cooldowns.put(serverID, cm);
+        }
+
+        cm.applyCooldown(userID);
+    }
+
+    public static boolean isCooldownExpired(String userID, Long serverID){
+        CooldownManager cm = cooldowns.get(serverID);
+        if(cm == null){
+            return false;
+        }
+
+        return cm.isCooldownExpired(userID);
     }
 
 }
