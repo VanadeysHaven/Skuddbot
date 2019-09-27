@@ -87,7 +87,7 @@ public class TdManager {
     public static boolean isCooldownExpired(String userID, Long serverID){
         CooldownManager cm = cooldowns.get(serverID);
         if(cm == null){
-            return false;
+            return true;
         }
 
         return cm.isCooldownExpired(userID);
