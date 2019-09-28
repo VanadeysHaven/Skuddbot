@@ -131,7 +131,7 @@ public class BlackjackGame {
         }
 
         if(gameState == GameStates.ENDED){
-            ServerManager.getServer(guild).getBlackjackHandler().cooldowns.put(user.getLongID(), System.currentTimeMillis());
+            ServerManager.getServer(guild).getBlackjackHandler().applyCooldown(user.getStringID());
             if(dealerHand.size() == 1) {
                 dealerHand.add(holeCard);
                 dealerHandValue = calculateHandValue(dealerHand);

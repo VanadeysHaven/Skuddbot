@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Minigames.Blackjack;
 
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
+import me.Cooltimmetje.Skuddbot.Utilities.CooldownManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
@@ -18,12 +19,14 @@ import java.util.HashMap;
  */
 public class BlackjackHandler {
 
+    private static final int COOLDOWN = 300;
+
     private String serverId;
-    private int cooldown = 300;
-    HashMap<Long,Long> cooldowns = new HashMap<>();
+    private CooldownManager cooldownManager;
 
     public BlackjackHandler(String serverId){
         this.serverId = serverId;
+        this.cooldownManager = new CooldownManager(COOLDOWN);
 
         Logger.info("Creating Blackjack handler for Server with ID: " + serverId);
     }
@@ -31,11 +34,9 @@ public class BlackjackHandler {
     HashMap<String, BlackjackGame> games = new HashMap<>();
 
     void startNewGame(IUser user, IMessage message){
-        if(cooldowns.containsKey(user.getLongID())){
-            if((System.currentTimeMillis() - cooldowns.get(user.getLongID())) < (cooldown * 1000)){
-                MessagesUtils.addReaction(message, "Hold on there, we don't want you to get a gambling addiction, you'll have to wait 5 minutes between games.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
-                return;
-            }
+        if(cooldownManager.isOnCooldown(user.getStringID())){
+            MessagesUtils.addReaction(message, "Hold on there, we don't want you to get a gambling addiction, you'll have to wait 5 minutes between games.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
+            return;
         }
 
         if(!games.containsKey(user.getStringID())) {
@@ -56,5 +57,13 @@ public class BlackjackHandler {
 
         if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.H) games.get(event.getUser().getStringID()).hit();
         if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.S) games.get(event.getUser().getStringID()).stand();
+    }
+
+    void applyCooldown(String identifier){
+        cooldownManager.applyCooldown(identifier);
+    }
+
+    void clearCooldowns(){
+        cooldownManager.clearAll();
     }
 }

@@ -21,7 +21,7 @@ public class BlackjackManager {
 
     public static void clearCooldowns(){
         for(Server server : ServerManager.servers.values()){
-            server.getBlackjackHandler().cooldowns.clear();
+            server.getBlackjackHandler().clearCooldowns();
         }
     }
 

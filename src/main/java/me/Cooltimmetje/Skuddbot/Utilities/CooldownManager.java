@@ -27,9 +27,9 @@ public class CooldownManager {
         this.lastUsed.put(identifier, lastUsed);
     }
 
-    public boolean isCooldownExpired(String identifier) {
-        if(!lastUsed.containsKey(identifier)) return true;
-        return ((System.currentTimeMillis() - lastUsed.get(identifier))/1000) > delay;
+    public boolean isOnCooldown(String identifier) {
+        if(!lastUsed.containsKey(identifier)) return false;
+        return ((System.currentTimeMillis() - lastUsed.get(identifier))/1000) < delay;
     }
 
     public void clearAll(){

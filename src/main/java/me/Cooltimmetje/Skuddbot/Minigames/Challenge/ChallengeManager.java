@@ -17,7 +17,7 @@ public class ChallengeManager {
 
     public static void clearCooldowns() {
         for(Server server : ServerManager.servers.values()){
-            server.getChallengeHandler().cooldowns.clear();
+            server.getChallengeHandler().clearCooldowns();
         }
     }
 

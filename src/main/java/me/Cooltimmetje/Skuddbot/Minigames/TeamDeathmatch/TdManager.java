@@ -27,7 +27,7 @@ public class TdManager {
         String[] args = message.getContent().toLowerCase().split(" ");
 
         if(args.length == 1){ //start new
-            if(!isCooldownExpired(message.getAuthor().getStringID(), message.getGuild().getLongID())){
+            if(isOnCooldown(message.getAuthor().getStringID(), message.getGuild().getLongID())){
                 MessagesUtils.addReaction(message, "The arena is still being cleaned up, please wait.", EmojiEnum.HOURGLASS_FLOWING_SAND);
                 return;
             }
@@ -84,13 +84,13 @@ public class TdManager {
         cm.applyCooldown(userID);
     }
 
-    public static boolean isCooldownExpired(String userID, Long serverID){
+    public static boolean isOnCooldown(String userID, Long serverID){
         CooldownManager cm = cooldowns.get(serverID);
         if(cm == null){
-            return true;
+            return false;
         }
 
-        return cm.isCooldownExpired(userID);
+        return cm.isOnCooldown(userID);
     }
 
 }

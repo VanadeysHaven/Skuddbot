@@ -7,10 +7,7 @@ import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
-import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
-import me.Cooltimmetje.Skuddbot.Utilities.Logger;
-import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
+import me.Cooltimmetje.Skuddbot.Utilities.*;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
 import sx.blah.discord.handle.obj.IChannel;
@@ -37,18 +34,22 @@ public class FFAHandler {
 
     public FFAHandler(String serverID){
         this.serverID = serverID;
+        this.cooldownManager = new CooldownManager(COOLDOWN);
         Logger.info("Creating FFA handler for Server with ID: " + serverID);
     }
 
-    private static final int winReward = 100;
-    private static final int killReward = 50;
-    private static final int cooldown = 300; //in seconds
-    public static final int remindDelay = 6; //in hours
+    private static final int WIN_REWARD = 100;
+    private static final int KILL_REWARD = 50;
+    private static final int COOLDOWN = 300; //in seconds
+    private static final int REMIND_DELAY = 6; //in hours
 
+    private CooldownManager cooldownManager;
 
+    public void clearCooldowns(){
+        cooldownManager.clearAll();
+    }
 
     // ---- DISCORD ----
-    HashMap<IUser,Long> cooldowns = new HashMap<>();
     private ArrayList<IUser> entrants = new ArrayList<>();
 
     private IUser host;
@@ -60,12 +61,11 @@ public class FFAHandler {
 
     void enter(IMessage message){
         String[] args = message.getContent().split(" ");
-        if(cooldowns.containsKey(message.getAuthor())){
-            if((System.currentTimeMillis() - cooldowns.get(message.getAuthor())) < (cooldown * 1000)){
-                MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
-                return;
-            }
+        if(cooldownManager.isOnCooldown(message.getAuthor().getStringID())){
+            MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
+            return;
         }
+
         if(message.getAuthor() == host){
             if(args.length > 1){
                 if(args[1].equalsIgnoreCase("-start")){
@@ -190,14 +190,14 @@ public class FFAHandler {
 
         StringBuilder sbRewards = new StringBuilder();
         SkuddUser suWinner = ProfileManager.getDiscord(winner.getStringID(), guild.getStringID(), true);
-        sbRewards.append(winner.getDisplayName(guild)).append(": *+").append(winReward + (killReward * kills.get(winner.getStringID()))).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(winner.getStringID())).append(" kills)");
+        sbRewards.append(winner.getDisplayName(guild)).append(": *+").append(WIN_REWARD + (KILL_REWARD * kills.get(winner.getStringID()))).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(winner.getStringID())).append(" kills)");
         if(suWinner.getFfaMostWin() < entrantsAmount){
             sbRewards.append(" - **New highest entrants win:** *").append(entrantsAmount).append(" people*");
         }
         sbRewards.append("\n");
         for(String s : kills.keySet()){
             if(!s.equals(winner.getStringID()))
-            sbRewards.append(channel.getGuild().getUserByID(Long.parseLong(s)).getDisplayName(guild)).append(": *+").append(killReward * kills.get(s)).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(s)).append(" kills)\n");
+                sbRewards.append(channel.getGuild().getUserByID(Long.parseLong(s)).getDisplayName(guild)).append(": *+").append(KILL_REWARD * kills.get(s)).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(s)).append(" kills)\n");
         }
         sbRewards.append("*Click the ").append(EmojiEnum.NOTEPAD_SPIRAL.getEmoji()).append(" reaction to view the kill feed.*");
         String rewards = sbRewards.toString();
@@ -221,7 +221,7 @@ public class FFAHandler {
 
             MessagesUtils.addReaction(messageFinal, sbKillFeed.toString().trim(), EmojiEnum.NOTEPAD_SPIRAL, true, 6*60*60*1000);
 
-            suWinner.setXp(suWinner.getXp() + winReward + (killReward * kills.get(winner.getStringID())));
+            suWinner.setXp(suWinner.getXp() + WIN_REWARD + (KILL_REWARD * kills.get(winner.getStringID())));
             suWinner.setFfaWins(suWinner.getFfaWins() + 1);
             if(suWinner.getFfaMostWin() < entrantsAmount){
                 suWinner.setFfaMostWin(entrantsAmount);
@@ -230,7 +230,7 @@ public class FFAHandler {
                 SkuddUser su = ProfileManager.getDiscord(s, guild.getStringID(), true);
                 su.setFfaKills(su.getFfaKills() + kills.get(s));
                 if(guild.getUserByID(Long.parseLong(s)) != winner){
-                    su.setXp(su.getXp() + kills.get(s) * killReward);
+                    su.setXp(su.getXp() + kills.get(s) * KILL_REWARD);
                 }
             }
 
@@ -257,7 +257,7 @@ public class FFAHandler {
 
     private void finishFight(IUser winner, IGuild guild){
         for(IUser user : entrants){
-            cooldowns.put(user,System.currentTimeMillis());
+            cooldownManager.applyCooldown(user.getStringID());
             if(user != winner){
                 SkuddUser suLoser = ProfileManager.getDiscord(user.getStringID(), guild.getStringID(), true);
 
@@ -277,7 +277,7 @@ public class FFAHandler {
         if(entrants.size() < 3) return;
         if(host == null) return;
         if(!ProfileManager.getDiscord(host.getStringID(), serverID, true).isFfaReminders()) return;
-        if((System.currentTimeMillis() - lastReminder) < (remindDelay * 60 * 60 * 1000)) return;
+        if((System.currentTimeMillis() - lastReminder) < (REMIND_DELAY * 60 * 60 * 1000)) return;
 
         if(lastEntrants != entrants.size() || entrants.size() < 3) {
             IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageSent);
@@ -293,22 +293,19 @@ public class FFAHandler {
 
     // ---- TWITCH ----
     private ArrayList<String> twitchEntrants = new ArrayList<>();
-    public HashMap<String, Long> twitchCooldowns = new HashMap<>();
-    private int startDelay = 120;
+
+    private static final int START_DELAY = 120;
     private boolean fightRunning = false;
     ScheduledThreadPoolExecutor execTwitch = new ScheduledThreadPoolExecutor(1);
 
     public void run(String sender, String channel) {
         if(fightRunning) return;
-        if(twitchCooldowns.containsKey(sender)){
-            if(System.currentTimeMillis() - twitchCooldowns.get(sender) < cooldown * 1000){
-                return;
-            }
-        }
+        if(cooldownManager.isOnCooldown(sender)) return;
+
 
         if(twitchEntrants.isEmpty()) {
-            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} is looking to host a free for all fight, anyone can participate! Type \"!ffa\" to enter, the fight will start in {1} minutes.", sender, startDelay / 60), channel);
-            execTwitch.schedule(() -> startFightTwitch(channel), startDelay, TimeUnit.SECONDS);
+            Main.getSkuddbotTwitch().send(MessageFormat.format("{0} is looking to host a free for all fight, anyone can participate! Type \"!ffa\" to enter, the fight will start in {1} minutes.", sender, START_DELAY / 60), channel);
+            execTwitch.schedule(() -> startFightTwitch(channel), START_DELAY, TimeUnit.SECONDS);
         }
         if(!twitchEntrants.contains(sender)) twitchEntrants.add(sender);
     }
@@ -324,7 +321,7 @@ public class FFAHandler {
             return;
         }
         for(String string : twitchEntrants){
-            twitchCooldowns.put(string, System.currentTimeMillis());
+            cooldownManager.applyCooldown(string);
         }
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
         Server server = ServerManager.getTwitch(channel);
@@ -347,14 +344,14 @@ public class FFAHandler {
 
         StringBuilder sb = new StringBuilder();
         sb.append("A furious battle is going on in {0}, bodies are dropping.... It looks like {1} has won the fight! | ");
-        sb.append(winner).append(": +").append(winReward + (kills.get(winner) * killReward)).append(" XP (").append(kills.get(winner)).append(" kills)");
+        sb.append(winner).append(": +").append(WIN_REWARD + (kills.get(winner) * KILL_REWARD)).append(" XP (").append(kills.get(winner)).append(" kills)");
         if(suWinner.getFfaMostWin() < entrants){
             sb.append(" - New highest entrants win: ").append(entrants).append(" entrants");
         }
         sb.append(" | ");
         for(String string : kills.keySet()){
             if(!string.equals(winner)) {
-                sb.append(string).append(":9 +").append(kills.get(string) * killReward).append(" XP (").append(kills.get(string)).append(" kills) | ");
+                sb.append(string).append(":9 +").append(kills.get(string) * KILL_REWARD).append(" XP (").append(kills.get(string)).append(" kills) | ");
             }
         }
 
@@ -374,7 +371,7 @@ public class FFAHandler {
             for(String string : kills.keySet()){
                 SkuddUser su = ProfileManager.getTwitch(string, channel, true);
                 su.setFfaKills(su.getFfaKills() + kills.get(string));
-                int xpGain = (string.equals(winner) ? winReward : 0) + (kills.get(string) * killReward);
+                int xpGain = (string.equals(winner) ? WIN_REWARD : 0) + (kills.get(string) * KILL_REWARD);
                 su.setXp(su.getXp() + xpGain);
             }
 

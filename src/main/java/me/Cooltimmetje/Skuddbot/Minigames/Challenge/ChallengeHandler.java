@@ -37,13 +37,18 @@ public class ChallengeHandler {
 
     public ChallengeHandler(String serverId){
         this.serverId = serverId;
+        this.cooldownManager = new CooldownManager(COOLDOWN);
     }
 
-    private int cooldown = 300;
-    private int xpReward = 100;
-    private int streakReward = 50;
+    private static final int COOLDOWN = 300;
+    private static final int XP_REWARD = 100;
+    private static final int STREAK_REWARD = 50;
 
-    public HashMap<String,Long> cooldowns = new HashMap<>();
+    private CooldownManager cooldownManager;
+
+    public void clearCooldowns(){
+        cooldownManager.clearAll();
+    }
 
     private String updateStats(SkuddUser winner, SkuddUser loser, Platforms platform){
         boolean newHighestStreak = false;
@@ -71,10 +76,10 @@ public class ChallengeHandler {
 
         switch (platform){
             case DISCORD:
-                rewardString.append(winnerName).append(":").append(" *+").append(xpReward).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("*");
+                rewardString.append(winnerName).append(":").append(" *+").append(XP_REWARD).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("*");
                 break;
             case TWITCH:
-                rewardString.append(winnerName).append(": +").append(xpReward).append(" XP");
+                rewardString.append(winnerName).append(": +").append(XP_REWARD).append(" XP");
                 break;
         }
 
@@ -87,7 +92,7 @@ public class ChallengeHandler {
                     } else {
                         rewardString.append("started");
                     }
-                    rewardString.append(":** *").append(winner.getChallengeStreak()).append(" wins*").append(" (+").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus ").append(EmojiHelper.getEmoji("xp_icon")).append(")");
+                    rewardString.append(":** *").append(winner.getChallengeStreak()).append(" wins*").append(" (+").append(STREAK_REWARD * (winner.getChallengeStreak() - 1)).append(" bonus ").append(EmojiHelper.getEmoji("xp_icon")).append(")");
                     break;
                 case TWITCH:
                     rewardString.append(" | Win streak ");
@@ -96,7 +101,7 @@ public class ChallengeHandler {
                     } else {
                         rewardString.append("started");
                     }
-                    rewardString.append(": ").append(winner.getChallengeStreak()).append(" wins").append(" (+").append(streakReward * (winner.getChallengeStreak() - 1)).append(" bonus XP)");
+                    rewardString.append(": ").append(winner.getChallengeStreak()).append(" wins").append(" (+").append(STREAK_REWARD * (winner.getChallengeStreak() - 1)).append(" bonus XP)");
                     break;
             }
         }
@@ -125,12 +130,11 @@ public class ChallengeHandler {
     public HashMap<IUser,IUser> targetPunch = new HashMap<>();
 
     public void run(IMessage message){
-        if(cooldowns.containsKey(message.getAuthor().getStringID())){
-            if((System.currentTimeMillis() - cooldowns.get(message.getAuthor().getStringID())) < (cooldown * 1000)){
-                MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
-                return;
-            }
+        if(cooldownManager.isOnCooldown(message.getStringID())){
+            MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
+            return;
         }
+
 
         String[] args = message.getContent().split(" ");
         if(args.length == 1){
@@ -262,8 +266,8 @@ public class ChallengeHandler {
             outstandingChallenges.remove(challengerOne);
         },10, TimeUnit.MILLISECONDS);
 
-        cooldowns.put(challengerOne.getStringID(), System.currentTimeMillis());
-        cooldowns.put(challengerTwo.getStringID(), System.currentTimeMillis());
+        cooldownManager.applyCooldown(challengerOne.getStringID());
+        cooldownManager.applyCooldown(challengerTwo.getStringID());
 
         IUser preWinner = (MiscUtils.randomInt(1,2) == 1) ? challengerOne : challengerTwo;
         if(Constants.rigged.containsKey(challengerOne.getStringID())){
@@ -323,20 +327,15 @@ public class ChallengeHandler {
     public void run(String sender, String message, String twitchChannel){
         String[] args = message.toLowerCase().split(" ");
 
-        if(cooldowns.containsKey(sender)){
-            if((System.currentTimeMillis() - cooldowns.get(sender)) < (cooldown*1000)){
-                return;
-            }
-        }
+        if(cooldownManager.isOnCooldown(sender)) return;
 
         if(args.length < 2){
             Main.getSkuddbotTwitch().send(sender + ", you did not specify anyone to challenge!", twitchChannel);
             return;
         }
 
-        if(args[1].startsWith("@")){
+        if(args[1].startsWith("@"))
             args[1] = args[1].substring(1);
-        }
 
         if(args[1].equalsIgnoreCase(sender)){
             Main.getSkuddbotTwitch().send(sender + ", you can't challenge yourself!", twitchChannel);
@@ -361,8 +360,8 @@ public class ChallengeHandler {
         Server server = ServerManager.getTwitch(twitchChannel.substring(1));
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
 
-        cooldowns.put(challengerOne, System.currentTimeMillis());
-        cooldowns.put(challengerTwo, System.currentTimeMillis());
+        cooldownManager.applyCooldown(challengerOne);
+        cooldownManager.applyCooldown(challengerTwo);
         outstandingChallengesTwitch.remove(challengerOne);
 
         int winInt = MiscUtils.randomInt(1,2);

@@ -21,9 +21,7 @@ public class FFAManager {
 
     public static void clearCooldowns(){
         for(Server server : ServerManager.servers.values()){
-            FFAHandler ffaHandler = server.getFfaHandler();
-            ffaHandler.cooldowns.clear();
-            ffaHandler.twitchCooldowns.clear();
+            server.getFfaHandler().clearCooldowns();
         }
     }
 
