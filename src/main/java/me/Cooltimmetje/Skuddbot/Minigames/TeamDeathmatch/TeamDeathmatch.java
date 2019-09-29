@@ -44,6 +44,7 @@ public class TeamDeathmatch {
     private static final String PLAY_PHASE_MESSAGE_FORMAT = "{0}\n\n" + "*The teams have been decided:*\n" + "{1}\n" + "> *The match is starting soon...*";
 
     private static final int SAVE_CHANCE = 25; //in %
+    private static final int REMIND_DELAY = 6; //in hours
 
     private IUser host;
     private IGuild guild;
@@ -54,6 +55,9 @@ public class TeamDeathmatch {
     private String killFeed;
     private boolean startReact;
 
+    private long lastReminder;
+    private int lastEntrants;
+
     public TeamDeathmatch(IMessage message) {
         this.maxTeamSize = 2;
         this.host = message.getAuthor();
@@ -62,11 +66,31 @@ public class TeamDeathmatch {
         this.joinQueue = new ArrayList<>();
         this.startReact = false;
 
+        this.lastReminder = System.currentTimeMillis();
+        this.lastEntrants = 0;
+
         IMessage msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false);
         RequestBuffer.request(() -> msg.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
         this.messageId = msg.getLongID();
         RequestBuffer.request(message::delete);
     }
+
+    public void runReminder() {
+        if (getPlayerCount() < 3 && teams.size() < 2) return;
+        if (!ProfileManager.getDiscord(host, guild, true).isMinigameReminders()) return;
+        if ((System.currentTimeMillis() - lastReminder) < (REMIND_DELAY * 60 * 60 * 1000)) return;
+        IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageId);
+
+        if(lastEntrants != getPlayerCount()){
+            MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a Team Deathmatch with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", getPlayerCount(), message.getChannel().mention(), message.getGuild().getName()), host.getOrCreatePMChannel(), false);
+            lastReminder = System.currentTimeMillis();
+            lastEntrants = getPlayerCount();
+        } else {
+            startMatch(message.getChannel());
+        }
+
+    }
+
 
     public void joinTeam(IMessage message){
         TeamMember member = new UserMember(message.getAuthor(), guild);

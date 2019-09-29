@@ -59,7 +59,7 @@ public class SkuddUser {
     private boolean analyticsMention;
     private boolean statsPrivate;
     private boolean mentionMe;
-    private boolean ffaReminders;
+    private boolean minigameReminders;
 
     //---- USER STATS ----
     private int xpStreak;
@@ -265,8 +265,8 @@ public class SkuddUser {
                 return isStatsPrivate()+"";
             case MENTION_ME:
                 return isMentionMe()+"";
-            case FFA_REMINDERS:
-                return isFfaReminders()+"";
+            case MINIGAME_REMINDERS:
+                return isMinigameReminders()+"";
         }
         return null;
     }
@@ -337,8 +337,8 @@ public class SkuddUser {
             case MENTION_ME:
                 this.mentionMe = booleanValue;
                 return null;
-            case FFA_REMINDERS:
-                this.ffaReminders = booleanValue;
+            case MINIGAME_REMINDERS:
+                this.minigameReminders = booleanValue;
                 return null;
         }
     }

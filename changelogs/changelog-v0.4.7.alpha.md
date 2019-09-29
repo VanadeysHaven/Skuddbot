@@ -7,9 +7,11 @@
 - New minigame: Team Deathmatch
   - Play a game of Team Deathmatch, form teams, go for the battle, last team standing wins!
   - Features:
-    - Form teams, and head to battle with your friends.
-    - AI players.
+    - Form teams, and head to battle with your friends
+    - AI players
     - AutoMatch Queue
+    - Reminders and Autostart
+      - Works in the same way as FFA reminders.
     
   - New Commands:
     - `!td`
@@ -50,7 +52,8 @@
 
 ## Changed
 - Removed the redundant information from `!stats`.
-- An attempt at improving randomness. 
+- An attempt at improving randomness.
+- Setting renamed: `FFA_REMINDERS` -> `MINIGAME_REMINDERS`
  
 ## Removed
 - User setting:

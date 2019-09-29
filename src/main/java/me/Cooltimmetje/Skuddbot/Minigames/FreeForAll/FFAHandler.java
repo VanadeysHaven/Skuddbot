@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * This class handles the FFA command on a per-server basis.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.4.7-ALPHA
  * @since v0.4.4-ALPHA
  */
 public class FFAHandler {
@@ -276,10 +276,10 @@ public class FFAHandler {
     public void remind(){
         if(entrants.size() < 3) return;
         if(host == null) return;
-        if(!ProfileManager.getDiscord(host.getStringID(), serverID, true).isFfaReminders()) return;
+        if(!ProfileManager.getDiscord(host.getStringID(), serverID, true).isMinigameReminders()) return;
         if((System.currentTimeMillis() - lastReminder) < (REMIND_DELAY * 60 * 60 * 1000)) return;
 
-        if(lastEntrants != entrants.size() || entrants.size() < 3) {
+        if(lastEntrants != entrants.size()) {
             IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageSent);
             MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a free for all with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", entrants.size(), message.getChannel().mention(), message.getGuild().getName()), host.getOrCreatePMChannel(), false);
         } else {
