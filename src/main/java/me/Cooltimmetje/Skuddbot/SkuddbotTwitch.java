@@ -20,7 +20,7 @@ import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
  * Everything Twitch happens here!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.4.7-ALPHA
  * @since v0.1-ALPHA
  */
 public class SkuddbotTwitch extends PircBot{
@@ -29,8 +29,6 @@ public class SkuddbotTwitch extends PircBot{
     private static final int MINIGAME_COOLDOWN = 300;
 
     private boolean terminated = false;
-//    private static HashMap<String,Long> cooldown = new HashMap<>();
-//    private static HashMap<String,Long> playCooldown = new HashMap<>();
 
     private CooldownManager flipCooldown;
     private CooldownManager trackingCooldown;
