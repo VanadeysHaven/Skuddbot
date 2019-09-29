@@ -93,4 +93,10 @@ public class TdManager {
         return cm.isOnCooldown(userID);
     }
 
+    public static void runReminders(){
+        for(TeamDeathmatch teamDeathmatch : teamDeathmatches.values()){
+            teamDeathmatch.runReminder();
+        }
+    }
+
 }
