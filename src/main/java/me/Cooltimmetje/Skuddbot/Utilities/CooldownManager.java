@@ -32,6 +32,10 @@ public class CooldownManager {
         return ((System.currentTimeMillis() - lastUsed.get(identifier))/1000) < delay;
     }
 
+    public boolean isCooldownExpired(String identifier){
+        return !isOnCooldown(identifier);
+    }
+
     public void clearAll(){
         lastUsed.clear();
     }

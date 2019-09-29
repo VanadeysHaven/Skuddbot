@@ -5,6 +5,7 @@ import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Profiles.*;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
+import me.Cooltimmetje.Skuddbot.Utilities.CooldownManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import org.jibble.pircbot.IrcException;
@@ -12,7 +13,6 @@ import org.jibble.pircbot.PircBot;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.HashMap;
 
 import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
 
@@ -25,13 +25,26 @@ import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
  */
 public class SkuddbotTwitch extends PircBot{
 
+    private static final int DEFAULT_COOLDOWN = 60;
+    private static final int MINIGAME_COOLDOWN = 300;
+
     private boolean terminated = false;
-    private static HashMap<String,Long> cooldown = new HashMap<>();
-    private static HashMap<String,Long> playCooldown = new HashMap<>();
+//    private static HashMap<String,Long> cooldown = new HashMap<>();
+//    private static HashMap<String,Long> playCooldown = new HashMap<>();
+
+    private CooldownManager flipCooldown;
+    private CooldownManager trackingCooldown;
+    private CooldownManager playCooldown;
+    private CooldownManager reverseCooldown;
 
     public SkuddbotTwitch() {
         this.setName(Constants.twitchBot);
         this.setLogin(Constants.twitchBot);
+
+        flipCooldown = new CooldownManager(DEFAULT_COOLDOWN);
+        trackingCooldown = new CooldownManager(DEFAULT_COOLDOWN);
+        playCooldown = new CooldownManager(DEFAULT_COOLDOWN);
+        reverseCooldown = new CooldownManager(DEFAULT_COOLDOWN);
     }
 
     @Override
@@ -83,36 +96,21 @@ public class SkuddbotTwitch extends PircBot{
                     }
                 }
             } else if (message.startsWith("!flip ")) {
-                if (cooldown.containsKey(channel)) {
-                    if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
-                        sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
-                        cooldown.put(channel, System.currentTimeMillis());
-                    }
-                } else {
+                if (flipCooldown.isCooldownExpired(sender)) {
                     sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + "(╯°□°）╯︵ " + MiscUtils.flipText(message.trim().substring(6, message.length()).trim())).trim());
-                    cooldown.put(channel, System.currentTimeMillis());
+                    flipCooldown.applyCooldown(channel);
                 }
             } else if (message.startsWith("!reverse ")) {
                 reverseCommand(message, channel, sender);
             } else if (message.startsWith("!toggletracking")) {
-                if (cooldown.containsKey(sender)) {
-                    if ((System.currentTimeMillis() - cooldown.get(sender)) > 30000) {
-                        SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
-                        boolean currentlyEnabled = user.isTrackMe();
-                        user.setTrackMe(!user.isTrackMe());
-
-                        sendMessage(channel, sender + ", tracking has been " + (currentlyEnabled ? "disabled" : "enabled") + " for you." +
-                                (user.isLinked() ? " | NOTE: Because your account is linked to Discord, tracking has also been " + (currentlyEnabled ? "disabled" : "enabled") + " on Discord." : ""));
-                        cooldown.put(sender, System.currentTimeMillis());
-                    }
-                } else {
+                if(trackingCooldown.isCooldownExpired(sender)){
                     SkuddUser user = ProfileManager.getTwitch(sender, channel, true);
                     boolean currentlyEnabled = user.isTrackMe();
                     user.setTrackMe(!user.isTrackMe());
 
                     sendMessage(channel, sender + ", tracking has been " + (currentlyEnabled ? "disabled" : "enabled") + " for you." +
                             (user.isLinked() ? " | NOTE: Because your account is linked to Discord, tracking has also been " + (currentlyEnabled ? "disabled" : "enabled") + " on Discord." : ""));
-                    cooldown.put(sender, System.currentTimeMillis());
+                    trackingCooldown.applyCooldown(sender);
                 }
             } else if(message.toLowerCase().startsWith("s!") || message.startsWith("!")) {
                 commands(sender, message, channel);
@@ -167,14 +165,11 @@ public class SkuddbotTwitch extends PircBot{
     }
 
     private void play(String channel){
-        if(playCooldown.containsKey(channel)) {
-            if((System.currentTimeMillis() - playCooldown.get(channel)) < 60 * 1000){
-                return;
-            }
-        }
+        if(playCooldown.isOnCooldown(channel)) return;
+
 
         sendMessage(channel, "!play");
-        playCooldown.put(channel, System.currentTimeMillis());
+        playCooldown.applyCooldown(channel);
     }
 
     private void reverseCommand(String message, String channel, String sender) {
@@ -204,14 +199,9 @@ public class SkuddbotTwitch extends PircBot{
                 }
             }
         }
-        if (cooldown.containsKey(channel)) {
-            if ((System.currentTimeMillis() - cooldown.get(channel)) > 30000) {
-                sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim(), true)).trim());
-                cooldown.put(channel, System.currentTimeMillis());
-            }
-        } else {
+        if (reverseCooldown.isCooldownExpired(sender)) {
             sendMessage(channel, ((ServerManager.getTwitch(channel.replace("#", " ").trim()).isVrMode() ? "! " : " ") + MiscUtils.reverse(message.trim().substring(9, message.length()).trim(), true)).trim());
-            cooldown.put(channel, System.currentTimeMillis());
+            reverseCooldown.applyCooldown(sender);
         }
     }
 
