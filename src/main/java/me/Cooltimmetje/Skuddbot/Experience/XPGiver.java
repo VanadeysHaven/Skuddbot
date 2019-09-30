@@ -20,7 +20,7 @@ public class XPGiver {
     @EventSubscriber
     @SuppressWarnings("all") //FUCK OFF
     public void onMessage(MessageReceivedEvent event){
-        if(!event.getMessage().getContent().startsWith("!") && !event.getMessage().getAuthor().isBot() && !event.getMessage().getChannel().isPrivate()){
+        if(!event.getMessage().getAuthor().isBot() && !event.getMessage().getChannel().isPrivate()){
             SkuddUser user = ProfileManager.getDiscord(event.getMessage().getAuthor().getStringID(), event.getMessage().getGuild().getStringID(), true);
             if(user.isTrackMe()) {
                 Server server = ServerManager.getServer(event.getMessage().getGuild().getStringID());

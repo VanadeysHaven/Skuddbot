@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Commands;
 
 import me.Cooltimmetje.Skuddbot.Commands.Admin.ServerSettingsCommand;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
+import me.Cooltimmetje.Skuddbot.Commands.Custom.CommandEditor;
 import me.Cooltimmetje.Skuddbot.Commands.Useless.*;
 import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackManager;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
@@ -176,6 +177,10 @@ public class CommandManager {
                 case "!teamdeathmatch":
                 case "!td":
                     TdManager.run(event.getMessage());
+                    break;
+                case "!command":
+                case "!cmd":
+                    CommandEditor.run(event.getMessage());
                     break;
                 default:
                     ServerManager.getServer(event.getGuild()).runCommand(invoker, event.getMessage());

@@ -66,6 +66,7 @@ public class TdManager {
 
     @EventSubscriber
     public void onReaction(ReactionAddEvent event){
+        if(!teamDeathmatches.containsKey(event.getGuild().getLongID())) return;
         if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.CROSSED_SWORDS){
             teamDeathmatches.get(event.getGuild().getLongID()).joinTeam(event);
         } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.WHITE_CHECK_MARK ||

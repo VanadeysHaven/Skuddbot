@@ -800,4 +800,32 @@ public class Server {
             if(command.getInvoker().equalsIgnoreCase(invoker))
                 command.run(message);
     }
+
+    public boolean doesCommandExist(String invoker){
+        for(Command command : commands)
+            if(command.getInvoker().equalsIgnoreCase(invoker))
+                return true;
+        return false;
+    }
+
+    public void addCommand(IMessage message) {
+        String[] args = message.getContent().split(" ");
+        String invoker = args[2].toLowerCase();
+        StringBuilder sb = new StringBuilder();
+        for(int i=3; i < args.length; i++) sb.append(args[i]).append(" ");
+        String output = sb.toString().trim();
+
+        if(args.length < 4) {
+            MessagesUtils.addReaction(message, "Invalid usage. Usage: `!command add <invoker> <output...>`", EmojiEnum.X);
+            return;
+        }
+        if(doesCommandExist(invoker)){
+            MessagesUtils.addReaction(message, "This command already exists!", EmojiEnum.X);
+            return;
+        }
+
+        commands.add(new Command(serverID, invoker, output));
+
+        MessagesUtils.addReaction(message, "Added command `" + invoker + "` with output `" + output + "`.", EmojiEnum.WHITE_CHECK_MARK);
+    }
 }
