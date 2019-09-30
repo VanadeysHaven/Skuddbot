@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.Cooltimmetje.Skuddbot.Commands.Custom.Command;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.ServerSettings.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
@@ -72,6 +73,7 @@ public class Server {
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
     public HashMap<Long,Long> lastSeen = new HashMap<>();
+    private ArrayList<Command> commands = new ArrayList<>();
 
     /**
      * Constructor for a new server, it puts all the settings to default and asks to initialize the server.
@@ -791,5 +793,11 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void runCommand(String invoker, IMessage message){
+        for(Command command : commands)
+            if(command.getInvoker().equalsIgnoreCase(invoker))
+                command.run(message);
     }
 }

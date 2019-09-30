@@ -7,6 +7,7 @@ import me.Cooltimmetje.Skuddbot.Minigames.Blackjack.BlackjackManager;
 import me.Cooltimmetje.Skuddbot.Minigames.Challenge.ChallengeManager;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.TdManager;
+import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -29,10 +30,11 @@ public class CommandManager {
      */
     @EventSubscriber
     public void onMessage(MessageReceivedEvent event){
+        String invoker = event.getMessage().getContent().split(" ")[0].toLowerCase();
 
         if(!event.getMessage().getChannel().isPrivate()) {
-            switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {
-                case "!game":
+            switch (invoker) {
+                    case "!game":
                     GameCommand.run(event.getMessage());
                     break;
                 case "!xp":
@@ -174,6 +176,9 @@ public class CommandManager {
                 case "!teamdeathmatch":
                 case "!td":
                     TdManager.run(event.getMessage());
+                    break;
+                default:
+                    ServerManager.getServer(event.getGuild()).runCommand(invoker, event.getMessage());
                     break;
             }
         } else {
