@@ -21,7 +21,7 @@ import java.util.HashMap;
  * This class handles everything to do with the database, and contains all operations we can run on the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.62-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -1292,6 +1292,126 @@ public class MySqlManager {
         }
 
         return result;
+    }
+
+    public static void loadCommands(String serverId){
+        Logger.info("Loading all commands for server ID: " + serverId);
+        Server server = ServerManager.getServer(serverId);
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String query = "SELECT * FROM commands WHERE server_id=?;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, serverId);
+
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                server.loadCommand(rs.getString("invoker"), rs.getString("output"), rs.getString("metadata"), rs.getString("properties"));
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void createNewCommand(String serverId, String invoker, String output, String metadata) {
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "INSERT INTO commands(server_id, invoker, output, metadata) VALUES (?, ?, ?, ?);";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, serverId);
+            ps.setString(2, invoker);
+            ps.setString(3, output);
+            ps.setString(4, metadata);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void saveCommand(String serverId, String invoker, String output, String metadata, String properties) {
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "UPDATE commands SET output=?, metadata=?, properties=? WHERE server_id=? AND invoker=?";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, output);
+            ps.setString(2, metadata);
+            ps.setString(3, properties);
+            ps.setString(4, serverId);
+            ps.setString(5, invoker);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

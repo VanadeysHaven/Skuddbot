@@ -1,4 +1,4 @@
-# The "yes this is away overdue" update. (v0.5-ALPHA)
+# The "yes this is way overdue" update. (v0.5-ALPHA)
 
 ## Added
 - **CUSTOM COMMANDS!!**
@@ -14,6 +14,9 @@
 ## Changed
 - Using commands will now also give XP.
 - When using the WIP bot in the Test server everybody has elevated permission by default.
+
+## Improved
+- Less bot spam!
 
 ## Fixed
 - Backend NPE when adding reactions.

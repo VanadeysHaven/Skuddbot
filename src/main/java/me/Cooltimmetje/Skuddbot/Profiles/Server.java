@@ -34,7 +34,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.2-ALPHA
  */
 
@@ -139,30 +139,31 @@ public class Server {
         this.challengeHandler = new ChallengeHandler(serverID);
         this.ffaHandler = new FFAHandler(serverID);
         this.blackjackHandler = new BlackjackHandler(serverID);
+
+        MySqlManager.loadCommands(serverID);
     }
 
     /**
      * Saves the server settings, and all profiles to the database.
-     *
-     * @param onlySettings If true, profiles will not be saved.
      */
-    public void save(boolean onlySettings){
+    public void save(){
         if(serverInitialized) {
             MySqlManager.saveServer(this);
 
-            if (!onlySettings) {
-                ArrayList<SkuddUser> saved = new ArrayList<>();
-                for (String s : discordProfiles.keySet()) {
-                    discordProfiles.get(s).save();
-                    if (discordProfiles.get(s).getTwitchUsername() != null) {
-                        saved.add(discordProfiles.get(s));
-                    }
+            ArrayList<SkuddUser> saved = new ArrayList<>();
+            for (String s : discordProfiles.keySet()) {
+                discordProfiles.get(s).save();
+                if (discordProfiles.get(s).getTwitchUsername() != null) {
+                    saved.add(discordProfiles.get(s));
                 }
-
-                twitchProfiles.keySet().stream().filter(s -> !saved.contains(twitchProfiles.get(s))).forEach(s -> twitchProfiles.get(s).save());
-
-                Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
             }
+
+            twitchProfiles.keySet().stream().filter(s -> !saved.contains(twitchProfiles.get(s))).forEach(s -> twitchProfiles.get(s).save());
+
+            for(Command command : commands)
+                command.save();
+
+            Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
         }
     }
 
@@ -824,8 +825,14 @@ public class Server {
             return;
         }
 
-        commands.add(new Command(serverID, invoker, output));
+        Command command = new Command(serverID, invoker, output);
+        commands.add(command);
 
         MessagesUtils.addReaction(message, "Added command `" + invoker + "` with output `" + output + "`.", EmojiEnum.WHITE_CHECK_MARK);
+    }
+
+    public void loadCommand(String invoker, String output, String metaData, String properties){
+        Command command = new Command(serverID, invoker, output, metaData, properties);
+        commands.add(command);
     }
 }

@@ -21,7 +21,7 @@ import java.util.*;
  * This command generates a leaderboard of a given stat.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.4.6-ALPHA
  */
 public class StatLeaderboardCommand {
@@ -32,7 +32,7 @@ public class StatLeaderboardCommand {
         IChannel channel = message.getChannel();
         IGuild guild = message.getGuild();
         Server server = ServerManager.getServer(guild);
-        server.save(false);
+        server.save();
         UserStats stat = null;
         StringBuilder sb = new StringBuilder();
 

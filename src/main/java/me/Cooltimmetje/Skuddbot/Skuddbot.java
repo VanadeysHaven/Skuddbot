@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Holds the Skuddbot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.4.5-ALPHA
  * @since v0.1-ALPHA
  */
 public class Skuddbot {
@@ -102,7 +102,7 @@ public class Skuddbot {
         try {
             Main.getSkuddbotTwitch().leaveChannels();
             Main.stopTimer();
-            ServerManager.saveAll(false);
+            ServerManager.saveAll();
             Main.getSkuddbotTwitch().terminate();
             MySqlManager.disconnect();
             skuddbot.logout();
