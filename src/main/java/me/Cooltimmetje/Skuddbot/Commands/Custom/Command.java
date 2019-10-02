@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands.Custom;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
@@ -21,7 +22,7 @@ public class Command {
 
     private String serverId;
     @Getter private String invoker;
-    @Getter private String output;
+    @Getter @Setter private String output;
     private HashMap<MetaData,String> metaData;
     private HashMap<Properties,String> properties;
 

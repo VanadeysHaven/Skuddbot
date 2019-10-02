@@ -796,17 +796,21 @@ public class Server {
         }
     }
 
-    public void runCommand(String invoker, IMessage message){
+    public Command getCommand(String invoker){
         for(Command command : commands)
             if(command.getInvoker().equalsIgnoreCase(invoker))
-                command.run(message);
+                return command;
+        return null;
+    }
+
+    public void runCommand(String invoker, IMessage message){
+        Command command = getCommand(invoker);
+        if(command != null)
+            command.run(message);
     }
 
     public boolean doesCommandExist(String invoker){
-        for(Command command : commands)
-            if(command.getInvoker().equalsIgnoreCase(invoker))
-                return true;
-        return false;
+        return getCommand(invoker) != null;
     }
 
     public void addCommand(IMessage message) {
@@ -834,5 +838,36 @@ public class Server {
     public void loadCommand(String invoker, String output, String metaData, String properties){
         Command command = new Command(serverID, invoker, output, metaData, properties);
         commands.add(command);
+    }
+
+    public void editCommand(IMessage message) {
+        String[] args = message.getContent().split(" ");
+        if(args.length < 4){
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command edit <invoker> <output...>`.", EmojiEnum.X);
+            return;
+        }
+        if(args[2].equalsIgnoreCase("-invoker")){
+            editInvoker(message);
+            return;
+        }
+
+        Command command = getCommand(args[2]);
+        if(command == null){
+            MessagesUtils.addReaction(message, "This command does not exist!", EmojiEnum.X);
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int i=3; i < args.length; i++) sb.append(args[i]).append(" ");
+        String newOutput = sb.toString().trim();
+        command.setOutput(newOutput);
+
+        command.save();
+
+        MessagesUtils.addReaction(message, "Edited command `" + args[2] + "` to output `" + newOutput + "`.", EmojiEnum.WHITE_CHECK_MARK);
+    }
+
+    public void editInvoker(IMessage message){
+
     }
 }

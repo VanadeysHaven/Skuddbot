@@ -38,6 +38,7 @@ public class CommandEditor {
                 server.addCommand(message);
                 break;
             case "edit":
+                server.editCommand(message);
                 break;
             case "remove":
                 break;
