@@ -15,6 +15,9 @@
         - This will edit the output of the command with the given invoker to the new specified output.
       - `!command edit -invoker <oldInvoker> <newInvoker>`
         - This will edit the command with the given old invoker to the new invoker.
+    - Removing of commands:
+      - `!command remove <invoker>`
+        - This will remove the command with the given invoker.
         
 ## Changed
 - Using commands will now also give XP.

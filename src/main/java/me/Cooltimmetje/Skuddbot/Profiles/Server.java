@@ -888,4 +888,24 @@ public class Server {
         command.setInvoker(newInvoker);
         MessagesUtils.addReaction(message, "Updated invoker `" + oldInvoker + "` to `" + newInvoker + "`.", EmojiEnum.WHITE_CHECK_MARK);
     }
+
+    public void removeCommand(IMessage message){
+        String[] args = message.getContent().split(" ");
+        if(args.length < 3){
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command remove <invoker>`", EmojiEnum.X);
+            return;
+        }
+        String invoker = args[2];
+        Command command = getCommand(invoker);
+        if(command == null){
+            MessagesUtils.addReaction(message, "This command does not exist!", EmojiEnum.X);
+            return;
+        }
+
+        commands.remove(command);
+        MySqlManager.removeCommand(serverID, invoker);
+
+        MessagesUtils.addReaction(message, "Removed command with invoker `" + invoker + "`.", EmojiEnum.WHITE_CHECK_MARK);
+        Logger.info("Removed command with invoker " + invoker);
+    }
 }

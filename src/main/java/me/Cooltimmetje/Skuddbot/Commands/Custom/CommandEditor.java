@@ -41,6 +41,7 @@ public class CommandEditor {
                 server.editCommand(message);
                 break;
             case "remove":
+                server.removeCommand(message);
                 break;
             default:
                 MessagesUtils.addReaction(message, "Invalid usage. Usage: `" + COMMAND_USAGE + "`", EmojiEnum.X);

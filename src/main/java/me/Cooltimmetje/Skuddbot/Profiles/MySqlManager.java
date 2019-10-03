@@ -1449,4 +1449,38 @@ public class MySqlManager {
         }
     }
 
+    public static void removeCommand(String serverId, String invoker) {
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "DELETE FROM commands WHERE server_id = ? AND invoker = ?;";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, serverId);
+            ps.setString(2, invoker);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 }
