@@ -2,9 +2,11 @@ package me.Cooltimmetje.Skuddbot.Commands.Custom;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.Cooltimmetje.Skuddbot.Commands.Custom.MetaData.MetaDataContainer;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
+import org.json.simple.parser.ParseException;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.text.MessageFormat;
@@ -23,7 +25,7 @@ public class Command {
     private String serverId;
     @Getter private String invoker;
     @Getter @Setter private String output;
-    private HashMap<MetaData,String> metaData;
+    private MetaDataContainer metaData;
     private HashMap<Properties,String> properties;
 
     public Command(String serverId, String invoker, String output){
@@ -31,11 +33,18 @@ public class Command {
         this.invoker = invoker;
         this.output = output;
 
-        this.metaData = new HashMap<>();
+        try {
+            this.metaData = new MetaDataContainer("{}");
+            this.metaData.setTimeCreated(System.currentTimeMillis());
+            this.metaData.setLastUpdated(System.currentTimeMillis());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         this.properties = new HashMap<>();
 
-        MySqlManager.createNewCommand(serverId, invoker, output, metaDataJSON());
-        Logger.info(MessageFormat.format("Created new command for server id {0} with invoker {1} and output {2}", serverId, invoker, output));
+        MySqlManager.createNewCommand(serverId, invoker, output, metaData.getJSON());
+        Logger.info(MessageFormat.format("Created new command for server id {0} with invoker {1}, output {2} and metadata {3}", serverId, invoker, output, metaData.getJSON()));
     }
 
     public Command(String serverId, String invoker, String output, String metaData, String properties){
@@ -43,27 +52,23 @@ public class Command {
         this.invoker = invoker;
         this.output = output;
 
-        this.metaData = new HashMap<>();
+        try {
+            this.metaData = new MetaDataContainer("{}");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         this.properties = new HashMap<>();
-        parseMetaData(metaData);
         parseProperties(properties);
         Logger.info(MessageFormat.format("Loaded command for server id {0} with invoker {1}, output {2}, metadata {3} and properties {4}", serverId, invoker, output, metaData, properties));
     }
 
     public void run(IMessage message) {
         MessagesUtils.sendPlain(output, message.getChannel());
-    }
-
-    private String metaDataJSON(){
-        return "{}";
+        metaData.incrementCount();
     }
 
     private String propertiesJSON(){
         return "{}";
-    }
-
-    private void parseMetaData(String metaData){
-
     }
 
     private void parseProperties(String properties){
@@ -71,13 +76,17 @@ public class Command {
     }
 
     public void save(){
-        MySqlManager.saveCommand(serverId, invoker, output, metaDataJSON(), propertiesJSON());
-        Logger.info(MessageFormat.format("Saved command for server id {0} with invoker {1}, output {2}, metadata {3} and properties {4}", serverId, invoker, output, metaDataJSON(), propertiesJSON()));
+        MySqlManager.saveCommand(serverId, invoker, output, metaData.getJSON(), propertiesJSON());
+        Logger.info(MessageFormat.format("Saved command for server id {0} with invoker {1}, output {2}, metadata {3} and properties {4}", serverId, invoker, output,  metaData.getJSON(), propertiesJSON()));
     }
 
     public void setInvoker(String newInvoker){
         String oldInvoker = this.invoker;
         this.invoker = newInvoker;
         MySqlManager.editInvoker(serverId, oldInvoker, newInvoker);
+    }
+
+    public void update(){
+        metaData.setLastUpdated(System.currentTimeMillis());
     }
 }

@@ -18,6 +18,11 @@
     - Removing of commands:
       - `!command remove <invoker>`
         - This will remove the command with the given invoker.
+    - Metadata:
+      - `TIME_CREATED`
+      - `LAST_UPDATED`
+      - `TIMES_USED`
+      - These are values helping with administration. They have no interface yet to show them, but this will come soon.
         
 ## Changed
 - Using commands will now also give XP.
@@ -28,3 +33,7 @@
 
 ## Fixed
 - Backend NPE when adding reactions.
+
+## Coming Soon
+- Properties
+- Variables

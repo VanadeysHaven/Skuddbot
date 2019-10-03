@@ -862,7 +862,9 @@ public class Server {
         String newOutput = sb.toString().trim();
         command.setOutput(newOutput);
 
+        command.update();
         command.save();
+
 
         MessagesUtils.addReaction(message, "Edited command `" + args[2] + "` to output `" + newOutput + "`.", EmojiEnum.WHITE_CHECK_MARK);
     }
@@ -885,6 +887,7 @@ public class Server {
             return;
         }
 
+        command.update();
         command.setInvoker(newInvoker);
         MessagesUtils.addReaction(message, "Updated invoker `" + oldInvoker + "` to `" + newInvoker + "`.", EmojiEnum.WHITE_CHECK_MARK);
     }
@@ -892,7 +895,8 @@ public class Server {
     public void removeCommand(IMessage message){
         String[] args = message.getContent().split(" ");
         if(args.length < 3){
-            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command remove <invoker>`", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!comm" +
+                    "and remove <invoker>`", EmojiEnum.X);
             return;
         }
         String invoker = args[2];
