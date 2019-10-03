@@ -6,7 +6,7 @@
   - Command: `!command`
     - Alias: `!cmd`
     - Command requires elevated permissions.
-  - Functionality:
+  - Commands:
     - Adding of commands:
       - `!command add <invoker> <output...>`
         - This will create a new command with the given invoker and output.

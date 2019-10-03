@@ -21,7 +21,7 @@ import java.util.HashMap;
 public class Command {
 
     private String serverId;
-    @Getter @Setter private String invoker;
+    @Getter private String invoker;
     @Getter @Setter private String output;
     private HashMap<MetaData,String> metaData;
     private HashMap<Properties,String> properties;
@@ -73,5 +73,11 @@ public class Command {
     public void save(){
         MySqlManager.saveCommand(serverId, invoker, output, metaDataJSON(), propertiesJSON());
         Logger.info(MessageFormat.format("Saved command for server id {0} with invoker {1}, output {2}, metadata {3} and properties {4}", serverId, invoker, output, metaDataJSON(), propertiesJSON()));
+    }
+
+    public void setInvoker(String newInvoker){
+        String oldInvoker = this.invoker;
+        this.invoker = newInvoker;
+        MySqlManager.editInvoker(serverId, oldInvoker, newInvoker);
     }
 }

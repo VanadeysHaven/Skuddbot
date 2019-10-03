@@ -886,7 +886,6 @@ public class Server {
         }
 
         command.setInvoker(newInvoker);
-        MySqlManager.editInvoker(serverID, oldInvoker, newInvoker);
         MessagesUtils.addReaction(message, "Updated invoker `" + oldInvoker + "` to `" + newInvoker + "`.", EmojiEnum.WHITE_CHECK_MARK);
     }
 }
