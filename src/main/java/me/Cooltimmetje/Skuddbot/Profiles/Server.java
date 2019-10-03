@@ -843,7 +843,7 @@ public class Server {
     public void editCommand(IMessage message) {
         String[] args = message.getContent().split(" ");
         if(args.length < 4){
-            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command edit <invoker> <output...>`.", EmojiEnum.X);
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command edit <invoker> <newOutput...>`.", EmojiEnum.X);
             return;
         }
         if(args[2].equalsIgnoreCase("-invoker")){
@@ -867,7 +867,26 @@ public class Server {
         MessagesUtils.addReaction(message, "Edited command `" + args[2] + "` to output `" + newOutput + "`.", EmojiEnum.WHITE_CHECK_MARK);
     }
 
-    public void editInvoker(IMessage message){
+    private void editInvoker(IMessage message){
+        String[] args = message.getContent().split(" ");
+        if(args.length < 5){
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command edit -invoker <oldInvoker> <newInvoker>", EmojiEnum.X);
+            return;
+        }
+        String oldInvoker = args[3];
+        String newInvoker = args[4];
+        if(oldInvoker.equalsIgnoreCase(newInvoker)){
+            MessagesUtils.addReaction(message, "The old and the new invoker are the same!", EmojiEnum.X);
+            return;
+        }
+        Command command = getCommand(oldInvoker);
+        if(command == null){
+            MessagesUtils.addReaction(message, "This command doesn't exist!", EmojiEnum.X);
+            return;
+        }
 
+        command.setInvoker(newInvoker);
+        MySqlManager.editInvoker(serverID, oldInvoker, newInvoker);
+        MessagesUtils.addReaction(message, "Updated invoker `" + oldInvoker + "` to `" + newInvoker + "`.", EmojiEnum.WHITE_CHECK_MARK);
     }
 }

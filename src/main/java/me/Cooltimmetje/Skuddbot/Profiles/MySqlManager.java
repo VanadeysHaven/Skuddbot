@@ -1414,4 +1414,39 @@ public class MySqlManager {
         }
     }
 
+    public static void editInvoker(String serverId, String oldInvoker, String newInvoker) {
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        String query = "UPDATE commands SET invoker=? WHERE server_id=? AND invoker=?";
+
+        try {
+            c = hikari.getConnection();
+            ps = c.prepareStatement(query);
+
+            ps.setString(1, newInvoker);
+            ps.setString(2, serverId);
+            ps.setString(3, oldInvoker);
+
+            ps.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if(c != null){
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 }

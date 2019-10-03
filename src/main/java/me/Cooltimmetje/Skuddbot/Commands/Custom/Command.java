@@ -21,7 +21,7 @@ import java.util.HashMap;
 public class Command {
 
     private String serverId;
-    @Getter private String invoker;
+    @Getter @Setter private String invoker;
     @Getter @Setter private String output;
     private HashMap<MetaData,String> metaData;
     private HashMap<Properties,String> properties;
