@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.Cooltimmetje.Skuddbot.Commands.Custom.Command;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.ServerSettings.ServerSettings;
 import me.Cooltimmetje.Skuddbot.Main;
@@ -33,7 +34,7 @@ import java.util.TreeMap;
  * This class holds settings and profiles for servers, and manages them too.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.2-ALPHA
  */
 
@@ -72,6 +73,7 @@ public class Server {
     public HashMap<String,SkuddUser> discordProfiles = new HashMap<>();
     public HashMap<String,SkuddUser> twitchProfiles = new HashMap<>();
     public HashMap<Long,Long> lastSeen = new HashMap<>();
+    private ArrayList<Command> commands = new ArrayList<>();
 
     /**
      * Constructor for a new server, it puts all the settings to default and asks to initialize the server.
@@ -137,30 +139,31 @@ public class Server {
         this.challengeHandler = new ChallengeHandler(serverID);
         this.ffaHandler = new FFAHandler(serverID);
         this.blackjackHandler = new BlackjackHandler(serverID);
+
+        MySqlManager.loadCommands(serverID);
     }
 
     /**
      * Saves the server settings, and all profiles to the database.
-     *
-     * @param onlySettings If true, profiles will not be saved.
      */
-    public void save(boolean onlySettings){
+    public void save(){
         if(serverInitialized) {
             MySqlManager.saveServer(this);
 
-            if (!onlySettings) {
-                ArrayList<SkuddUser> saved = new ArrayList<>();
-                for (String s : discordProfiles.keySet()) {
-                    discordProfiles.get(s).save();
-                    if (discordProfiles.get(s).getTwitchUsername() != null) {
-                        saved.add(discordProfiles.get(s));
-                    }
+            ArrayList<SkuddUser> saved = new ArrayList<>();
+            for (String s : discordProfiles.keySet()) {
+                discordProfiles.get(s).save();
+                if (discordProfiles.get(s).getTwitchUsername() != null) {
+                    saved.add(discordProfiles.get(s));
                 }
-
-                twitchProfiles.keySet().stream().filter(s -> !saved.contains(twitchProfiles.get(s))).forEach(s -> twitchProfiles.get(s).save());
-
-                Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
             }
+
+            twitchProfiles.keySet().stream().filter(s -> !saved.contains(twitchProfiles.get(s))).forEach(s -> twitchProfiles.get(s).save());
+
+            for(Command command : commands)
+                command.save();
+
+            Logger.info("[SaveServer] " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)).getName() + " (ID: " + serverID + ")");
         }
     }
 
@@ -791,5 +794,121 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Command getCommand(String invoker){
+        for(Command command : commands)
+            if(command.getInvoker().equalsIgnoreCase(invoker))
+                return command;
+        return null;
+    }
+
+    public void runCommand(String invoker, IMessage message){
+        Command command = getCommand(invoker);
+        if(command != null)
+            command.run(message);
+    }
+
+    public boolean doesCommandExist(String invoker){
+        return getCommand(invoker) != null;
+    }
+
+    public void addCommand(IMessage message) {
+        String[] args = message.getContent().split(" ");
+        String invoker = args[2].toLowerCase();
+        StringBuilder sb = new StringBuilder();
+        for(int i=3; i < args.length; i++) sb.append(args[i]).append(" ");
+        String output = sb.toString().trim();
+
+        if(args.length < 4) {
+            MessagesUtils.addReaction(message, "Invalid usage. Usage: `!command add <invoker> <output...>`", EmojiEnum.X);
+            return;
+        }
+        if(doesCommandExist(invoker)){
+            MessagesUtils.addReaction(message, "This command already exists!", EmojiEnum.X);
+            return;
+        }
+
+        Command command = new Command(serverID, invoker, output, message.getAuthor().getLongID());
+        commands.add(command);
+
+        MessagesUtils.addReaction(message, "Added command `" + invoker + "` with output `" + output + "`.", EmojiEnum.WHITE_CHECK_MARK);
+    }
+
+    public void loadCommand(String invoker, String output, String metaData, String properties){
+        Command command = new Command(serverID, invoker, output, metaData, properties);
+        commands.add(command);
+    }
+
+    public void editCommand(IMessage message) {
+        String[] args = message.getContent().split(" ");
+        if(args.length < 4){
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command edit <invoker> <newOutput...>`.", EmojiEnum.X);
+            return;
+        }
+        if(args[2].equalsIgnoreCase("-invoker")){
+            editInvoker(message);
+            return;
+        }
+
+        Command command = getCommand(args[2]);
+        if(command == null){
+            MessagesUtils.addReaction(message, "This command does not exist!", EmojiEnum.X);
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int i=3; i < args.length; i++) sb.append(args[i]).append(" ");
+        String newOutput = sb.toString().trim();
+        command.setOutput(newOutput);
+
+        command.update(message.getAuthor().getLongID());
+        command.save();
+
+
+        MessagesUtils.addReaction(message, "Edited command `" + args[2] + "` to output `" + newOutput + "`.", EmojiEnum.WHITE_CHECK_MARK);
+    }
+
+    private void editInvoker(IMessage message){
+        String[] args = message.getContent().split(" ");
+        if(args.length < 5){
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command edit -invoker <oldInvoker> <newInvoker>", EmojiEnum.X);
+            return;
+        }
+        String oldInvoker = args[3];
+        String newInvoker = args[4];
+        if(oldInvoker.equalsIgnoreCase(newInvoker)){
+            MessagesUtils.addReaction(message, "The old and the new invoker are the same!", EmojiEnum.X);
+            return;
+        }
+        Command command = getCommand(oldInvoker);
+        if(command == null){
+            MessagesUtils.addReaction(message, "This command doesn't exist!", EmojiEnum.X);
+            return;
+        }
+
+        command.update(message.getAuthor().getLongID());
+        command.setInvoker(newInvoker);
+        MessagesUtils.addReaction(message, "Updated invoker `" + oldInvoker + "` to `" + newInvoker + "`.", EmojiEnum.WHITE_CHECK_MARK);
+    }
+
+    public void removeCommand(IMessage message){
+        String[] args = message.getContent().split(" ");
+        if(args.length < 3){
+            MessagesUtils.addReaction(message, "Invalid usage! Usage: `!command remove <invoker>`", EmojiEnum.X);
+            return;
+        }
+        String invoker = args[2];
+        Command command = getCommand(invoker);
+        if(command == null){
+            MessagesUtils.addReaction(message, "This command does not exist!", EmojiEnum.X);
+            return;
+        }
+
+        commands.remove(command);
+        MySqlManager.removeCommand(serverID, invoker);
+
+        MessagesUtils.addReaction(message, "Removed command with invoker `" + invoker + "`.", EmojiEnum.WHITE_CHECK_MARK);
+        Logger.info("Removed command with invoker " + invoker);
     }
 }

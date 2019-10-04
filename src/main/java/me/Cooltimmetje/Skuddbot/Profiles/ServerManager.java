@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Used for handling servers.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerManager {
@@ -61,8 +61,8 @@ public class ServerManager {
      * Save all servers to the database.
      * @param onlySettings If true, profiles will not be saved.
      */
-    public static void saveAll(boolean onlySettings){
-        servers.values().forEach(server -> server.save(onlySettings));
+    public static void saveAll(){
+        servers.values().forEach(server -> server.save());
     }
 
 }

@@ -610,6 +610,9 @@ public class SkuddUser {
         Server server = ServerManager.getServer(serverID);
         boolean elevatedPerms = false;
 
+        if(guild.getLongID() == 224987945638035456L && Main.getInstance().getSkuddbot().getOurUser().getLongID() == 224553721210732544L)
+            return true;
+
         if(server.getAdminRole() != null){
             if(guild.getRolesByName(server.getAdminRole()).size() == 1){
                 elevatedPerms = user.getRolesForGuild(guild).contains(guild.getRolesByName(server.getAdminRole()).get(0));

@@ -15,7 +15,7 @@ import java.util.TimerTask;
  * Activity checker to prevent memory leaks.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5-ALPHA
  * @since v0.2-ALPHA
  */
 public class ActivityChecker extends TimerTask {
@@ -61,7 +61,7 @@ public class ActivityChecker extends TimerTask {
         }
 
         MiscUtils.setPlaying(false);
-        ServerManager.saveAll(true);
+        ServerManager.saveAll();
 
         ArrayList<IMessage> temp = new ArrayList<>();
         for (IMessage message : MessagesUtils.reactions.keySet()){

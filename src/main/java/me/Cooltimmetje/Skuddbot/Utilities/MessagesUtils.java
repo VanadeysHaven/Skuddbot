@@ -109,7 +109,7 @@ public class MessagesUtils {
      *
      * @param msg           The message that we send.
      * @param channel       Channel where we send the message.
-     * @param allowEveryone Defines if we should allow @everyone/@here. If false, @everyone and @here get a ZWC added to them so Discord doesn't trigger it.
+     * @param allowEveryone (optional, default=false)Defines if we should allow @everyone/@here. If false, @everyone and @here get a ZWC added to them so Discord doesn't trigger it.
      * @return The message that was sent.
      */
     @SuppressWarnings("all") //Just because IntelliJ decided to be a dick.
@@ -130,6 +130,10 @@ public class MessagesUtils {
             return null;
         }
         return null;
+    }
+
+    public static IMessage sendPlain (String msg, IChannel channel){
+        return sendPlain(msg, channel, false);
     }
 
     /**
