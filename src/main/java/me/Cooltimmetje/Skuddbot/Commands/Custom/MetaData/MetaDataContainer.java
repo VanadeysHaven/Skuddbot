@@ -20,6 +20,8 @@ public class MetaDataContainer {
     @Getter @Setter private long timeCreated;
     @Getter @Setter private long lastUpdated;
     @Getter @Setter private int timesUsed;
+    @Getter @Setter private long createdBy;
+    @Getter @Setter private long lastUpdatedBy;
 
     public MetaDataContainer(String json) throws ParseException {
         JSONObject obj = (JSONObject) PARSER.parse(json);
@@ -87,6 +89,11 @@ public class MetaDataContainer {
             case TIMES_USED:
                 this.timesUsed = intValue;
                 return null;
+            case CREATED_BY:
+                this.createdBy = longValue;
+                return null;
+            case LAST_UPDATED_BY:
+                this.lastUpdatedBy = longValue;
             default:
                 return null;
         }
@@ -100,6 +107,10 @@ public class MetaDataContainer {
                 return this.lastUpdated+"";
             case TIMES_USED:
                 return this.timesUsed+"";
+            case CREATED_BY:
+                return this.createdBy+"";
+            case LAST_UPDATED_BY:
+                return this.lastUpdatedBy+"";
             default:
                 return null;
         }

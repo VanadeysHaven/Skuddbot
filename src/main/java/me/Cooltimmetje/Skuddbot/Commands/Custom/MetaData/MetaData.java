@@ -12,9 +12,11 @@ import lombok.Getter;
 @Getter
 public enum MetaData {
 
-    TIME_CREATED ("time_created", "Long",    "0"),
-    LAST_UPDATED ("last_updated", "Long",    "0"),
-    TIMES_USED   ("times_used",   "Integer", "0");
+    TIME_CREATED    ("time_created",    "Long",    "0"),
+    LAST_UPDATED    ("last_updated",    "Long",    "0"),
+    TIMES_USED      ("times_used",      "Integer", "0"),
+    CREATED_BY      ("created_by",      "Long",    "0"),
+    LAST_UPDATED_BY ("last_updated_by", "Long",    "0");
 
     private String jsonReference;
     private String type;

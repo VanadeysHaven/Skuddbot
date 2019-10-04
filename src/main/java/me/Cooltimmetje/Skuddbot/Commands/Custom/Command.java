@@ -28,7 +28,7 @@ public class Command {
     private MetaDataContainer metaData;
     private HashMap<Properties,String> properties;
 
-    public Command(String serverId, String invoker, String output){
+    public Command(String serverId, String invoker, String output, long createdBy){
         this.serverId = serverId;
         this.invoker = invoker;
         this.output = output;
@@ -37,6 +37,8 @@ public class Command {
             this.metaData = new MetaDataContainer("{}");
             this.metaData.setTimeCreated(System.currentTimeMillis());
             this.metaData.setLastUpdated(System.currentTimeMillis());
+            this.metaData.setLastUpdatedBy(createdBy);
+            this.metaData.setCreatedBy(createdBy);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -86,7 +88,8 @@ public class Command {
         MySqlManager.editInvoker(serverId, oldInvoker, newInvoker);
     }
 
-    public void update(){
+    public void update(long userId){
         metaData.setLastUpdated(System.currentTimeMillis());
+        metaData.setLastUpdatedBy(userId);
     }
 }
