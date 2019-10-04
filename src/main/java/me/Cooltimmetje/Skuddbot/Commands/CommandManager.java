@@ -179,6 +179,7 @@ public class CommandManager {
                     TdManager.run(event.getMessage());
                     break;
                 case "!command":
+                case "!commands":
                 case "!cmd":
                     CommandEditor.run(event.getMessage());
                     break;

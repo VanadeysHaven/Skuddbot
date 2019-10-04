@@ -4,7 +4,9 @@
 - **CUSTOM COMMANDS!!**
   - Yes, you can now create your own commands!
   - Command: `!command`
-    - Alias: `!cmd`
+    - Aliases: 
+      - `!cmd`
+      - `!commands`
     - Command requires elevated permissions.
   - Commands:
     - Adding of commands:
