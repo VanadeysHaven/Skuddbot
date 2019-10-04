@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import com.vdurmont.emoji.EmojiParser;
 import com.zaxxer.hikari.HikariDataSource;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
@@ -1312,7 +1313,7 @@ public class MySqlManager {
             rs = ps.executeQuery();
 
             while(rs.next()){
-                server.loadCommand(rs.getString("invoker"), rs.getString("output"), rs.getString("metadata"), rs.getString("properties"));
+                server.loadCommand(rs.getString("invoker"), EmojiParser.parseToUnicode(rs.getString("output")), rs.getString("metadata"), rs.getString("properties"));
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -1353,7 +1354,7 @@ public class MySqlManager {
 
             ps.setString(1, serverId);
             ps.setString(2, invoker);
-            ps.setString(3, output);
+            ps.setString(3, EmojiParser.parseToAliases(output));
             ps.setString(4, metadata);
 
             ps.execute();
@@ -1387,7 +1388,7 @@ public class MySqlManager {
             c = hikari.getConnection();
             ps = c.prepareStatement(query);
 
-            ps.setString(1, output);
+            ps.setString(1, EmojiParser.parseToAliases(output));
             ps.setString(2, metadata);
             ps.setString(3, properties);
             ps.setString(4, serverId);
