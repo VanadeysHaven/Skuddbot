@@ -17,7 +17,7 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public class CommandEditor {
 
-    private static final String COMMAND_USAGE = "!commands <add/edit/remove> <invoker>";
+    private static final String COMMAND_USAGE = "!command <add/edit/remove> <invoker>";
 
     public static void run(IMessage message){
         SkuddUser user = ProfileManager.getDiscord(message.getAuthor(), message.getGuild(), true);
