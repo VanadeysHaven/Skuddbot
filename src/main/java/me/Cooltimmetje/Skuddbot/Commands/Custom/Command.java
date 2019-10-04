@@ -55,7 +55,7 @@ public class Command {
         this.output = output;
 
         try {
-            this.metaData = new MetaDataContainer("{}");
+            this.metaData = new MetaDataContainer(metaData);
         } catch (ParseException e) {
             e.printStackTrace();
         }
