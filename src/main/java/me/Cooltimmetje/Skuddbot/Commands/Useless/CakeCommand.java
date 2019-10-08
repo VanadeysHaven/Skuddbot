@@ -23,7 +23,7 @@ public class CakeCommand {
             allowed = MiscUtils.randomCheck(pictureURL);
         } while (!allowed);
 
-        MessagesUtils.sendPlain(":cake:" + pictureURL , message.getChannel(), false);
+        MessagesUtils.sendPlain(":cake: " + pictureURL , message.getChannel(), false);
     }
 
 }
