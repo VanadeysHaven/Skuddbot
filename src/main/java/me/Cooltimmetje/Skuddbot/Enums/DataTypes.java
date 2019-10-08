@@ -6,7 +6,7 @@ import lombok.Getter;
  * Database stuff, to separate stuff from each other.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.5.01-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 @Getter
@@ -20,7 +20,8 @@ public enum DataTypes {
     PUPPY            (512),
     BACON            (512),
     KITTY            (512),
-    AI_NAME          (64 );
+    AI_NAME          (64 ),
+    CAKE             (128);
 
     private int maxLength;
 

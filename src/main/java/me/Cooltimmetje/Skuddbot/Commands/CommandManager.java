@@ -19,7 +19,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5.01-ALPHA
  * @since v0.1-ALPHA
  */
 public class CommandManager {
@@ -182,6 +182,9 @@ public class CommandManager {
                 case "!commands":
                 case "!cmd":
                     CommandEditor.run(event.getMessage());
+                    break;
+                case "!cake":
+                    CakeCommand.run(event.getMessage());
                     break;
                 default:
                     ServerManager.getServer(event.getGuild()).runCommand(invoker, event.getMessage());
