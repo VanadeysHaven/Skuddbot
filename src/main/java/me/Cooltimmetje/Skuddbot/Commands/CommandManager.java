@@ -1,5 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.Channel;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.ServerSettingsCommand;
 import me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin.*;
 import me.Cooltimmetje.Skuddbot.Commands.Custom.CommandEditor;
@@ -10,8 +12,6 @@ import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.TdManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 import java.io.IOException;
 
@@ -19,7 +19,7 @@ import java.io.IOException;
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5.01-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class CommandManager {
@@ -29,11 +29,10 @@ public class CommandManager {
      *
      * @param event The event that the message triggered.
      */
-    @EventSubscriber
-    public void onMessage(MessageReceivedEvent event){
-        String invoker = event.getMessage().getContent().split(" ")[0].toLowerCase();
+    public static void onMessage(MessageCreateEvent event){
+        String invoker = event.getMessage().getContent().get().split(" ")[0].toLowerCase();
 
-        if(!event.getMessage().getChannel().isPrivate()) {
+        if(event.getMessage().getChannel().block().getType() == Channel.Type.GUILD_TEXT) {
             switch (invoker) {
                     case "!game":
                     GameCommand.run(event.getMessage());
@@ -190,8 +189,8 @@ public class CommandManager {
                     ServerManager.getServer(event.getGuild()).runCommand(invoker, event.getMessage());
                     break;
             }
-        } else {
-            switch (event.getMessage().getContent().split(" ")[0].toLowerCase()) {
+        } else if (event.getMessage().getChannel().block().getType() == Channel.Type.DM){
+            switch (event.getMessage().getContent().get().split(" ")[0].toLowerCase()) {
                 case "!confirm":
                     TwitchLinkCommand.confirm(event.getMessage());
                     break;

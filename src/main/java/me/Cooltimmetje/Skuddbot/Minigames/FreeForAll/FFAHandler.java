@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * This class handles the FFA command on a per-server basis.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.4-ALPHA
  */
 public class FFAHandler {
@@ -199,7 +199,7 @@ public class FFAHandler {
             if(!s.equals(winner.getStringID()))
                 sbRewards.append(channel.getGuild().getUserByID(Long.parseLong(s)).getDisplayName(guild)).append(": *+").append(KILL_REWARD * kills.get(s)).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(s)).append(" kills)\n");
         }
-        sbRewards.append("*Click the ").append(EmojiEnum.NOTEPAD_SPIRAL.getEmoji()).append(" reaction to view the kill feed.*");
+        sbRewards.append("*Click the ").append(EmojiEnum.NOTEPAD_SPIRAL.getUnicode()).append(" reaction to view the kill feed.*");
         String rewards = sbRewards.toString();
 
 

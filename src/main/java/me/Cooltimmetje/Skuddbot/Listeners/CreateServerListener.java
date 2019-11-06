@@ -1,12 +1,9 @@
 package me.Cooltimmetje.Skuddbot.Listeners;
 
+import discord4j.core.event.domain.guild.GuildCreateEvent;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.util.ArrayList;
 
@@ -14,15 +11,14 @@ import java.util.ArrayList;
  * Stuff to handle when we join a server.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.41-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.2-ALPHA
  */
 public class CreateServerListener {
 
     public static ArrayList<String> authorized = new ArrayList<>();
 
-    @EventSubscriber
-    public void onCreate(GuildCreateEvent event){
+    public static void onCreate(GuildCreateEvent event){
         if(authorized.contains(event.getGuild().getStringID())) {
             Logger.info("[ServerAuthorization] " + event.getGuild().getName() + " (ID: " + event.getGuild().getStringID() + ") is authorized to use Skuddbot.");
             ServerManager.getServer(event.getGuild().getStringID());

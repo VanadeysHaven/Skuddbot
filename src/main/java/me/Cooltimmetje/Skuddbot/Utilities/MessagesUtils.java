@@ -1,26 +1,23 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
-import com.vdurmont.emoji.EmojiManager;
+import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.reaction.ReactionEmoji;
+import discord4j.core.object.util.Snowflake;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import org.json.simple.JSONObject;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
-import sx.blah.discord.util.RequestBuffer;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class is used for message sending, there is a separate class for this so that I don't have try-catches all over my code. Keep it nice and tidy. SeemsGood
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class MessagesUtils {
@@ -28,7 +25,7 @@ public class MessagesUtils {
     /**
      * This HashMap is to save messages that have been reacted to, to recall their original message so we can print it out when people react to it.
      */
-    public static HashMap<IMessage, JSONObject> reactions = new HashMap<>();
+    public static HashMap<Message, JSONObject> reactions = new HashMap<>();
 
     /**
      * This adds a reaction to the specified message with the specified emoji. The debug string get's saved to recall later and will be posted upon reaction from the original author with the same emoji.
@@ -39,18 +36,14 @@ public class MessagesUtils {
      * @param expireTime (optional, default=1800000) This sets the the time for how long the debug string will be stored for in the HashMap.
      */
     @SuppressWarnings("unchecked")
-    public static void addReaction(IMessage message, String debug, EmojiEnum emoji, boolean ignoreUser, long expireTime) {
-        try {
-            RequestBuffer.request(() -> message.addReaction(EmojiManager.getForAlias(emoji.getAlias())));
-        } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-            e.printStackTrace();
-        }
+    public static void addReaction(Message message, String debug, EmojiEnum emoji, boolean ignoreUser, long expireTime) {
+        message.addReaction(ReactionEmoji.unicode(emoji.getUnicode()));
 
         JSONObject obj = new JSONObject();
 
         obj.put("time", System.currentTimeMillis());
         obj.put("debug", debug);
-        obj.put("emoji", emoji.getEmoji());
+        obj.put("emoji", emoji.getUnicode());
         obj.put("ignoreUser", ignoreUser);
         obj.put("expireTime", expireTime);
 
@@ -58,11 +51,11 @@ public class MessagesUtils {
     }
 
 
-    public static void addReaction(IMessage message, String debug, EmojiEnum emoji, boolean ignoreUser){
+    public static void addReaction(Message message, String debug, EmojiEnum emoji, boolean ignoreUser){
         addReaction(message, debug, emoji, ignoreUser, 30*60*1000);
     }
 
-    public static void addReaction(IMessage message, String debug, EmojiEnum emoji){
+    public static void addReaction(Message message, String debug, EmojiEnum emoji){
         addReaction(message, debug, emoji, false, 30*60*1000);
     }
 
@@ -71,15 +64,15 @@ public class MessagesUtils {
      *
      * @param event The event that fires this.
      */
-    @EventSubscriber
-    public void onReaction(ReactionAddEvent event) {
-        if(event.getUser().isBot()) return;
-        if(reactions.containsKey(event.getMessage())) { //Check if the message is actually eligible for a "debug" string.
+    public static void onReaction(ReactionAddEvent event) {
+        if(event.getUser().block().isBot()) return;
+        if(reactions.containsKey(event.getMessage().block())) { //Check if the message is actually eligible for a "debug" string.
             JSONObject obj = reactions.get(event.getMessage()); //Save it for sake of code tidyness.
-            if (event.getReaction().getUserReacted(Main.getInstance().getSkuddbot().getOurUser())) { //Check if the bot reacted the same.
-                if (event.getReaction().getUserReacted(event.getMessage().getAuthor()) || Boolean.parseBoolean(String.valueOf(obj.get("ignoreUser")))) { //Check if the original author reacted or if we should ignore users.
+            List<User> reactors = event.getMessage().block().getReactors(event.getEmoji()).collectList().block();
+            if (reactors.contains(Main.getInstance().getSkuddbot().getSelf().block())) { //Check if the bot reacted the same.
+                if (reactors.contains(event.getMessage().block().getAuthor().get()) || Boolean.parseBoolean(String.valueOf(obj.get("ignoreUser")))) { //Check if the original author reacted or if we should ignore users.
                     if (obj.get("debug") != null) { //Check if there's a debug string.
-                        sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().getChannel(), false); //Post the message.
+                        sendPlain(obj.get("emoji") + " " + obj.get("debug"), event.getMessage().block().getChannel().block(), false); //Post the message.
                     }
 
                     reactions.remove(event.getMessage()); //Remove it from the HashMap as we no longer need it there.
@@ -94,13 +87,9 @@ public class MessagesUtils {
      * @param message Message that we send, gets appended to the emoji.
      * @param channel Channel where we send the message.
      */
-    public static void sendSuccess(String message, IChannel channel) {
+    public static void sendSuccess(String message, MessageChannel channel) {
         if (!Constants.MUTED) {
-            try {
-                RequestBuffer.request(() -> channel.sendMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere")));
-            } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                e.printStackTrace();
-            }
+            channel.createMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
         }
     }
 
@@ -113,26 +102,19 @@ public class MessagesUtils {
      * @return The message that was sent.
      */
     @SuppressWarnings("all") //Just because IntelliJ decided to be a dick.
-    public static IMessage sendPlain(String msg, IChannel channel, boolean allowEveryone) {
+    public static Message sendPlain(String msg, MessageChannel channel, boolean allowEveryone) {
         if (!allowEveryone) {
             msg = msg.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere");
         }
         String msgFinal = msg;
         if (!Constants.MUTED) {
-            try {
-                IMessage message = RequestBuffer.request(() -> {
-                    return channel.sendMessage(msgFinal);
-                }).get();
-                return message;
-            } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                e.printStackTrace();
-            }
-            return null;
+            Message message = channel.createMessage(msgFinal).block();
+            return message;
         }
         return null;
     }
 
-    public static IMessage sendPlain (String msg, IChannel channel){
+    public static Message sendPlain (String msg, MessageChannel channel){
         return sendPlain(msg, channel, false);
     }
 
@@ -143,14 +125,9 @@ public class MessagesUtils {
      * @param message The message that we send.
      * @return The message that was sent.
      */
-    public static IMessage sendPM(IUser user, String message) {
+    public static Message sendPM(User user, String message) {
         if (!Constants.MUTED) {
-            try {
-                return RequestBuffer.request(() -> Main.getInstance().getSkuddbot().getOrCreatePMChannel(user).sendMessage(message)).get();
-            } catch (DiscordException | RateLimitException | MissingPermissionsException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return user.getPrivateChannel().block().createMessage(message).block();
         }
         return null;
     }
@@ -158,11 +135,12 @@ public class MessagesUtils {
     /**
      * Gets the message with the specified ID
      *
-     * @param id The ID of the message we want to get.
+     * @param messageId The ID of the message we want to get.
+     * @param channelId The ID of the channel where the message is in.
      * @return The message we want.
      */
-    public static IMessage getMessageByID(long id){
-        return Main.getInstance().getSkuddbot().getMessageByID(id);
+    public static Message getMessageByID(long messageId, long channelId){
+        return Main.getInstance().getSkuddbot().getMessageById(Snowflake.of(channelId), Snowflake.of(messageId)).block();
     }
 
 

@@ -16,7 +16,7 @@ import java.text.MessageFormat;
  * This is for users to edit their personal settings.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 public class UserSettingsCommand {
@@ -77,7 +77,7 @@ public class UserSettingsCommand {
             String result = user.setSetting(setting, value);
 
             if(result == null){
-                MessagesUtils.addReaction(message, MessageFormat.format("Setting `{0}` has been updated to `{1}`!" + ((setting == UserSettings.TRACK_ME && user.isLinked()) ? "\n" + EmojiEnum.WARNING.getEmoji() + " Since you have Twitch account linked, this change also applies on Twitch." : ""), setting.toString(), value), EmojiEnum.WHITE_CHECK_MARK, false);
+                MessagesUtils.addReaction(message, MessageFormat.format("Setting `{0}` has been updated to `{1}`!" + ((setting == UserSettings.TRACK_ME && user.isLinked()) ? "\n" + EmojiEnum.WARNING.getUnicode() + " Since you have Twitch account linked, this change also applies on Twitch." : ""), setting.toString(), value), EmojiEnum.WHITE_CHECK_MARK, false);
             } else {
                 MessagesUtils.addReaction(message, result, EmojiEnum.X, false);
             }

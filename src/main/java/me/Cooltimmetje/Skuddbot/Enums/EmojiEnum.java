@@ -6,7 +6,7 @@ import lombok.Getter;
  * This is to easily recall emoji's without going out and copying them.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
@@ -42,11 +42,11 @@ public enum EmojiEnum {
     Q                       ("\uD83C\uDDF6", "regional_indicator_symbol_q"),
     S                       ("\uD83C\uDDF8", "regional_indicator_symbol_s");
 
-    private String emoji;
+    private String unicode;
     private String alias;
 
-    EmojiEnum(String emoji, String alias){
-        this.emoji = emoji;
+    EmojiEnum(String unicode, String alias){
+        this.unicode = unicode;
         this.alias = alias;
     }
 
@@ -56,7 +56,7 @@ public enum EmojiEnum {
 
     public static EmojiEnum getByUnicode(String unicodeEmoji){
         for(EmojiEnum emoji : EmojiEnum.values()){
-            if(emoji.getEmoji().equals(unicodeEmoji)){
+            if(emoji.getUnicode().equals(unicodeEmoji)){
                 return emoji;
             }
         }

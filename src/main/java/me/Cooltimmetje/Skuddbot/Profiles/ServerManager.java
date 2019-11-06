@@ -1,6 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
-import sx.blah.discord.handle.obj.IGuild;
+import discord4j.core.object.entity.Guild;
 
 import java.util.HashMap;
 
@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Used for handling servers.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.2-ALPHA
  */
 public class ServerManager {
@@ -22,8 +22,8 @@ public class ServerManager {
      * @param guild The Guild Instance of the server we want.
      * @return The server instance.
      */
-    public static Server getServer(IGuild guild){
-        return getServer(guild.getStringID());
+    public static Server getServer(Guild guild){
+        return getServer(guild.getId().asString());
     }
 
     /**
@@ -59,7 +59,6 @@ public class ServerManager {
 
     /**
      * Save all servers to the database.
-     * @param onlySettings If true, profiles will not be saved.
      */
     public static void saveAll(){
         servers.values().forEach(server -> server.save());

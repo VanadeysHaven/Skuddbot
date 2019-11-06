@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import discord4j.core.object.entity.Role;
 import me.Cooltimmetje.Skuddbot.Enums.Avatars;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Main;
@@ -17,7 +18,7 @@ import java.util.*;
  * Some useful utilities I can use throughout the code.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.51-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class MiscUtils {
@@ -394,4 +395,13 @@ public class MiscUtils {
 
         return sb.toString();
     }
+
+    public static Role getRoleByString(List<Role> roles, String name){
+        for(Role role : roles){
+            if(role.getName().equals(name)) return role;
+        }
+
+        return null;
+    }
+
 }

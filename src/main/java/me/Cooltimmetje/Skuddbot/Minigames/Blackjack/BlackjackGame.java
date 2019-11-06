@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * This is a game of blackjack, with all the needed functions to carry out an game.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.5-ALPHA
  */
 public class BlackjackGame {
@@ -100,7 +100,7 @@ public class BlackjackGame {
                 su.setBlackjackLosses(su.getBlackjackLosses() + 1);
                 gameState = GameStates.ENDED;
             } else {
-                playingInstructions = "*Press " + EmojiEnum.H.getEmoji() + " to hit, press " + EmojiEnum.S.getEmoji() + " to stand.*";
+                playingInstructions = "*Press " + EmojiEnum.H.getUnicode() + " to hit, press " + EmojiEnum.S.getUnicode() + " to stand.*";
                 gameState = GameStates.PLAYER_PLAYING;
             }
         } else if (gameState == GameStates.DEALER_PLAYING) {
@@ -186,7 +186,7 @@ public class BlackjackGame {
         }
 
         if(cards.size() == 1){
-            sb.append(EmojiEnum.QUESTION.getEmoji()).append(" ").append(EmojiEnum.QUESTION.getEmoji()).append(" | ");
+            sb.append(EmojiEnum.QUESTION.getUnicode()).append(" ").append(EmojiEnum.QUESTION.getUnicode()).append(" | ");
         }
 
         String hand = sb.toString();

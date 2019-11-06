@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * This allows people to challenge each other. Winner is picked at random.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.42-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.3-ALPHA
  */
 
@@ -172,8 +172,8 @@ public class ChallengeHandler {
     private void startOpenChallenge(IMessage message){
         openChallenges.add(message.getAuthor().getStringID());
 
-        IMessage messageSent = MessagesUtils.sendPlain(MessageFormat.format(EmojiEnum.CROSSED_SWORDS.getEmoji() + "**{0}** has put down an open fight, anyone can accept it! Click the {1} to accept.",
-                message.getAuthor().getDisplayName(message.getGuild()), EmojiEnum.CROSSED_SWORDS.getEmoji()), message.getChannel(), false);
+        IMessage messageSent = MessagesUtils.sendPlain(MessageFormat.format(EmojiEnum.CROSSED_SWORDS.getUnicode() + "**{0}** has put down an open fight, anyone can accept it! Click the {1} to accept.",
+                message.getAuthor().getDisplayName(message.getGuild()), EmojiEnum.CROSSED_SWORDS.getUnicode()), message.getChannel(), false);
         RequestBuffer.request(() -> messageSent.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
 
         senderMessage.put(message.getAuthor().getStringID(), message.getStringID());
@@ -187,7 +187,7 @@ public class ChallengeHandler {
             outstandingChallenges.put(message.getAuthor().getStringID(), message.getMentions().get(0).getStringID());
             senderMessage.put(message.getAuthor().getStringID(), message.getStringID());
 
-            IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getEmoji() + " **" + message.getAuthor().getDisplayName(message.getGuild()) + "** has challenged **" + message.getMentions().get(0).getDisplayName(message.getGuild()) + "** to a fight! " +
+            IMessage messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " **" + message.getAuthor().getDisplayName(message.getGuild()) + "** has challenged **" + message.getMentions().get(0).getDisplayName(message.getGuild()) + "** to a fight! " +
                     "To accept click the reaction below!", message.getChannel(), false);
             messageBot.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias()));
 
@@ -217,7 +217,7 @@ public class ChallengeHandler {
         if(challengerOne == null){
             return;
         }
-        if(!event.getReaction().getEmoji().getName().equals(EmojiEnum.CROSSED_SWORDS.getEmoji())) {
+        if(!event.getReaction().getEmoji().getName().equals(EmojiEnum.CROSSED_SWORDS.getUnicode())) {
             return;
         }
 
@@ -293,12 +293,12 @@ public class ChallengeHandler {
         SkuddUser suLoser = ProfileManager.getDiscord(loser, channel.getGuild(), true);
 
         String fightAnnounceFormat = "{0} **{1}** and **{2}** go head to head in {3}, who will win? *3*... *2*... *1*... **FIGHT!**";
-        MessagesUtils.sendPlain(MessageFormat.format(fightAnnounceFormat, EmojiEnum.CROSSED_SWORDS.getEmoji(), challengerOne.getDisplayName(channel.getGuild()), challengerTwo.getDisplayName(channel.getGuild()), server.getArenaName()), channel, false);
+        MessagesUtils.sendPlain(MessageFormat.format(fightAnnounceFormat, EmojiEnum.CROSSED_SWORDS.getUnicode(), challengerOne.getDisplayName(channel.getGuild()), challengerTwo.getDisplayName(channel.getGuild()), server.getArenaName()), channel, false);
         channel.setTypingStatus(true);
 
         exec.schedule(() -> {
             String rewards = updateStats(suWinner, suLoser, Platforms.DISCORD);
-            String messageToSend = MessageFormat.format("{0} The crowd goes wild, but suddenly a scream of victory sounds! **{1}** has won the fight! \n\n{2}", EmojiEnum.CROSSED_SWORDS.getEmoji(), winner.getDisplayName(channel.getGuild()), rewards);
+            String messageToSend = MessageFormat.format("{0} The crowd goes wild, but suddenly a scream of victory sounds! **{1}** has won the fight! \n\n{2}", EmojiEnum.CROSSED_SWORDS.getUnicode(), winner.getDisplayName(channel.getGuild()), rewards);
             MessagesUtils.sendPlain(messageToSend, channel, false);
 
             targetPunch.remove(challengerOne);

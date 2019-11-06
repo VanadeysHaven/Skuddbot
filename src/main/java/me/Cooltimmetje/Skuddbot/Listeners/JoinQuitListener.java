@@ -1,68 +1,54 @@
 package me.Cooltimmetje.Skuddbot.Listeners;
 
-import me.Cooltimmetje.Skuddbot.Main;
+import discord4j.core.event.domain.guild.MemberJoinEvent;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.entity.Role;
+import discord4j.core.object.util.Snowflake;
+import discord4j.core.spec.EmbedCreateSpec;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
-import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
-import sx.blah.discord.handle.impl.events.guild.member.UserLeaveEvent;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IRole;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.EmbedBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
-import java.util.List;
+import java.awt.*;
+import java.util.function.Consumer;
 
 /**
  * Stuff to handle when a user joins/leaves
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA-DEV
  */
 public class JoinQuitListener {
 
-    @EventSubscriber
-    public void onJoin(UserJoinEvent event){
-        Server server = ServerManager.getServer(event.getGuild().getStringID());
+    public static void onJoin(MemberJoinEvent event){
+        Server server = ServerManager.getServer(event.getGuild().block().getId().asString());
         if(server.getWelcomeMessage() != null) {
-            String message = ServerManager.getServer(event.getGuild().getStringID()).getWelcomeMessage()
-                    .replace("$user", event.getUser().getName())
-                    .replace("$guild", event.getGuild().getName())
+            String message = ServerManager.getServer(event.getGuild().block().getId().asString()).getWelcomeMessage()
+                    .replace("$user", event.getMember().getDisplayName())
+                    .replace("$guild", event.getMember().getDisplayName())
                     .replace("$nl","\n");
-            IChannel channel = server.getWelcomeGoodbyeChannel() != null ?
-                    event.getGuild().getChannelByID(Long.parseLong(server.getWelcomeGoodbyeChannel())) :
-                    event.getGuild().getChannelByID(event.getGuild().getLongID());
+            MessageChannel channel = (MessageChannel) (server.getWelcomeGoodbyeChannel() != null ?
+                    event.getGuild().block().getChannelById(Snowflake.of(server.getWelcomeGoodbyeChannel())).block() :
+                    event.getGuild().block().getChannelById(event.getGuildId()).block());
 
-            EmbedBuilder builder = new EmbedBuilder();
 
-            builder.withColor(MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255));
-            builder.withTitle(message);
-            if(server.getGoodbyeMsgAttach() != null) {
-                builder.withImage(server.getWelcomeMsgAttach());
-            }
-            channel.sendMessage(builder.build());
-
+            Consumer<EmbedCreateSpec> template = embedSpec -> {
+                embedSpec.setColor(new Color(MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255)));
+                embedSpec.setTitle(message);
+            };
+            channel.createMessage(messageSpec -> {
+                messageSpec.setEmbed(template);
+            });
         }
         if(server.getRoleOnJoin() != null){
-            IUser user = Main.getInstance().getSkuddbot().getUserByID(event.getUser().getLongID());
-            IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(server.getServerID()));
-            List<IRole> roleList = user.getRolesForGuild(guild);
+            Member user = event.getMember();
+            Guild guild = event.getGuild().block();
+            Role role = MiscUtils.getRoleByString(guild.getRoles().collectList().block(), server.getRoleOnJoin());
 
-            roleList.add(guild.getRolesByName(server.getRoleOnJoin()).get(0));
-            IRole[] roles = roleList.toArray(new IRole[roleList.size()]);
-
-            try {
-                guild.editUserRoles(user, roles);
-            } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-                Logger.warn("Couldn't add role. See Stacktrace", e);
-            }
+            user.addRole(role.getId()).block();
         }
     }
 

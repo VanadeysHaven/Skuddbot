@@ -1,5 +1,12 @@
 package me.Cooltimmetje.Skuddbot;
 
+import discord4j.core.DiscordClient;
+import discord4j.core.DiscordClientBuilder;
+import discord4j.core.event.domain.guild.GuildCreateEvent;
+import discord4j.core.event.domain.guild.MemberJoinEvent;
+import discord4j.core.event.domain.guild.MemberLeaveEvent;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.event.domain.message.ReactionAddEvent;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
@@ -13,12 +20,6 @@ import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.TdManager;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.*;
-import sx.blah.discord.api.ClientBuilder;
-import sx.blah.discord.api.IDiscordClient;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.ReadyEvent;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MentionEvent;
-import sx.blah.discord.util.DiscordException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,36 +27,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Holds the Skuddbot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.5-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class Skuddbot {
 
-    private volatile IDiscordClient skuddbot;
+    private volatile DiscordClient skuddbot;
     private String token;
     private final AtomicBoolean reconnect = new AtomicBoolean(true);
-    private boolean preReadyListenersReady = false;
     private boolean listenersReady = false;
 
     public Skuddbot(String token){
         this.token = token;
     }
 
-    public void login() throws DiscordException {
-        skuddbot = new ClientBuilder().withToken(token).setMaxReconnectAttempts(3).login();
-        if(!preReadyListenersReady) {
-            skuddbot.getDispatcher().registerListeners(this, new CreateServerListener());
-
-            preReadyListenersReady = true;
-        }
+    public void login() {
+        skuddbot = new DiscordClientBuilder(token).build();
+        registerListeners();
+        skuddbot.login().block();
     }
 
-    @EventSubscriber
-    public void onReady(ReadyEvent event){
+    public void registerListeners(){
         if(!listenersReady){
             MiscUtils.setPlaying(true);
 
-            skuddbot.getDispatcher().registerListeners(new CommandManager(), new XPGiver(), new JoinQuitListener(), new TwitchLiveListener(), new MessagesUtils(),
+            skuddbot.getEventDispatcher().on(GuildCreateEvent.class).subscribe(CreateServerListener::onCreate);
+            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(MessagesUtils::onReaction);
+            skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(CommandManager::onMessage);
+            skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(XPGiver::onMessage);
+            skuddbot.getEventDispatcher().on(MemberJoinEvent.class).subscribe(JoinQuitListener::onJoin);
+            skuddbot.getEventDispatcher().on(MemberLeaveEvent.class).subscribe();
+
+            skuddbot.getDispatcher().registerListeners(new CommandManager(), new XPGiver(), new JoinQuitListener(), new TwitchLiveListener(),
             new ChallengeManager(), new FFAManager(), new BlackjackManager(), new TdManager());
 
             Main.getSkuddbotTwitch().joinChannels();
@@ -112,7 +115,7 @@ public class Skuddbot {
 
     }
 
-    public IDiscordClient getSkuddbot(){
+    public DiscordClient getSkuddbot(){
         return skuddbot;
     }
 

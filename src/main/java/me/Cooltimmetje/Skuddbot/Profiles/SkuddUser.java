@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import discord4j.core.object.entity.Message;
 import lombok.Getter;
 import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.AccountType;
@@ -34,7 +35,7 @@ import java.util.List;
  * Holds user data. Doesn't need much explanation imo...
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 @Getter
@@ -144,7 +145,7 @@ public class SkuddUser {
         }
     }
 
-    public int[] calcXP(boolean showLevelUp, IMessage message){
+    public int[] calcXP(boolean showLevelUp, Message message){
         if(showLevelUp && message == null) throw new IllegalArgumentException("We need a message to find the channel where we should post the level up message.");
         Server server = ServerManager.getServer(getServerID());
         int exp,level,needed;
