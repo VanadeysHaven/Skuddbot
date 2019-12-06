@@ -7,6 +7,7 @@ import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.event.domain.message.ReactionRemoveEvent;
 import me.Cooltimmetje.Skuddbot.Commands.CommandManager;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Experience.XPGiver;
@@ -59,6 +60,8 @@ public class Skuddbot {
             skuddbot.getEventDispatcher().on(MemberLeaveEvent.class).subscribe(JoinQuitListener::onLeave);
             skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(TwitchLiveListener::onMessage);
             skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(ChallengeManager::onReaction);
+            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(FFAManager::onReaction);
+            skuddbot.getEventDispatcher().on(ReactionRemoveEvent.class).subscribe(FFAManager::onReactionRemove);
 
 
             skuddbot.getDispatcher().registerListeners(new FFAManager(), new BlackjackManager(), new TdManager());

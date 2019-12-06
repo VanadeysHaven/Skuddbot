@@ -1,6 +1,10 @@
 package me.Cooltimmetje.Skuddbot.Minigames.FreeForAll;
 
-import com.vdurmont.emoji.EmojiManager;
+import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.event.domain.message.ReactionRemoveEvent;
+import discord4j.core.object.entity.*;
+import discord4j.core.object.reaction.ReactionEmoji;
+import discord4j.core.object.util.Snowflake;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
@@ -8,13 +12,6 @@ import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.*;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionRemoveEvent;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.RequestBuffer;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -50,186 +47,166 @@ public class FFAHandler {
     }
 
     // ---- DISCORD ----
-    private ArrayList<IUser> entrants = new ArrayList<>();
+    private ArrayList<Member> entrants = new ArrayList<>();
 
-    private IUser host;
+    private Member host;
     private long messageSent;
     private long messageHost;
     private boolean startReact;
     private long lastReminder;
     private int lastEntrants;
+    private MessageChannel channel;
 
-    void enter(IMessage message){
-        String[] args = message.getContent().split(" ");
-        if(cooldownManager.isOnCooldown(message.getAuthor().getStringID())){
-            MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().mention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
+    void enter(Message message){
+        String[] args = message.getContent().get().split(" ");
+        if(cooldownManager.isOnCooldown(message.getAuthor().get().getId().asString())){
+            MessagesUtils.addReaction(message, "Hold on there, **" + message.getAuthor().get().getMention() + "**, you're still wounded from the last fight.", EmojiEnum.HOURGLASS_FLOWING_SAND, false);
             return;
         }
 
-        if(message.getAuthor() == host){
+        if(message.getAuthor().get().asMember(Snowflake.of(serverID)).block() == host){
             if(args.length > 1){
                 if(args[1].equalsIgnoreCase("-start")){
                     if(entrants.size() > 1) {
-                        startFight(message.getChannel());
-                        RequestBuffer.request(message::delete);
+                        startFight(message.getChannel().block());
+                        message.delete().block();
                     }
                 }
             }
         }
 
         if(host == null) {
-            host = message.getAuthor();
-            messageHost = message.getLongID();
+            host = message.getAuthor().get().asMember(Snowflake.of(serverID)).block();
+            messageHost = message.getId().asLong();
             messageSent = MessagesUtils.sendPlain(MessageFormat.format("{0} **{1}** is looking to host a free for all fight, anyone can participate!\n" +
                             "Click the {0} reaction to enter, {1} can start the fight by clicking the {2} reaction.",
-                    EmojiEnum.CROSSED_SWORDS.getString(), message.getAuthor().getDisplayName(message.getGuild()), EmojiEnum.WHITE_CHECK_MARK.getString()),
-                    message.getChannel(), false).getLongID();
+                    EmojiEnum.CROSSED_SWORDS.getString(), message.getAuthor().get().asMember(Snowflake.of(serverID)).block().getDisplayName(), EmojiEnum.WHITE_CHECK_MARK.getString()),
+                    message.getChannel().block(), false).getId().asLong();
 
-            RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
-            entrants.add(message.getAuthor());
+            MessagesUtils.getMessageByID(messageSent, Long.parseLong(serverID)).addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode())).block();
+            entrants.add(message.getAuthor().get().asMember(Snowflake.of(serverID)).block());
             startReact = false;
             lastReminder = System.currentTimeMillis();
+            channel = message.getChannel().block();
         } else {
-            RequestBuffer.request(message::delete);
+            message.delete().block();
         }
     }
 
     void reactionAdd(ReactionAddEvent event){
-        Logger.info(MessageFormat.format("FFA Reaction | Server ID: {0} | Reaction: {1} | User: {2}#{3}",
-                serverID, event.getReaction().getEmoji().getName(), event.getUser().getName(), event.getUser().getDiscriminator()));
-        if(event.getUser().isBot()){
-            Logger.info("Reaction is from a bot, stopping...");
-            return;
-        }
-        if(event.getMessage().getLongID() != messageSent){
-            Logger.info("Reaction is on an invalid message, stopping...");
-            return;
-        }
-        String unicodeEmoji = event.getReaction().getEmoji().getName();
+        String unicodeEmoji = event.getEmoji().asUnicodeEmoji().get().getRaw();
 
-        if(EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.WHITE_CHECK_MARK){
-            if(event.getUser() != host){
-                Logger.info("This user may not trigger this reaction, stopping...");
-                return;
-            }
-
+        if(unicodeEmoji == EmojiEnum.WHITE_CHECK_MARK.getUnicode()){
             if(entrants.size() > 2){
-                Logger.info("Starting fight...");
-                startFight(event.getChannel());
+                startFight(event.getChannel().block());
             } else {
-                Logger.info("Not enough entrants, stopping...");
-                RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
+                MessagesUtils.getMessageByID(messageSent, Long.parseLong(serverID)).removeReaction(ReactionEmoji.unicode(EmojiEnum.WHITE_CHECK_MARK.getUnicode()), event.getUserId()).block();
             }
         } else if (EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.CROSSED_SWORDS){
-            if(event.getUser() == host){
-                Logger.info("This user may not trigger this reaction, removing reaction...");
-                RequestBuffer.request(() -> event.getMessage().removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
+            if(event.getUser().block().asMember(Snowflake.of(serverID)).block() == host){
+                event.getMessage().block().removeReaction(ReactionEmoji.unicode(EmojiEnum.WHITE_CHECK_MARK.getUnicode()), event.getUserId()).block();
                 return;
             }
 
             if(!entrants.contains(event.getUser())) {
-                Logger.info("Adding user to fight...");
-                entrants.add(event.getUser());
+                entrants.add(event.getUser().block().asMember(Snowflake.of(serverID)).block());
                 if((entrants.size() > 2) && !startReact){
-                    RequestBuffer.request(() -> MessagesUtils.getMessageByID(messageSent).addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
+                    MessagesUtils.getMessageByID(messageSent, Long.parseLong(serverID)).addReaction(ReactionEmoji.unicode(EmojiEnum.WHITE_CHECK_MARK.getUnicode())).block();
                     startReact = true;
                 }
             }
         } else if(EmojiEnum.getByUnicode(unicodeEmoji) == EmojiEnum.EYES){
-            if(ProfileManager.getDiscord(event.getUser(), event.getGuild(), true).hasElevatedPermissions()){
-                Logger.info("User has elevated permissions.");
+            if(ProfileManager.getDiscord(toMember(event.getUser().block()), true).hasElevatedPermissions()){
                 if(entrants.size() > 1){
-                    Logger.info("Starting fight...");
-                    startFight(event.getChannel());
+                    startFight(event.getChannel().block());
                 } else {
-                    Logger.info("Not enough entrants, stopping...");
-                    MessagesUtils.getMessageByID(messageSent).removeReaction(event.getUser(), EmojiManager.getForAlias(EmojiEnum.EYES.getAlias()));
+                    MessagesUtils.getMessageByID(messageSent, Long.parseLong(serverID)).removeReaction(ReactionEmoji.unicode(EmojiEnum.EYES.getUnicode()), event.getUserId()).block();
                 }
             }
         }
     }
 
     void reactionRemove(ReactionRemoveEvent event){
-        if(event.getUser() == host){
+        if(toMember(event.getUser().block()) == host){
             return;
         }
-        if(event.getMessage().getLongID() != messageSent){
+        if(event.getMessage().block().getId().asLong() != messageSent){
             return;
         }
-        if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) != EmojiEnum.CROSSED_SWORDS){
+        if(event.getEmoji().asUnicodeEmoji().get().getRaw().equals(EmojiEnum.CROSSED_SWORDS.getUnicode())){
             return;
         }
 
-        entrants.remove(event.getUser());
+        entrants.remove(toMember(event.getUser().block()));
     }
 
-    private void startFight(IChannel channel) {
+    private void startFight(MessageChannel channel) {
         int entrantsAmount = entrants.size();
-        IGuild guild = channel.getGuild();
-        Server server = ServerManager.getServer(channel.getGuild().getStringID());
+        Guild guild = ((TextChannel)channel).getGuild().block();
+        Server server = ServerManager.getServer(guild.getId().asString());
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-        String entrantsString = formatNames(channel);
+        String entrantsString = formatNames();
 
         StringBuilder sbKillFeed = new StringBuilder();
-        ArrayList<IUser> tempEntrants = new ArrayList<>(entrants);
+        ArrayList<Member> tempEntrants = new ArrayList<>(entrants);
         HashMap<String,Integer> kills = new HashMap<>();
         sbKillFeed.append("**Free for all killfeed:**\n");
         while (tempEntrants.size() > 1){
-            IUser eliminated = tempEntrants.get(MiscUtils.randomInt(0, tempEntrants.size() - 1));
+            Member eliminated = tempEntrants.get(MiscUtils.randomInt(0, tempEntrants.size() - 1));
             tempEntrants.remove(eliminated);
-            IUser killer = tempEntrants.get(MiscUtils.randomInt(0, tempEntrants.size() - 1));
-            if(kills.containsKey(killer.getStringID())){
-                kills.put(killer.getStringID(), kills.get(killer.getStringID()) + 1);
+            Member killer = tempEntrants.get(MiscUtils.randomInt(0, tempEntrants.size() - 1));
+            if(kills.containsKey(killer.getId().asString())){
+                kills.put(killer.getId().asString(), kills.get(killer.getId().asString()) + 1);
             } else {
-                kills.put(killer.getStringID(), 1);
+                kills.put(killer.getId().asString(), 1);
             }
 
-            sbKillFeed.append("**").append(killer.getDisplayName(channel.getGuild())).append("** eliminated **").append(eliminated.getDisplayName(channel.getGuild())).append("**\n");
+            sbKillFeed.append("**").append(killer.getDisplayName()).append("** eliminated **").append(eliminated.getDisplayName()).append("**\n");
         }
-        IUser winner = tempEntrants.get(0);
+        Member winner = tempEntrants.get(0);
 
         StringBuilder sbRewards = new StringBuilder();
-        SkuddUser suWinner = ProfileManager.getDiscord(winner.getStringID(), guild.getStringID(), true);
-        sbRewards.append(winner.getDisplayName(guild)).append(": *+").append(WIN_REWARD + (KILL_REWARD * kills.get(winner.getStringID()))).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(winner.getStringID())).append(" kills)");
+        SkuddUser suWinner = ProfileManager.getDiscord(winner, true);
+        sbRewards.append(winner.getDisplayName()).append(": *+").append(WIN_REWARD + (KILL_REWARD * kills.get(winner.getId().asString()))).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(winner.getId().asString())).append(" kills)");
         if(suWinner.getFfaMostWin() < entrantsAmount){
             sbRewards.append(" - **New highest entrants win:** *").append(entrantsAmount).append(" people*");
         }
         sbRewards.append("\n");
         for(String s : kills.keySet()){
-            if(!s.equals(winner.getStringID()))
-                sbRewards.append(channel.getGuild().getUserByID(Long.parseLong(s)).getDisplayName(guild)).append(": *+").append(KILL_REWARD * kills.get(s)).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(s)).append(" kills)\n");
+            if(!s.equals(winner.getId().asString()))
+                sbRewards.append(guild.getMemberById(Snowflake.of(s)).block().getDisplayName()).append(": *+").append(KILL_REWARD * kills.get(s)).append(" ").append(EmojiHelper.getEmoji("xp_icon")).append("* (").append(kills.get(s)).append(" kills)\n");
         }
         sbRewards.append("*Click the ").append(EmojiEnum.NOTEPAD_SPIRAL.getUnicode()).append(" reaction to view the kill feed.*");
         String rewards = sbRewards.toString();
 
 
-        if(MessagesUtils.getMessageByID(messageHost) != null) {
-            MessagesUtils.getMessageByID(messageHost).delete();
+        if(MessagesUtils.getMessageByID(messageHost, channel.getId().asLong()) != null) {
+            MessagesUtils.getMessageByID(messageHost, channel.getId().asLong()).delete();
         }
-        if(MessagesUtils.getMessageByID(messageSent) != null) {
-            MessagesUtils.getMessageByID(messageSent).delete();
+        if(MessagesUtils.getMessageByID(messageSent, channel.getId().asLong()) != null) {
+            MessagesUtils.getMessageByID(messageSent, channel.getId().asLong()).delete();
         }
 
         MessagesUtils.sendPlain(MessageFormat.format("{0} {1} all go into {2} for an epic Free For All battle. Only one can emerge victorious! *3*... *2*... *1*... **FIGHT!**",
                 EmojiEnum.CROSSED_SWORDS.getString(), entrantsString, server.getArenaName()),
                 channel, false);
-        channel.toggleTypingStatus();
+        channel.type().block();
 
         exec.schedule(() -> {
-            IMessage messageFinal = MessagesUtils.sendPlain(MessageFormat.format("{0} A furious battle is going on in {1}, bodies are dropping... It looks like **{2}** has won the fight!\n\n{3}",
-                    EmojiEnum.CROSSED_SWORDS.getString(), server.getArenaName(), winner.getDisplayName(channel.getGuild()), rewards), channel, false);
+            Message messageFinal = MessagesUtils.sendPlain(MessageFormat.format("{0} A furious battle is going on in {1}, bodies are dropping... It looks like **{2}** has won the fight!\n\n{3}",
+                    EmojiEnum.CROSSED_SWORDS.getString(), server.getArenaName(), winner.getDisplayName(), rewards), channel, false);
 
             MessagesUtils.addReaction(messageFinal, sbKillFeed.toString().trim(), EmojiEnum.NOTEPAD_SPIRAL, true, 6*60*60*1000);
 
-            suWinner.setXp(suWinner.getXp() + WIN_REWARD + (KILL_REWARD * kills.get(winner.getStringID())));
+            suWinner.setXp(suWinner.getXp() + WIN_REWARD + (KILL_REWARD * kills.get(winner.getId().asString())));
             suWinner.setFfaWins(suWinner.getFfaWins() + 1);
             if(suWinner.getFfaMostWin() < entrantsAmount){
                 suWinner.setFfaMostWin(entrantsAmount);
             }
             for(String s : kills.keySet()){
-                SkuddUser su = ProfileManager.getDiscord(s, guild.getStringID(), true);
+                SkuddUser su = ProfileManager.getDiscord(s, guild.getId().asString(), true);
                 su.setFfaKills(su.getFfaKills() + kills.get(s));
-                if(guild.getUserByID(Long.parseLong(s)) != winner){
+                if(guild.getMemberById(Snowflake.of(s)).block() != winner){
                     su.setXp(su.getXp() + kills.get(s) * KILL_REWARD);
                 }
             }
@@ -239,27 +216,27 @@ public class FFAHandler {
 
     }
 
-    private String formatNames(IChannel channel){
+    private String formatNames(){
         int entrantsAmount = entrants.size();
         StringBuilder sbEntrants = new StringBuilder();
-        for (IUser user : entrants) {
-            if (entrants.indexOf(user) == (entrantsAmount - 1)) {
-                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("**");
-            } else if (entrants.indexOf(user) == (entrantsAmount - 2)) {
-                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("** and ");
+        for (Member member : entrants) {
+            if (entrants.indexOf(member) == (entrantsAmount - 1)) {
+                sbEntrants.append("**").append(member.getDisplayName()).append("**");
+            } else if (entrants.indexOf(member) == (entrantsAmount - 2)) {
+                sbEntrants.append("**").append(member.getDisplayName()).append("** and ");
             } else {
-                sbEntrants.append("**").append(user.getDisplayName(channel.getGuild())).append("**, ");
+                sbEntrants.append("**").append(member.getDisplayName()).append("**, ");
             }
         }
 
         return sbEntrants.toString().trim();
     }
 
-    private void finishFight(IUser winner, IGuild guild){
-        for(IUser user : entrants){
-            cooldownManager.applyCooldown(user.getStringID());
-            if(user != winner){
-                SkuddUser suLoser = ProfileManager.getDiscord(user.getStringID(), guild.getStringID(), true);
+    private void finishFight(Member winner, Guild guild){
+        for(Member member : entrants){
+            cooldownManager.applyCooldown(member.getId().asString());
+            if(member != winner){
+                SkuddUser suLoser = ProfileManager.getDiscord(member.getId().asString(), guild.getId().asString(), true);
 
                 suLoser.setFfaLosses(suLoser.getFfaLosses() + 1);
             }
@@ -276,14 +253,14 @@ public class FFAHandler {
     public void remind(){
         if(entrants.size() < 3) return;
         if(host == null) return;
-        if(!ProfileManager.getDiscord(host.getStringID(), serverID, true).isMinigameReminders()) return;
+        if(!ProfileManager.getDiscord(host.getId().asString(), serverID, true).isMinigameReminders()) return;
         if((System.currentTimeMillis() - lastReminder) < (REMIND_DELAY * 60 * 60 * 1000)) return;
 
         if(lastEntrants != entrants.size()) {
-            IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageSent);
-            MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a free for all with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", entrants.size(), message.getChannel().mention(), message.getGuild().getName()), host.getOrCreatePMChannel(), false);
+            Message message = MessagesUtils.getMessageByID(messageSent, host.getId().asLong());
+            MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a free for all with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", entrants.size(), ((TextChannel) message.getChannel().block()).toString(), message.getGuild().block().getName()), host.getPrivateChannel().block(), false);
         } else {
-            startFight(Main.getInstance().getSkuddbot().getMessageByID(messageSent).getChannel());
+            startFight(channel);
         }
 
         lastReminder = System.currentTimeMillis();
@@ -380,5 +357,8 @@ public class FFAHandler {
         }, 5, TimeUnit.SECONDS);
     }
 
+    private Member toMember(User user){
+        return user.asMember(Snowflake.of(serverID)).block();
+    }
 
 }

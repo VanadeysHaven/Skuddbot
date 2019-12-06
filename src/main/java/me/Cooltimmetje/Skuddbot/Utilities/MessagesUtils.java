@@ -139,9 +139,13 @@ public class MessagesUtils {
      * @param channelId The ID of the channel where the message is in.
      * @return The message we want.
      */
-    public static Message getMessageByID(long messageId, long channelId){
-        return Main.getInstance().getSkuddbot().getMessageById(Snowflake.of(channelId), Snowflake.of(messageId)).block();
+    public static Message getMessageByID(Snowflake messageId, Snowflake channelId){
+        return Main.getInstance().getSkuddbot().getMessageById(channelId, messageId).block();
     }
+
+    public static Message getMessageByID(long messageId, long channelId){
+        return getMessageByID(Snowflake.of(messageId), Snowflake.of(channelId));
+}
 
 
 }
