@@ -114,7 +114,7 @@ public class MessagesUtils {
         return null;
     }
 
-    public static Message sendPlain (String msg, MessageChannel channel){
+    public static Message sendPlain(String msg, MessageChannel channel){
         return sendPlain(msg, channel, false);
     }
 

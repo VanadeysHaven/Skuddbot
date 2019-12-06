@@ -1,5 +1,7 @@
 package me.Cooltimmetje.Skuddbot;
 
+import discord4j.core.DiscordClient;
+import discord4j.core.object.entity.User;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.ActivityChecker;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
@@ -84,4 +86,11 @@ public class Main {
         return skuddbotTwitch;
     }
 
+    public static User self() {
+        return getInstance().getSkuddbot().getSelf().block();
+    }
+
+    public static DiscordClient client(){
+        return getInstance().getSkuddbot();
+    }
 }

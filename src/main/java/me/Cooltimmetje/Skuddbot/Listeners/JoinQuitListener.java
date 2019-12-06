@@ -1,6 +1,7 @@
 package me.Cooltimmetje.Skuddbot.Listeners;
 
 import discord4j.core.event.domain.guild.MemberJoinEvent;
+import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.MessageChannel;
@@ -52,27 +53,25 @@ public class JoinQuitListener {
         }
     }
 
-    @EventSubscriber
-    public void onLeave(UserLeaveEvent event){
-        Server server = ServerManager.getServer(event.getGuild().getStringID());
+    public static void onLeave(MemberLeaveEvent event){
+        Server server = ServerManager.getServer(event.getGuild().block().getId().asString());
         if(server.getGoodbyeMessage() != null) {
 
-            String message = ServerManager.getServer(event.getGuild().getStringID()).getGoodbyeMessage()
-                    .replace("$user", event.getUser().getName())
-                    .replace("$guild", event.getGuild().getName())
+            String message = ServerManager.getServer(event.getGuild().block().getId().asString()).getGoodbyeMessage()
+                    .replace("$user", event.getUser().getUsername())
+                    .replace("$guild", event.getGuild().block().getName())
                     .replace("$nl","\n");
-            IChannel channel = server.getWelcomeGoodbyeChannel() != null ?
-                    event.getGuild().getChannelByID(Long.parseLong(server.getWelcomeGoodbyeChannel())) :
-                    event.getGuild().getChannelByID(event.getGuild().getLongID());
+            MessageChannel channel = (MessageChannel) (server.getWelcomeGoodbyeChannel() != null ?
+                    event.getGuild().block().getChannelById(Snowflake.of(server.getWelcomeGoodbyeChannel())).block() :
+                    event.getGuild().block().getChannelById(event.getGuild().block().getId()).block());
 
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.withColor(MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255));
-            builder.withTitle(message);
-            if(server.getGoodbyeMsgAttach() != null) {
-                builder.withImage(server.getGoodbyeMsgAttach());
-            }
-            channel.sendMessage(builder.build());
+            Consumer<EmbedCreateSpec> template = embedSpec -> {
+                embedSpec.setColor(new Color(MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255)));
+                embedSpec.setTitle(message);
+            };
+            channel.createMessage(messageSpec -> {
+                messageSpec.setEmbed(template);
+            });
         }
     }
 

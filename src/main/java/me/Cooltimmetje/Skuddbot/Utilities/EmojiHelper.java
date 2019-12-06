@@ -1,8 +1,9 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.GuildEmoji;
+import discord4j.core.object.util.Snowflake;
 import me.Cooltimmetje.Skuddbot.Main;
-import sx.blah.discord.handle.obj.IEmoji;
-import sx.blah.discord.handle.obj.IGuild;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.HashMap;
  * This class helps with custom Emoji's.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.31-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.31-ALPHA
  */
 public class EmojiHelper {
@@ -21,10 +22,10 @@ public class EmojiHelper {
     public static void loadEmoji(){
         Logger.info("Loading custom emoji...");
 
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Constants.HOME_SERVER);
-        for(IEmoji emoji : guild.getEmojis()){
-            emojis.put(emoji.getName(), MessageFormat.format("<:{0}:{1}>", emoji.getName(), emoji.getStringID()));
-            Logger.info(MessageFormat.format("Emoji \"{0}\" added. (ID: {1})", emoji.getName(), emoji.getStringID()));
+        Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(Constants.HOME_SERVER)).block();
+        for(GuildEmoji emoji : guild.getEmojis().collectList().block()){
+            emojis.put(emoji.getName(), emoji.asFormat());
+            Logger.info(MessageFormat.format("Emoji \"{0}\" added. (ID: {1})", emoji.getName(), emoji.getId().asString()));
         }
     }
 

@@ -1,12 +1,10 @@
 package me.Cooltimmetje.Skuddbot.Listeners;
 
-import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.util.Snowflake;
 import me.Cooltimmetje.Skuddbot.Main;
-import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 import java.util.HashMap;
 
@@ -14,29 +12,21 @@ import java.util.HashMap;
  * Things to do with people going live on Twitch.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.01-ALPHA-DEV
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class TwitchLiveListener {
 
     private HashMap<String,Long> cooldown = new HashMap<>();
 
-    @EventSubscriber
-    public void onMessage(MessageReceivedEvent event){
-        if(event.getMessage().getAuthor().getStringID().equals("165140151121608704")){
-            if(event.getMessage().getContent().contains("just went offline, here are their most recent stats.")){
-//                ServerManager.getServer(event.getMessage().getGuild().getStringID()).runAnalytics(event.getMessage().getChannel());
-            } else if(event.getMessage().getContent().contains("just went live!")) {
-                if (ServerManager.getServer(event.getMessage().getGuild().getStringID()).getTwitchChannel() != null) {
-                    Main.getSkuddbotTwitch().sendMessage("#" + ServerManager.getServer(event.getMessage().getGuild().getStringID()).getTwitchChannel(), MiscUtils.getRandomMessage(DataTypes.ALIVE));
+    public static void onMessage(MessageCreateEvent event){
+        if(event.getMessage().getAuthorAsMember().block().getId().asString().equals("165140151121608704")){
+            if(event.getMessage().getContent().get().contains("just went live!")) {
 
-//                    ServerManager.getServer(event.getMessage().getGuild().getStringID()).setStreamLive(true);
-                }
-
-                if (event.getMessage().getGuild().getStringID().equals("198483566026424321")) { //Melsh
-                    MessagesUtils.sendPlain("@here melsh87 just went live! Go check them out and show them some love! https://www.twitch.tv/melsh87", Main.getInstance().getSkuddbot().getChannelByID(157855484395782144L), true);
-                } else if (event.getMessage().getGuild().getStringID().equals("157774629975490561")) { //Ray
-                    MessagesUtils.sendPlain("@here rayskudda just went live! Go check them out and show them some love! https://www.twitch.tv/rayskudda", Main.getInstance().getSkuddbot().getChannelByID(231813505961951232L), true);
+                if (event.getMessage().getGuild().block().getId().asString().equals("198483566026424321")) { //Melsh
+                    MessagesUtils.sendPlain("@here melsh87 just went live! Go check them out and show them some love! https://www.twitch.tv/melsh87", (MessageChannel) Main.getInstance().getSkuddbot().getChannelById(Snowflake.of(157855484395782144L)), true);
+                } else if (event.getMessage().getGuild().block().getId().asString().equals("157774629975490561")) { //Ray
+                    MessagesUtils.sendPlain("@here rayskudda just went live! Go check them out and show them some love! https://www.twitch.tv/rayskudda", (MessageChannel) Main.getInstance().getSkuddbot().getChannelById(Snowflake.of(231813505961951232L)), true);
                 }
             }
         }

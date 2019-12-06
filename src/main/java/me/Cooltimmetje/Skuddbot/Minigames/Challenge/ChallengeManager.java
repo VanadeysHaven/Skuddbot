@@ -1,16 +1,16 @@
 package me.Cooltimmetje.Skuddbot.Minigames.Challenge;
 
+import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.object.entity.Channel;
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
-import sx.blah.discord.handle.obj.IMessage;
 
 /**
  * Managing of challenge handlers.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.34-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.34-ALPHA
  */
 public class ChallengeManager {
@@ -22,14 +22,13 @@ public class ChallengeManager {
     }
 
     //--- DISCORD ---
-    public static void run(IMessage message) {
-        ServerManager.getServer(message.getGuild().getStringID()).getChallengeHandler().run(message);
+    public static void run(Message message) {
+        ServerManager.getServer(message.getGuild().block().getId().asString()).getChallengeHandler().run(message);
     }
 
-    @EventSubscriber
-    public void onReaction(ReactionAddEvent event){
-        if(!event.getChannel().isPrivate()) {
-            ServerManager.getServer(event.getMessage().getGuild().getStringID()).getChallengeHandler().reactionAccept(event);
+    public static void onReaction(ReactionAddEvent event){
+        if(event.getChannel().block().getType() == Channel.Type.GUILD_TEXT) {
+            ServerManager.getServer(event.getMessage().block().getGuild().block().getId().asString()).getChallengeHandler().reactionAccept(event);
         }
     }
 

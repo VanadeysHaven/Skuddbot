@@ -6,15 +6,12 @@ import lombok.Getter;
  * This holds data about user statistics.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4-ALPHA-DEV
  */
 @Getter
 public enum UserStats {
 
-    MESSAGES_POSTED_STREAK   ("message_streak",           "0",  "Integer", false, "",                     "",         UserStatsCats.NO_CATEGORY,     false),
-    XP_GAIN_STREAK           ("xp_streak",                "0",  "Integer", false, "",                     "",         UserStatsCats.NO_CATEGORY,     false),
-    CHAT_WALL_STREAK         ("chat_wall_streak",         "0",  "Integer", false, "",                     "",         UserStatsCats.NO_CATEGORY,     false),
     CHALLENGE_WINS           ("challenge_wins",           "0",  "Integer", true,  "Wins",                 "wins",     UserStatsCats.CHALLENGE,       true ),
     CHALLENGE_LOSSES         ("challenge_losses",         "0",  "Integer", true,  "Losses",               "losses",   UserStatsCats.CHALLENGE,       true ),
     CHALLENGE_WIN_STREAK     ("challenge_win_streak",     "0",  "Integer", true,  "Current winstreak",    "wins",     UserStatsCats.CHALLENGE,       true ),

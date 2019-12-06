@@ -1,5 +1,6 @@
 package me.Cooltimmetje.Skuddbot.Commands.Custom;
 
+import discord4j.core.object.entity.Message;
 import lombok.Getter;
 import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Commands.Custom.MetaData.MetaDataContainer;
@@ -7,7 +8,6 @@ import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import org.json.simple.parser.ParseException;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -64,8 +64,8 @@ public class Command {
         Logger.info(MessageFormat.format("Loaded command for server id {0} with invoker {1}, output {2}, metadata {3} and properties {4}", serverId, invoker, output, metaData, properties));
     }
 
-    public void run(IMessage message) {
-        MessagesUtils.sendPlain(output, message.getChannel());
+    public void run(Message message) {
+        MessagesUtils.sendPlain(output, message.getChannel().block());
         metaData.incrementCount();
     }
 

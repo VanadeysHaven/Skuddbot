@@ -1,14 +1,13 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import discord4j.core.object.entity.Member;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IUser;
 
 /**
  * This class handles all profiles, getting them from either memory or the database, or creating new ones.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.6-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -53,8 +52,8 @@ public class ProfileManager {
 
     }
 
-    public static SkuddUser getDiscord(IUser user, IGuild guild, boolean createNew){
-        return getDiscord(user.getStringID(), guild.getStringID(), createNew);
+    public static SkuddUser getDiscord(Member member, boolean createNew){
+        return getDiscord(member.getId().asString(), member.getGuildId().asString(), createNew);
     }
 
     public static SkuddUser getTwitch(String twitchUsername, String twitchChannel, boolean createNew){

@@ -56,10 +56,12 @@ public class Skuddbot {
             skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(CommandManager::onMessage);
             skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(XPGiver::onMessage);
             skuddbot.getEventDispatcher().on(MemberJoinEvent.class).subscribe(JoinQuitListener::onJoin);
-            skuddbot.getEventDispatcher().on(MemberLeaveEvent.class).subscribe();
+            skuddbot.getEventDispatcher().on(MemberLeaveEvent.class).subscribe(JoinQuitListener::onLeave);
+            skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(TwitchLiveListener::onMessage);
+            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(ChallengeManager::onReaction);
 
-            skuddbot.getDispatcher().registerListeners(new CommandManager(), new XPGiver(), new JoinQuitListener(), new TwitchLiveListener(),
-            new ChallengeManager(), new FFAManager(), new BlackjackManager(), new TdManager());
+
+            skuddbot.getDispatcher().registerListeners(new FFAManager(), new BlackjackManager(), new TdManager());
 
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();
@@ -118,7 +120,6 @@ public class Skuddbot {
     public DiscordClient getSkuddbot(){
         return skuddbot;
     }
-
 
 
 
