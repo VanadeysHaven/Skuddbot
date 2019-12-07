@@ -1,22 +1,22 @@
 package me.Cooltimmetje.Skuddbot.Minigames.Blackjack;
 
-import com.vdurmont.emoji.EmojiManager;
+import discord4j.core.object.entity.*;
+import discord4j.core.object.reaction.ReactionEmoji;
+import discord4j.core.spec.MessageEditSpec;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.RequestBuffer;
+import reactor.core.publisher.Mono;
 
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * This is a game of blackjack, with all the needed functions to carry out an game.
@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlackjackGame {
 
-    private IMessage message;
-    private IUser user;
-    private IGuild guild;
+    private Message message;
+    private Member member;
+    private Guild guild;
     private ArrayList<Card> playerHand;
     private ArrayList<Card> dealerHand;
     private Card holeCard;
@@ -55,9 +55,9 @@ public class BlackjackGame {
             "{4}\n\n" +
             "{5}";
 
-    public BlackjackGame(IUser user, IChannel channel){
-        this.user = user;
-        this.guild = channel.getGuild();
+    public BlackjackGame(Member member, MessageChannel channel){
+        this.member = member;
+        this.guild = ((TextChannel) channel).getGuild().block();
         this.gameState = GameStates.PLAYER_PLAYING;
         this.cardsInGame = new ArrayList<>();
 
@@ -73,20 +73,18 @@ public class BlackjackGame {
         this.message = MessagesUtils.sendPlain(buildMessage(), channel, false);
 
         if(gameState == GameStates.PLAYER_PLAYING) {
-            RequestBuffer.request(() -> {
-                message.addReaction(EmojiManager.getForAlias(EmojiEnum.H.getAlias()));
-                message.addReaction(EmojiManager.getForAlias(EmojiEnum.S.getAlias()));
-            });
+            message.addReaction(ReactionEmoji.unicode(EmojiEnum.H.getUnicode()));
+            message.addReaction(ReactionEmoji.unicode(EmojiEnum.S.getUnicode()));
         }
     }
 
     private void updateGameStats() {
-        userDisplayName = user.getDisplayName(guild);
+        userDisplayName = member.getDisplayName();
         dealerHandValue = calculateHandValue(dealerHand);
         dealerHandString = formatHand(dealerHand);
         playerHandValue = calculateHandValue(playerHand);
         playerHandString = formatHand(playerHand);
-        SkuddUser su = ProfileManager.getDiscord(user, guild, true);
+        SkuddUser su = ProfileManager.getDiscord(member, true);
 
         if (gameState == GameStates.PLAYER_PLAYING) {
             if (playerHandValue == 21) {
@@ -131,7 +129,7 @@ public class BlackjackGame {
         }
 
         if(gameState == GameStates.ENDED){
-            ServerManager.getServer(guild).getBlackjackHandler().applyCooldown(user.getStringID());
+            ServerManager.getServer(guild).getBlackjackHandler().applyCooldown(member.getId().asString());
             if(dealerHand.size() == 1) {
                 dealerHand.add(holeCard);
                 dealerHandValue = calculateHandValue(dealerHand);
@@ -142,6 +140,14 @@ public class BlackjackGame {
 
     private String buildMessage(){
         return MessageFormat.format(messageFormat, userDisplayName, dealerHandValue, dealerHandString, playerHandValue, playerHandString, playingInstructions);
+    }
+
+    private void editMessage(){
+        Consumer<MessageEditSpec> edit = spec -> {
+            spec.setContent(buildMessage());
+        };
+
+        message.edit(edit).block();
     }
 
     private int calculateHandValue(ArrayList<Card> cards){
@@ -179,7 +185,7 @@ public class BlackjackGame {
 
     private String formatHand(ArrayList<Card> cards){
         StringBuilder sb = new StringBuilder();
-        SkuddUser su = ProfileManager.getDiscord(user, guild, true);
+        SkuddUser su = ProfileManager.getDiscord(member, true);
 
         for(Card card : cards){
             sb.append(card.toString()).append(" | ");
@@ -200,12 +206,12 @@ public class BlackjackGame {
         playerHand.add(drawNewCard());
         updateGameStats();
 
-        RequestBuffer.request(() -> message.edit(buildMessage()));
+        editMessage();
 
         if(gameState == GameStates.ENDED){
-            ServerManager.getServer(message.getGuild().getStringID()).getBlackjackHandler().games.remove(user.getStringID());
+            ServerManager.getServer(message.getGuild().block().getId().asString()).getBlackjackHandler().games.remove(member.getId().asString());
         } else if (gameState == GameStates.PLAYER_PLAYING){
-            RequestBuffer.request(() -> message.removeReaction(user, EmojiManager.getForAlias(EmojiEnum.H.getAlias())));
+             message.removeReaction(ReactionEmoji.unicode(EmojiEnum.H.getUnicode()), member.getId());
         }
     }
 
@@ -214,7 +220,7 @@ public class BlackjackGame {
             return;
         }
 
-        message.getChannel().setTypingStatus(true);
+        message.getChannel().block().typeUntil(Mono.delay(Duration.ofSeconds(5)));
         gameState = GameStates.DEALER_PLAYING;
 
         dealerHand.add(holeCard);
@@ -226,22 +232,20 @@ public class BlackjackGame {
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
         exec.schedule(() -> {
             updateGameStats();
-            RequestBuffer.request(() -> message.edit(buildMessage()));
+            editMessage();
 
-            ServerManager.getServer(message.getGuild().getStringID()).getBlackjackHandler().games.remove(user.getStringID());
-
-            message.getChannel().setTypingStatus(false);
+            ServerManager.getServer(message.getGuild().block().getId().asString()).getBlackjackHandler().games.remove(member.getId().asString());
         }, 5, TimeUnit.SECONDS);
     }
 
-    public IMessage getMessage(){
+    public Message getMessage(){
         return message;
     }
 
     private boolean cardExistsInGame(Card card){
-        for(Card cardInGame : cardsInGame){
+        for(Card cardInGame : cardsInGame)
             if(card.equals(cardInGame)) return true;
-        }
+
         return false;
     }
 

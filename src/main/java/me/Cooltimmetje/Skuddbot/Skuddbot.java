@@ -64,7 +64,7 @@ public class Skuddbot {
             skuddbot.getEventDispatcher().on(ReactionRemoveEvent.class).subscribe(FFAManager::onReactionRemove);
 
 
-            skuddbot.getDispatcher().registerListeners(new FFAManager(), new BlackjackManager(), new TdManager());
+            skuddbot.getDispatcher().registerListeners(new BlackjackManager(), new TdManager());
 
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();

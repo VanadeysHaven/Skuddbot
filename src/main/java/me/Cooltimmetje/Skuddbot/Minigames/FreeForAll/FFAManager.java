@@ -44,13 +44,13 @@ public class FFAManager {
         }
     }
 
-    public void onReaction(ReactionAddEvent event){
+    public static void onReaction(ReactionAddEvent event){
         if(event.getChannel().block().getType() != Channel.Type.DM) {
             ServerManager.getServer(event.getMessage().block().getGuild().block().getId().asString()).getFfaHandler().reactionAdd(event);
         }
     }
 
-    public void onReactionRemove(ReactionRemoveEvent event){
+    public static void onReactionRemove(ReactionRemoveEvent event){
         if(event.getChannel().block().getType() != Channel.Type.DM) {
             ServerManager.getServer(event.getMessage().block().getGuild().block().getId().asString()).getFfaHandler().reactionRemove(event);
         }
