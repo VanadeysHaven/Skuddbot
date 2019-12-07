@@ -1,16 +1,16 @@
 package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members;
 
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Member;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.EmojiHelper;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IUser;
 
 /**
  * This class represents a team member that is a actual user.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.7-ALPHA
  */
 public class UserMember extends TeamMember {
@@ -20,17 +20,17 @@ public class UserMember extends TeamMember {
     private static final int SAVE_REWARD = 75;
     private static final int FULL_TEAM_ALIVE_BONUS = 300;
 
-    private IUser user;
-    private IGuild guild;
+    private Member member;
+    private Guild guild;
 
-    public UserMember(IUser user, IGuild guild){
-        this.user = user;
+    public UserMember(Member member, Guild guild){
+        this.member = member;
         this.guild = guild;
     }
 
     @Override
     public String getName(boolean withTeamNumber) {
-        String name = user.getDisplayName(guild);
+        String name = member.getDisplayName();
         if(withTeamNumber)
             name = "[" + team.getTeamNumber() + "] " + name;
 
@@ -49,7 +49,7 @@ public class UserMember extends TeamMember {
 
     @Override
     public String getIdentifier() {
-        return user.getStringID();
+        return member.getId().asString();
     }
 
     private int getXpReward(){
@@ -63,7 +63,7 @@ public class UserMember extends TeamMember {
     }
 
     public void awardRewards(int playerCount){
-        SkuddUser su = ProfileManager.getDiscord(user, guild, true);
+        SkuddUser su = ProfileManager.getDiscord(member, true);
 
         if(team.isWinner()){
             su.setTeamDeathmatchWins(su.getTeamDeathmatchWins() + 1);
@@ -85,7 +85,7 @@ public class UserMember extends TeamMember {
     }
 
     public String getRewardString(int playerCount){
-        SkuddUser su = ProfileManager.getDiscord(user, guild, true);
+        SkuddUser su = ProfileManager.getDiscord(member, true);
         if(saves == 0 && kills == 0 && !team.isWinner()) return null;
         StringBuilder sb = new StringBuilder();
 
@@ -108,6 +108,6 @@ public class UserMember extends TeamMember {
     }
 
     public long getID(){
-        return user.getLongID();
+        return member.getId().asLong();
     }
 }

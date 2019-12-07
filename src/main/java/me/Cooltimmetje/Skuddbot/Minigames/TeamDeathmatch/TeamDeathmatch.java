@@ -1,9 +1,14 @@
 package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
-import com.vdurmont.emoji.EmojiManager;
+import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.reaction.ReactionEmoji;
+import discord4j.core.spec.MessageEditSpec;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
-import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.AIMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.TeamMember;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.Members.UserMember;
@@ -13,17 +18,12 @@ import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.RequestBuffer;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * This represents a instance of a Team Deathmatch game.
@@ -46,11 +46,12 @@ public class TeamDeathmatch {
     private static final int SAVE_CHANCE = 25; //in %
     private static final int REMIND_DELAY = 6; //in hours
 
-    private IUser host;
-    private IGuild guild;
+    private Member host;
+    private Guild guild;
     private ArrayList<Team> teams;
     private ArrayList<TeamMember> joinQueue;
     private long messageId;
+    private long channelId;
     private int maxTeamSize;
     private String killFeed;
     private boolean startReact;
@@ -58,10 +59,10 @@ public class TeamDeathmatch {
     private long lastReminder;
     private int lastEntrants;
 
-    public TeamDeathmatch(IMessage message) {
+    public TeamDeathmatch(Message message) {
         this.maxTeamSize = 2;
-        this.host = message.getAuthor();
-        this.guild = message.getGuild();
+        this.host = message.getAuthor().get().asMember(guild.getId()).block();
+        this.guild = message.getGuild().block();
         this.teams = new ArrayList<>();
         this.joinQueue = new ArrayList<>();
         this.startReact = false;
@@ -69,59 +70,60 @@ public class TeamDeathmatch {
         this.lastReminder = System.currentTimeMillis();
         this.lastEntrants = 0;
 
-        IMessage msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel(), false);
-        RequestBuffer.request(() -> msg.addReaction(EmojiManager.getForAlias(EmojiEnum.CROSSED_SWORDS.getAlias())));
-        this.messageId = msg.getLongID();
-        RequestBuffer.request(message::delete);
+        Message msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel().block(), false);
+        msg.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode()));
+        this.messageId = msg.getId().asLong();
+        this.channelId = msg.getChannelId().asLong();
+        message.delete().block();
     }
 
     public void runReminder() {
         if (getPlayerCount() < 3 && teams.size() < 2) return;
-        if (!ProfileManager.getDiscord(host, guild, true).isMinigameReminders()) return;
+        if (!ProfileManager.getDiscord(host, true).isMinigameReminders()) return;
         if ((System.currentTimeMillis() - lastReminder) < (REMIND_DELAY * 60 * 60 * 1000)) return;
-        IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageId);
+        Message message = MessagesUtils.getMessageByID(messageId, channelId);
 
         if(lastEntrants != getPlayerCount()){
-            MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a Team Deathmatch with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", getPlayerCount(), message.getChannel().mention(), message.getGuild().getName()), host.getOrCreatePMChannel(), false);
+            MessagesUtils.sendPlain(MessageFormat.format("Hey, you still got a Team Deathmatch with **{0} entrants** pending in {1} (**{2}**).\n(**PRO-TIP:** You can use search to quickly find it!)", getPlayerCount(), message.getChannel().block().getMention(), message.getGuild().block().getName()), host.getPrivateChannel().block(), false);
             lastReminder = System.currentTimeMillis();
             lastEntrants = getPlayerCount();
         } else {
-            startMatch(message.getChannel());
+            startMatch(message.getChannel().block());
         }
 
     }
 
 
-    public void joinTeam(IMessage message){
-        TeamMember member = new UserMember(message.getAuthor(), guild);
+    public void joinTeam(Message message){
+        TeamMember member = new UserMember(message.getAuthor().get().asMember(guild.getId()).block(), guild);
         if(isInGame(member)){
             MessagesUtils.addReaction(message, "You are already participating in this Team Deathmatch!", EmojiEnum.X);
             return;
         }
-        if(message.getContent().split(" ").length < 3){
+        if(message.getContent().get().split(" ").length < 3){
             MessagesUtils.addReaction(message, "Please specify a team number to join or use new to join a new team.", EmojiEnum.X);
             return;
         }
 
-        String teamString = message.getContent().split(" ")[2];
+        String teamString = message.getContent().get().split(" ")[2];
         if (teamString.equalsIgnoreCase("-new") || teamString.equalsIgnoreCase("new")) {
             Team team = new Team(getNextTeamNumber(), maxTeamSize);
             teams.add(team);
             team.joinTeam(member);
-            RequestBuffer.request(message::delete);
+            message.delete().block();
             updateMessage();
             return;
         }
         if(teamString.equalsIgnoreCase("-queue") || teamString.equalsIgnoreCase("queue")){
             joinQueue.add(member);
-            RequestBuffer.request(message::delete);
+            message.delete().block();
             updateMessage();
             return;
         }
         if(MiscUtils.isInt(teamString)) {
             int teamNumber = Integer.parseInt(teamString);
             Team team = getTeamByNumber(teamNumber);
-            if (team == null && !Constants.awesomeUser.contains(message.getAuthor().getStringID())) {
+            if (team == null && !Constants.awesomeUser.contains(message.getAuthor().get().getId().asString())) {
                 MessagesUtils.addReaction(message, "Team " + teamNumber + " doesn't exist.", EmojiEnum.X);
                 return;
             }
@@ -131,8 +133,8 @@ public class TeamDeathmatch {
                 teams.add(team);
             }
 
-            if (team.joinTeam(new UserMember(message.getAuthor(), message.getGuild()))) {
-                RequestBuffer.request(message::delete);
+            if (team.joinTeam(new UserMember(message.getAuthor().get().asMember(guild.getId()).block(), guild))) {
+                message.delete().block();
                 updateMessage();
                 return;
             } else {
@@ -145,60 +147,60 @@ public class TeamDeathmatch {
     }
 
     public void joinTeam(ReactionAddEvent event){
-        TeamMember member = new UserMember(event.getUser(), guild);
+        TeamMember member = new UserMember(event.getUser().block().asMember(guild.getId()).block(), guild);
         if(isInGame(member)) return;
-        if(event.getUser().isBot()) return;
-        if(event.getMessage().getLongID() != messageId) return;
+        if(event.getUser().block().isBot()) return;
+        if(event.getMessage().block().getId().asLong() != messageId) return;
 
         joinQueue.add(member);
         updateMessage();
     }
 
-    public void start(IMessage message){
+    public void start(Message message){
         if(!canStart()){
             MessagesUtils.addReaction(message, "There must be atleast 2 teams or 3 players to start.", EmojiEnum.X);
             return;
         }
-        if(message.getAuthor().getLongID() != host.getLongID() && !ProfileManager.getDiscord(message.getAuthor(), message.getGuild(), true).hasElevatedPermissions()){
+        if(message.getAuthor().get().getId().asLong() != host.getId().asLong() && !ProfileManager.getDiscord(message.getAuthor().get().asMember(guild.getId()).block(), true).hasElevatedPermissions()){
             MessagesUtils.addReaction(message, "Only the host can start the match!", EmojiEnum.X);
             return;
         }
-        IChannel channel = message.getChannel();
-        RequestBuffer.request(message::delete);
+        MessageChannel channel = message.getChannel().block();
+        message.delete().block();
         startMatch(channel);
     }
 
     public void start(ReactionAddEvent event){
-        EmojiEnum emoji = EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName());
-        if(event.getMessage().getLongID() != messageId) return;
-        IChannel channel = event.getChannel();
+        EmojiEnum emoji = EmojiEnum.getByUnicode(event.getEmoji().asUnicodeEmoji().get().getRaw());
+        if(event.getMessage().block().getId().asLong() != messageId) return;
+        MessageChannel channel = event.getChannel().block();
 
-        if((!canStart() || event.getUser().getLongID() != host.getLongID()) && emoji == EmojiEnum.WHITE_CHECK_MARK){
-            event.getMessage().removeReaction(event.getUser(), event.getReaction().getEmoji());
+        if((!canStart() || event.getUser().block().getId().asLong() != host.getId().asLong()) && emoji == EmojiEnum.WHITE_CHECK_MARK){
+            event.getMessage().block().removeReaction(event.getEmoji(), event.getUserId());
             return;
         }
-        if((!canStart() || !ProfileManager.getDiscord(event.getUser(), event.getGuild(), true).hasElevatedPermissions()) && emoji == EmojiEnum.EYES){
-            event.getMessage().removeReaction(event.getUser(), event.getReaction().getEmoji());
+        if((!canStart() || !ProfileManager.getDiscord(event.getUser().block().asMember(guild.getId()).block(), true).hasElevatedPermissions()) && emoji == EmojiEnum.EYES){
+            event.getMessage().block().removeReaction(event.getEmoji(), event.getUserId());
             return;
         }
 
         startMatch(channel);
     }
 
-    public void startMatch(IChannel channel) {
+    public void startMatch(MessageChannel channel) {
         fillTeams();
-        Main.getInstance().getSkuddbot().getMessageByID(messageId).delete();
+        MessagesUtils.getMessageByID(messageId, channelId).delete().block();
         ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(2);
         MessagesUtils.sendPlain(MessageFormat.format(PLAY_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(true)), channel, false);
 
         Team winningTeam = simulateFight();
         winningTeam.setWinner(true);
 
-        RequestBuffer.request(() -> channel.setTypingStatus(true));
+        channel.type();
 
         exec.schedule(() -> {
-            MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " The teams go into " + ServerManager.getServer(guild.getStringID()).getArenaName() + " for a EPIC Team Deathmatch! Who will win? *3*... *2*... *1*... **FIGHT!**", channel, false);
-            channel.setTypingStatus(true);
+            MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " The teams go into " + ServerManager.getServer(guild.getId().asString()).getArenaName() + " for a EPIC Team Deathmatch! Who will win? *3*... *2*... *1*... **FIGHT!**", channel, false);
+            channel.type();
         }, 5, TimeUnit.SECONDS);
         exec.schedule(() -> {
             StringBuilder sb = new StringBuilder();
@@ -216,10 +218,10 @@ public class TeamDeathmatch {
                 }
             }
 
-            IMessage sent = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " It looks like the battle has finished, and **team " + winningTeam.getTeamNumber() + "** has won! \n\n" + sb.toString().trim() + "\n*Click the " + EmojiEnum.NOTEPAD_SPIRAL.getUnicode() + " reaction to view the kill feed.*", channel, false);
+            Message sent = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " It looks like the battle has finished, and **team " + winningTeam.getTeamNumber() + "** has won! \n\n" + sb.toString().trim() + "\n*Click the " + EmojiEnum.NOTEPAD_SPIRAL.getUnicode() + " reaction to view the kill feed.*", channel, false);
             MessagesUtils.addReaction(sent, "**Team Deathmatch kill feed:**\n" + killFeed, EmojiEnum.NOTEPAD_SPIRAL, true, 6*60*60*1000);
             applyCooldown();
-            TdManager.clean(guild.getLongID());
+            TdManager.clean(guild.getId().asLong());
         }, 10, TimeUnit.SECONDS);
     }
 
@@ -228,7 +230,7 @@ public class TeamDeathmatch {
             for(TeamMember teamMember : team.getTeamMemebers()){
                 if(!teamMember.isAI()){
                     UserMember member = (UserMember) teamMember;
-                    TdManager.applyCooldown(member.getIdentifier(), guild.getLongID());
+                    TdManager.applyCooldown(member.getIdentifier(), guild.getId().asLong());
                 }
             }
     }
@@ -295,17 +297,21 @@ public class TeamDeathmatch {
     }
 
     private void updateMessage(){
-        IMessage message = Main.getInstance().getSkuddbot().getMessageByID(messageId);
-        RequestBuffer.request(() -> message.edit(formatMessage()));
-        if(!startReact && canStart()) RequestBuffer.request(() -> message.addReaction(EmojiManager.getForAlias(EmojiEnum.WHITE_CHECK_MARK.getAlias())));
+        Message message = MessagesUtils.getMessageByID(messageId, channelId);
+        Consumer<MessageEditSpec> edit = spec -> {
+            spec.setContent(formatMessage());
+        };
+
+        message.edit(edit).block();
+        if(!startReact && canStart()) message.addReaction(ReactionEmoji.unicode(EmojiEnum.WHITE_CHECK_MARK.getUnicode())).block();
     }
 
     private String formatMessage(){
         String playingInstructions;
         if(canStart()) {
-            playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getUnicode(), host.getDisplayName(guild), ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS);
+            playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getUnicode(), host.getDisplayName(), ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS);
         } else {
-            playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getUnicode(), host.getDisplayName(guild), NOT_ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS);
+            playingInstructions = MessageFormat.format(JOIN_PHASE_PLAYING_INSTRUCTIONS, EmojiEnum.CROSSED_SWORDS.getUnicode(), host.getDisplayName(), NOT_ENOUGH_PLAYERS_PLAYING_INSTRUCTIONS);
         }
         return MessageFormat.format(JOIN_PHASE_MESSAGE_FORMAT, getHeader(), printTeams(false), playingInstructions);
     }

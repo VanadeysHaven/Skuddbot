@@ -25,7 +25,7 @@ public class BlackjackManager {
         }
     }
 
-    public void onReaction(ReactionAddEvent event){
+    public static void onReaction(ReactionAddEvent event){
         if(event.getMessage().block().getChannel().block().getType() == Channel.Type.DM) return;
         ServerManager.getServer(event.getGuild().block().getId().asString()).getBlackjackHandler().onReaction(event);
     }

@@ -1,11 +1,11 @@
 package me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch;
 
+import discord4j.core.event.domain.message.ReactionAddEvent;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Utilities.CooldownManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.guild.channel.message.reaction.ReactionAddEvent;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.HashMap;
 
@@ -13,7 +13,7 @@ import java.util.HashMap;
  * This class manages all Team Deathmatch games.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.7-ALPHA
  */
 public class TdManager {
@@ -23,31 +23,32 @@ public class TdManager {
     private static HashMap<Long,TeamDeathmatch> teamDeathmatches = new HashMap<>();
     public static HashMap<Long,CooldownManager> cooldowns = new HashMap<>();
 
-    public static void run(IMessage message){
-        String[] args = message.getContent().toLowerCase().split(" ");
+    public static void run(Message message){
+        String[] args = message.getContent().get().toLowerCase().split(" ");
+        Guild guild = message.getGuild().block();
 
         if(args.length == 1){ //start new
-            if(isOnCooldown(message.getAuthor().getStringID(), message.getGuild().getLongID())){
+            if(isOnCooldown(message.getAuthor().get().getId().asString(), guild.getId().asLong())){
                 MessagesUtils.addReaction(message, "The arena is still being cleaned up, please wait.", EmojiEnum.HOURGLASS_FLOWING_SAND);
                 return;
             }
-            if(teamDeathmatches.containsKey(message.getGuild().getLongID())) {
+            if(teamDeathmatches.containsKey(guild.getId().asLong())) {
                 MessagesUtils.addReaction(message, "There's already a Team Deathmatch active in this server!", EmojiEnum.X);
             } else {
                 TeamDeathmatch game = new TeamDeathmatch(message);
-                teamDeathmatches.put(message.getGuild().getLongID(), game);
+                teamDeathmatches.put(guild.getId().asLong(), game);
             }
         } else if (args.length >= 2) {
-            if(!teamDeathmatches.containsKey(message.getGuild().getLongID())){
+            if(!teamDeathmatches.containsKey(guild.getId().asLong())){
                 MessagesUtils.addReaction(message, "There is no game active in this server. Start one with `!td`!", EmojiEnum.X);
                 return;
             }
             switch (args[1]){
                 case "join":
-                    teamDeathmatches.get(message.getGuild().getLongID()).joinTeam(message);
+                    teamDeathmatches.get(guild.getId().asLong()).joinTeam(message);
                     break;
                 case "start":
-                    teamDeathmatches.get(message.getGuild().getLongID()).start(message);
+                    teamDeathmatches.get(guild.getId().asLong()).start(message);
                     break;
                 default:
                     MessagesUtils.addReaction(message,"The arguments you used are invalid. Usage: `!td [join/start] [teamnumber/new]`", EmojiEnum.X);
@@ -64,14 +65,15 @@ public class TdManager {
         cooldowns.clear();
     }
 
-    @EventSubscriber
-    public void onReaction(ReactionAddEvent event){
-        if(!teamDeathmatches.containsKey(event.getGuild().getLongID())) return;
-        if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.CROSSED_SWORDS){
-            teamDeathmatches.get(event.getGuild().getLongID()).joinTeam(event);
-        } else if(EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.WHITE_CHECK_MARK ||
-                EmojiEnum.getByUnicode(event.getReaction().getEmoji().getName()) == EmojiEnum.EYES){
-            teamDeathmatches.get(event.getGuild().getLongID()).start(event);
+    public static void onReaction(ReactionAddEvent event){
+        Guild guild = event.getGuild().block();
+        String reaction = event.getEmoji().asUnicodeEmoji().get().getRaw();
+        if(!teamDeathmatches.containsKey(guild.getId().asLong())) return;
+        if(EmojiEnum.getByUnicode(reaction) == EmojiEnum.CROSSED_SWORDS){
+            teamDeathmatches.get(guild.getId().asLong()).joinTeam(event);
+        } else if(EmojiEnum.getByUnicode(reaction) == EmojiEnum.WHITE_CHECK_MARK ||
+                EmojiEnum.getByUnicode(reaction) == EmojiEnum.EYES){
+            teamDeathmatches.get(guild.getId().asLong()).start(event);
         }
     }
 
