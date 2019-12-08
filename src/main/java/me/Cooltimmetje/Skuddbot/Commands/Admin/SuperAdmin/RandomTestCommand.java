@@ -23,7 +23,7 @@ public class RandomTestCommand {
         }
 
         Logger.info("Running random test.");
-        message.getChannel().block().type();
+        message.getChannel().block().type().subscribe();
         int one = 0;
         int two = 0;
         int three = 0;

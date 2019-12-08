@@ -42,7 +42,7 @@ public class JoinQuitListener {
             };
             channel.createMessage(messageSpec -> {
                 messageSpec.setEmbed(template);
-            });
+            }).block();
         }
         if(server.getRoleOnJoin() != null){
             Member user = event.getMember();
@@ -71,7 +71,7 @@ public class JoinQuitListener {
             };
             channel.createMessage(messageSpec -> {
                 messageSpec.setEmbed(template);
-            });
+            }).block();
         }
     }
 

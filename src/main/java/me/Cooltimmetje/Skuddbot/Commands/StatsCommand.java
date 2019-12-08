@@ -137,7 +137,7 @@ public class StatsCommand {
 
         message.getChannel().block().createMessage(spec -> {
             spec.setEmbed(template);
-        });
+        }).block();
     }
 
 }

@@ -29,7 +29,7 @@ public class LeaderboardCommand {
      * @param message This is the message that triggered the command.
      */
     public static void run(Message message){
-        message.getChannel().block().type();
+        message.getChannel().block().type().subscribe();
         long startTime = System.currentTimeMillis();
         Guild guild = message.getGuild().block();
         ServerManager.getServer(guild.getId().asString()).save();

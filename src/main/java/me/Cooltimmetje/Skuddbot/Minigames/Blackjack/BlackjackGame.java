@@ -73,8 +73,8 @@ public class BlackjackGame {
         this.message = MessagesUtils.sendPlain(buildMessage(), channel, false);
 
         if(gameState == GameStates.PLAYER_PLAYING) {
-            message.addReaction(ReactionEmoji.unicode(EmojiEnum.H.getUnicode()));
-            message.addReaction(ReactionEmoji.unicode(EmojiEnum.S.getUnicode()));
+            message.addReaction(ReactionEmoji.unicode(EmojiEnum.H.getUnicode())).block();
+            message.addReaction(ReactionEmoji.unicode(EmojiEnum.S.getUnicode())).block();
         }
     }
 
@@ -211,7 +211,7 @@ public class BlackjackGame {
         if(gameState == GameStates.ENDED){
             ServerManager.getServer(message.getGuild().block().getId().asString()).getBlackjackHandler().games.remove(member.getId().asString());
         } else if (gameState == GameStates.PLAYER_PLAYING){
-             message.removeReaction(ReactionEmoji.unicode(EmojiEnum.H.getUnicode()), member.getId());
+             message.removeReaction(ReactionEmoji.unicode(EmojiEnum.H.getUnicode()), member.getId()).block();
         }
     }
 
@@ -220,7 +220,7 @@ public class BlackjackGame {
             return;
         }
 
-        message.getChannel().block().typeUntil(Mono.delay(Duration.ofSeconds(5)));
+        message.getChannel().block().typeUntil(Mono.delay(Duration.ofSeconds(5))).subscribe();
         gameState = GameStates.DEALER_PLAYING;
 
         dealerHand.add(holeCard);

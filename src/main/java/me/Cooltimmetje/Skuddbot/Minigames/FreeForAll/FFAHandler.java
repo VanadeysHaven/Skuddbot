@@ -183,10 +183,10 @@ public class FFAHandler {
 
 
         if(MessagesUtils.getMessageByID(messageHost, channel.getId().asLong()) != null) {
-            MessagesUtils.getMessageByID(messageHost, channel.getId().asLong()).delete();
+            MessagesUtils.getMessageByID(messageHost, channel.getId().asLong()).delete().block();
         }
         if(MessagesUtils.getMessageByID(messageSent, channel.getId().asLong()) != null) {
-            MessagesUtils.getMessageByID(messageSent, channel.getId().asLong()).delete();
+            MessagesUtils.getMessageByID(messageSent, channel.getId().asLong()).delete().block();
         }
 
         MessagesUtils.sendPlain(MessageFormat.format("{0} {1} all go into {2} for an epic Free For All battle. Only one can emerge victorious! *3*... *2*... *1*... **FIGHT!**",

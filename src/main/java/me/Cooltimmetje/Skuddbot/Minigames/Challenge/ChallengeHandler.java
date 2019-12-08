@@ -174,7 +174,7 @@ public class ChallengeHandler {
 
         Message messageSent = MessagesUtils.sendPlain(MessageFormat.format(EmojiEnum.CROSSED_SWORDS.getUnicode() + "**{0}** has put down an open fight, anyone can accept it! Click the {1} to accept.",
                 message.getAuthorAsMember().block().getDisplayName(), EmojiEnum.CROSSED_SWORDS.getUnicode()), message.getChannel().block(), false);
-        messageSent.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode()));
+        messageSent.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode())).block();
 
         senderMessage.put(message.getAuthorAsMember().block().getId().asString(), message.getId().asString());
         botMessage.put(message.getAuthorAsMember().block().getId().asString(), messageSent.getId().asString());
@@ -189,7 +189,7 @@ public class ChallengeHandler {
 
             Message messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " **" + message.getAuthorAsMember().block().getDisplayName() + "** has challenged **" + message.getUserMentions().collectList().block().get(0).asMember(Snowflake.of(serverId)).block().getDisplayName() + "** to a fight! " +
                     "To accept click the reaction below!", message.getChannel().block(), false);
-            messageBot.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode()));
+            messageBot.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode())).block();
 
             botMessage.put(message.getAuthor().get().getId().asString(), messageBot.getId().asString());
             targetPunch.put(message.getAuthorAsMember().block(), message.getUserMentions().collectList().block().get(0).asMember(Snowflake.of(serverId)).block());
@@ -304,7 +304,7 @@ public class ChallengeHandler {
         if(senderMessage.containsKey(message.getAuthor().get().getId().asString())) {
             Flux<Snowflake> messages = Flux.just(Snowflake.of(senderMessage.get(message.getAuthor().get().getId().asString())), Snowflake.of(botMessage.get(message.getAuthor().get().getId().asString())));
             TextChannel tc = (TextChannel) message.getChannel().block();
-            tc.bulkDelete(messages);
+            tc.bulkDelete(messages).subscribe();
 
 
             senderMessage.remove(message.getAuthor().get().getId().asString());

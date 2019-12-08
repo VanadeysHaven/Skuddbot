@@ -37,7 +37,7 @@ public class MessagesUtils {
      */
     @SuppressWarnings("unchecked")
     public static void addReaction(Message message, String debug, EmojiEnum emoji, boolean ignoreUser, long expireTime) {
-        message.addReaction(ReactionEmoji.unicode(emoji.getUnicode()));
+        message.addReaction(ReactionEmoji.unicode(emoji.getUnicode())).block();
 
         JSONObject obj = new JSONObject();
 
@@ -89,7 +89,7 @@ public class MessagesUtils {
      */
     public static void sendSuccess(String message, MessageChannel channel) {
         if (!Constants.MUTED) {
-            channel.createMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere"));
+            channel.createMessage(":white_check_mark: " + message.replace("@everyone", "@\u200Beveryone").replace("@here", "@\u200Bhere")).block();
         }
     }
 

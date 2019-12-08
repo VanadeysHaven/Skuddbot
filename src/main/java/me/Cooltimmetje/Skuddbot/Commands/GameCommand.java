@@ -44,7 +44,7 @@ public class GameCommand {
                     }
                     String input = sb.toString().trim();
                     String substring = input.substring(0, Math.min(input.length(), 128));
-                    Main.getInstance().getSkuddbot().updatePresence(Presence.online(Activity.playing(substring)));
+                    Main.getInstance().getSkuddbot().updatePresence(Presence.online(Activity.playing(substring))).block();
                     if(input.length() > 128) { //Check limit - See if we need to display the warning.
                         MessagesUtils.addReaction(message,"Game set to: `" + substring + "`\n " +
                                 ":warning: Your message exceeded the __128 character limit__, therefore we have trimmed it down to that limit.", EmojiEnum.WHITE_CHECK_MARK, false);

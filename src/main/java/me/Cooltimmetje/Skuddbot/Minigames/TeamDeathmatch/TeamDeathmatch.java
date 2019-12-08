@@ -71,7 +71,7 @@ public class TeamDeathmatch {
         this.lastEntrants = 0;
 
         Message msg = MessagesUtils.sendPlain(formatMessage(), message.getChannel().block(), false);
-        msg.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode()));
+        msg.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode())).block();
         this.messageId = msg.getId().asLong();
         this.channelId = msg.getChannelId().asLong();
         message.delete().block();
@@ -176,11 +176,11 @@ public class TeamDeathmatch {
         MessageChannel channel = event.getChannel().block();
 
         if((!canStart() || event.getUser().block().getId().asLong() != host.getId().asLong()) && emoji == EmojiEnum.WHITE_CHECK_MARK){
-            event.getMessage().block().removeReaction(event.getEmoji(), event.getUserId());
+            event.getMessage().block().removeReaction(event.getEmoji(), event.getUserId()).block();
             return;
         }
         if((!canStart() || !ProfileManager.getDiscord(event.getUser().block().asMember(guild.getId()).block(), true).hasElevatedPermissions()) && emoji == EmojiEnum.EYES){
-            event.getMessage().block().removeReaction(event.getEmoji(), event.getUserId());
+            event.getMessage().block().removeReaction(event.getEmoji(), event.getUserId()).block();
             return;
         }
 
@@ -196,7 +196,7 @@ public class TeamDeathmatch {
         Team winningTeam = simulateFight();
         winningTeam.setWinner(true);
 
-        channel.type();
+        channel.type().subscribe();
 
         exec.schedule(() -> {
             MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " The teams go into " + ServerManager.getServer(guild.getId().asString()).getArenaName() + " for a EPIC Team Deathmatch! Who will win? *3*... *2*... *1*... **FIGHT!**", channel, false);

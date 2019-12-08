@@ -40,7 +40,7 @@ public class ServerInfoCommand {
 
         message.getChannel().block().createMessage(msgSpec -> {
            msgSpec.setEmbed(template);
-        });
+        }).block();
         
     }
 

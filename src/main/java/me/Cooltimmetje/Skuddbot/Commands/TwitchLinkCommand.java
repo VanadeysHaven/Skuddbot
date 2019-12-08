@@ -89,7 +89,7 @@ public class TwitchLinkCommand {
      * @param twitch The Twitch instance of the user.
      */
     public static void sendFollowUp(SkuddUser user, SkuddUser twitch) {
-        user.getVerifyMessage().delete();
+        user.getVerifyMessage().delete().block();
         user.setVerifyMessage(null);
 
         user.setVerifyMessage(MessagesUtils.sendPM(Main.getInstance().getSkuddbot().getUserById(Snowflake.of(user.getId())).block(), "[" + Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID.get(user.getId()))).block().getName() + "] **Code recieved on Twitch.** *Processing... Please wait.*"));

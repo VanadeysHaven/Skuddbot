@@ -342,7 +342,7 @@ public class MiscUtils {
 
         if(avatar != Avatars.valueOf(Constants.config.get("avatar"))){
             Avatars finalAvatar = avatar;
-            Main.getInstance().getSkuddbot().edit(userEditSpec -> userEditSpec.setAvatar(Image.ofUrl(finalAvatar.getUrl()).block()));
+            Main.getInstance().getSkuddbot().edit(userEditSpec -> userEditSpec.setAvatar(Image.ofUrl(finalAvatar.getUrl()).block())).block();
             Constants.config.put("avatar", avatar.toString());
             MySqlManager.saveGlobal("avatar", avatar.toString());
         }
