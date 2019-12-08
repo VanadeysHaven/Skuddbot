@@ -13,8 +13,6 @@ import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.TdManager;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 
-import java.io.IOException;
-
 /**
  * This class handles everything commands, and triggers the right bit of code to process the command!
  *
@@ -67,13 +65,6 @@ public class CommandManager {
                 case "!flip":
                     FlipTextCommand.run(event.getMessage());
                     break;
-                case "!import":
-                    try {
-                        ImportCommand.run(event.getMessage());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
                 case "!ping":
                     PingCommand.run(event.getMessage());
                     break;
@@ -93,7 +84,7 @@ public class CommandManager {
                     UserInfo.run(event.getMessage());
                     break;
                 case "!riot":
-                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel(), false);
+                    MessagesUtils.sendPlain("(╯°□°）╯︵ ┻━┻", event.getMessage().getChannel().block(), false);
                     break;
                 case "!reverse":
                     ReverseCommand.run(event.getMessage());
@@ -186,7 +177,7 @@ public class CommandManager {
                     CakeCommand.run(event.getMessage());
                     break;
                 default:
-                    ServerManager.getServer(event.getGuild()).runCommand(invoker, event.getMessage());
+                    ServerManager.getServer(event.getGuild().block()).runCommand(invoker, event.getMessage());
                     break;
             }
         } else if (event.getMessage().getChannel().block().getType() == Channel.Type.DM){

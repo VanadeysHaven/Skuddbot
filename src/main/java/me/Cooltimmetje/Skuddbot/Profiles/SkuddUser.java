@@ -1,7 +1,9 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
 import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.Role;
 import discord4j.core.object.util.Snowflake;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,9 +59,6 @@ public class SkuddUser {
     private boolean minigameReminders;
 
     //---- USER STATS ----
-    private int xpStreak;
-    private int msgStreak;
-    private int wallStreak;
     private int challengeWins;
     private int challengeLosses;
     private int challengeStreak;
@@ -184,19 +183,13 @@ public class SkuddUser {
     }
 
     public void setRoles(){
-        if(id != null && twitchUsername != null && Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(serverID)) != null){
-            IUser user = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(serverID));
-            IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
-            List<IRole> roleList = user.getRolesForGuild(guild);
+        if(id != null && twitchUsername != null && Main.getInstance().getSkuddbot().getUserById(Snowflake.of(serverID)) != null) {
+            Member member = Main.getInstance().getSkuddbot().getUserById(Snowflake.of(serverID)).block().asMember(Snowflake.of(serverID)).block();
+            Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID)).block();
+            Role role = guild.getRoles().filter(r -> r.getName().equals("Linked")).blockFirst();
 
-            roleList.add(guild.getRolesByName("Linked").get(0));
-            IRole[] roles = roleList.toArray(new IRole[roleList.size()]);
-
-            try {
-                guild.editUserRoles(user, roles);
-            } catch (MissingPermissionsException | RateLimitException | DiscordException e) {
-//                Logger.warn("Couldn't add role. See Stacktrace", e);
-            }
+            if(role != null)
+                member.addRole(role.getId()).block();
         }
     }
 
@@ -211,9 +204,9 @@ public class SkuddUser {
         }
 
         Constants.PROFILES_IN_MEMORY--;
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
+        Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID)).block();
         boolean isTwitch = id == null;
-        Logger.info(MessageFormat.format("[ProfileUnload][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(serverID)) == null ? name : guild.getUserByID(Long.parseLong(serverID)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getId().asString(), Constants.PROFILES_IN_MEMORY));
+        Logger.info(MessageFormat.format("[ProfileUnload][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getMemberById(Snowflake.of(serverID)) == null ? name : guild.getMemberById(Snowflake.of(serverID)).block().getUsername()) + " (ID: " + id + ")", guild.getName(), guild.getId().asString(), Constants.PROFILES_IN_MEMORY));
     }
 
     /**
@@ -423,15 +416,6 @@ public class SkuddUser {
         switch (stat){
             default:
                 return null;
-            case XP_GAIN_STREAK:
-                this.xpStreak = intValue;
-                return null;
-            case CHAT_WALL_STREAK:
-                this.wallStreak = intValue;
-                return null;
-            case MESSAGES_POSTED_STREAK:
-                this.msgStreak = intValue;
-                return null;
             case CHALLENGE_WINS:
                 this.challengeWins = intValue;
                 return null;
@@ -517,12 +501,6 @@ public class SkuddUser {
      */
     public String getStat(UserStats stat){
         switch (stat){
-            case MESSAGES_POSTED_STREAK:
-                return getMsgStreak()+"";
-            case CHAT_WALL_STREAK:
-                return getWallStreak()+"";
-            case XP_GAIN_STREAK:
-                return getXpStreak()+"";
             case CHALLENGE_WINS:
                 return getChallengeWins()+"";
             case CHALLENGE_LOSSES:
@@ -600,21 +578,21 @@ public class SkuddUser {
      * @return if the user has elevated permissions.
      */
     public boolean hasElevatedPermissions(){
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
-        IUser user = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id));
+        Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID)).block();
+        Member member = Main.getInstance().getSkuddbot().getUserById(Snowflake.of(id)).block().asMember(guild.getId()).block();
         Server server = ServerManager.getServer(serverID);
         boolean elevatedPerms = false;
 
-        if(guild.getLongID() == 224987945638035456L && Main.getInstance().getSkuddbot().getOurUser().getLongID() == 224553721210732544L)
+        if(guild.getId().asLong() == 224987945638035456L && Main.getInstance().getSkuddbot().getSelf().block().getId().asLong() == 224553721210732544L)
             return true;
 
         if(server.getAdminRole() != null){
-            if(guild.getRolesByName(server.getAdminRole()).size() == 1){
-                elevatedPerms = user.getRolesForGuild(guild).contains(guild.getRolesByName(server.getAdminRole()).get(0));
+            if(guild.getRoles().filter(role -> role.getName().equals(server.getAdminRole())).collectList().block().size() == 1){
+                elevatedPerms = member.getRoles().collectList().block().contains(guild.getRoles().filter(role -> role.getName().equals(server.getAdminRole())).collectList().block().get(0));
             }
         }
         if(!elevatedPerms){
-            elevatedPerms = user == guild.getOwner() || Constants.adminUser.contains(user.getId().asString());
+            elevatedPerms = member == guild.getOwner().block() || Constants.adminUser.contains(member.getId().asString());
         }
 
         return elevatedPerms;
@@ -624,8 +602,8 @@ public class SkuddUser {
         if(id == null){
             return twitchUsername;
         } else {
-            IUser user = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id));
-            if(user != null) return user.getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID)));
+            Member member = Main.getInstance().getSkuddbot().getUserById(Snowflake.of(id)).block().asMember(Snowflake.of(serverID)).block();
+            if(member != null) return member.getDisplayName();
             return name;
         }
     }
@@ -657,9 +635,9 @@ public class SkuddUser {
             if(amount < teamDeathmatchFavTeammate.get(key)){
                 names.clear();
                 amount = teamDeathmatchFavTeammate.get(key);
-                names.add(Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(key)).getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID))));
+                names.add(Main.getInstance().getSkuddbot().getUserById(Snowflake.of(key)).block().asMember(Snowflake.of(serverID)).block().getDisplayName());
             } else if(amount == teamDeathmatchFavTeammate.get(key)){
-                names.add(Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(key)).getDisplayName(Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID))));
+                names.add(Main.getInstance().getSkuddbot().getUserById(Snowflake.of(key)).block().asMember(Snowflake.of(serverID)).block().getDisplayName());
             }
         }
         return MiscUtils.glueStrings("", ", ", " and ", "", Arrays.copyOf(names.toArray(), names.size(), String[].class));

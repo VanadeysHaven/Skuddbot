@@ -2,6 +2,7 @@ package me.Cooltimmetje.Skuddbot.Profiles;
 
 import com.vdurmont.emoji.EmojiParser;
 import com.zaxxer.hikari.HikariDataSource;
+import discord4j.core.object.util.Snowflake;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
 import me.Cooltimmetje.Skuddbot.Listeners.CreateServerListener;
@@ -22,7 +23,7 @@ import java.util.HashMap;
  * This class handles everything to do with the database, and contains all operations we can run on the database.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -260,12 +261,12 @@ public class MySqlManager {
 
             ps.setString(1, user.getServerID());
             ps.setString(2, user.getId());
-            ps.setString(3, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
+            ps.setString(3, (Main.getInstance().getSkuddbot().getUserById(Snowflake.of(user.getId())).block() == null ? user.getName() : Main.getInstance().getSkuddbot().getUserById(Snowflake.of(user.getId())).block().getUsername()));
             ps.setInt(4, user.getXp());
             ps.setString(5, user.getTwitchUsername());
             ps.setString(6, user.jsonSettings());
             ps.setString(7, user.jsonStats());
-            ps.setString(8, (Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())) == null ? user.getName() : Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(user.getId())).getName()));
+            ps.setString(8, (Main.getInstance().getSkuddbot().getUserById(Snowflake.of(user.getId())).block() == null ? user.getName() : Main.getInstance().getSkuddbot().getUserById(Snowflake.of(user.getId())).block().getUsername()));
             ps.setInt(9, user.getXp());
             ps.setString(10, user.getTwitchUsername());
             ps.setString(11, user.jsonSettings());
@@ -735,7 +736,7 @@ public class MySqlManager {
             ps = c.prepareStatement(query);
 
             ps.setString(1, id);
-            ps.setString(2, Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id)).getName());
+            ps.setString(2, Main.getInstance().getSkuddbot().getUserById(Snowflake.of(id)).block().getUsername());
 
             ps.execute();
         } catch (SQLException e){
@@ -1224,7 +1225,7 @@ public class MySqlManager {
 
     public static HashMap<String,Integer> getStats(UserStats stat, String serverId){
         HashMap<String,Integer> result = new HashMap<>();
-        Logger.info("Loading all " + stat.toString() + " stats for server " + Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverId)).getName() + " (ID: " + serverId + ")");
+        Logger.info("Loading all " + stat.toString() + " stats for server " + Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverId)).block().getName() + " (ID: " + serverId + ")");
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs = null;

@@ -20,7 +20,7 @@ import static me.Cooltimmetje.Skuddbot.Profiles.ServerManager.twitchServers;
  * Everything Twitch happens here!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.7-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class SkuddbotTwitch extends PircBot{
@@ -122,10 +122,6 @@ public class SkuddbotTwitch extends PircBot{
                     }
                 }
             }
-
-            Server server = ServerManager.getTwitch(channel.replace("#", " ").trim());
-            server.logMessage(sender, message, gain);
-
         } else if (channel.equals("#" + Constants.twitchBot)) {
             if (message.startsWith("!verify")) {
                 String[] args = message.split(" ");

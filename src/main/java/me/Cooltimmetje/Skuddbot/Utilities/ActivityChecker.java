@@ -1,11 +1,11 @@
 package me.Cooltimmetje.Skuddbot.Utilities;
 
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Minigames.FreeForAll.FFAManager;
 import me.Cooltimmetje.Skuddbot.Minigames.TeamDeathmatch.TdManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,15 +63,15 @@ public class ActivityChecker extends TimerTask {
         MiscUtils.setPlaying(false);
         ServerManager.saveAll();
 
-        ArrayList<IMessage> temp = new ArrayList<>();
-        for (IMessage message : MessagesUtils.reactions.keySet()){
+        ArrayList<Message> temp = new ArrayList<>();
+        for (Message message : MessagesUtils.reactions.keySet()){
             long time = Long.parseLong(MessagesUtils.reactions.get(message).get("time")+"");
             long expireTime = Long.parseLong(MessagesUtils.reactions.get(message).get("expireTime")+"");
             if((System.currentTimeMillis() - time) > expireTime){
                 temp.add(message);
             }
         }
-        for(IMessage message : temp){
+        for(Message message : temp){
             MessagesUtils.reactions.remove(message);
         }
 

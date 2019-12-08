@@ -1,6 +1,5 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.MessageChannel;
@@ -84,7 +83,7 @@ public class StatLeaderboardCommand {
 
         int i = 0;
         int lastValue = -1;
-        TableArrayGenerator tag = new TableArrayGenerator(new TableRow("Pos", "Name", StringUtils.capitalize(stat.getStatSuffix()), "Account Type"));
+        TableArrayGenerator tag = new TableArrayGenerator(new TableRow("Pos", "Name", MiscUtils.capitalize(stat.getStatSuffix()), "Account Type"));
         for(String string : top.keySet()){
             TableRow tr = new TableRow();
             String name = getName(string, guild);

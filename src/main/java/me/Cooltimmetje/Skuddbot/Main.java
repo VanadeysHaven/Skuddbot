@@ -8,7 +8,6 @@ import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import org.jibble.pircbot.IrcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.util.DiscordException;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -17,7 +16,7 @@ import java.util.Timer;
  * This is the bot instance.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 
@@ -64,11 +63,8 @@ public class Main {
         MySqlManager.loadGlobal();
 
         log.info("All systems operational. Ready to connect to Discord.");
-        try {
-            skuddbot.login();
-        } catch (DiscordException e) {
-            e.printStackTrace();
-        }
+        skuddbot.login();
+
 
         timer.schedule(new ActivityChecker(), Constants.INACTIVE_DELAY, Constants.INACTIVE_DELAY);
         Constants.STARTUP_TIME = System.currentTimeMillis();
