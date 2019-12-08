@@ -1,17 +1,21 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Main;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.handle.obj.*;
 
 /**
  * This command changes the playing status of Skuddbot.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.1-ALPHA
  */
 public class GameCommand {
@@ -21,13 +25,13 @@ public class GameCommand {
      *
      * @param message This is the message that ran the command, and contains the arguments.
      */
-    public static void run(IMessage message){
-        String msgContent = message.getContent(); //Message content.
-        IChannel channel = message.getChannel(); //Channel to send the confirmation message to
-        IUser user = message.getAuthor(); //User that sent the message - Used to check the permissions.
+    public static void run(Message message){
+        String msgContent = message.getContent().get(); //Message content.
+        MessageChannel channel = message.getChannel().block(); //Channel to send the confirmation message to
+        User user = message.getAuthor().get(); //User that sent the message - Used to check the permissions.
 
-        if(!Constants.awesomeUser.contains(user.getStringID())){ //Actual permission check
-            Logger.info(user.getName() + " attempted to do something they don't have permission for.");
+        if(!Constants.awesomeUser.contains(user.getId().asString())){ //Actual permission check
+            Logger.info(user.getUsername() + " attempted to do something they don't have permission for.");
         } else {
             if(Constants.EVENT_ACTIVE){
                 MessagesUtils.addReaction(message,"There is a timed event active: " + Constants.CURRENT_EVENT, EmojiEnum.X, false);
@@ -39,12 +43,13 @@ public class GameCommand {
                         sb.append(args[i]).append(" ");
                     }
                     String input = sb.toString().trim();
-                    Main.getInstance().getSkuddbot().changePresence(StatusType.ONLINE, ActivityType.PLAYING, input.substring(0, Math.min(input.length(), 128))); //Set the playing status.
+                    String substring = input.substring(0, Math.min(input.length(), 128));
+                    Main.getInstance().getSkuddbot().updatePresence(Presence.online(Activity.playing(substring)));
                     if(input.length() > 128) { //Check limit - See if we need to display the warning.
-                        MessagesUtils.addReaction(message,"Game set to: `" + input.substring(0, Math.min(input.length(), 128)) + "`\n " +
+                        MessagesUtils.addReaction(message,"Game set to: `" + substring + "`\n " +
                                 ":warning: Your message exceeded the __128 character limit__, therefore we have trimmed it down to that limit.", EmojiEnum.WHITE_CHECK_MARK, false);
                     } else {
-                        MessagesUtils.addReaction(message,"Game set to: `" + input.substring(0, Math.min(input.length(), 128)) + "`", EmojiEnum.WHITE_CHECK_MARK, false);
+                        MessagesUtils.addReaction(message,"Game set to: `" + substring + "`", EmojiEnum.WHITE_CHECK_MARK, false);
                     }
                 } else {
                     MessagesUtils.addReaction(message,"No game specified.", EmojiEnum.X, false);

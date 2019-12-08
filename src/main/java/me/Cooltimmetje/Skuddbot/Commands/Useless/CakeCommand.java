@@ -1,9 +1,9 @@
 package me.Cooltimmetje.Skuddbot.Commands.Useless;
 
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.handle.obj.IMessage;
 
 /**
  * Cake! Who doesn't like cake?
@@ -14,7 +14,7 @@ import sx.blah.discord.handle.obj.IMessage;
  */
 public class CakeCommand {
 
-    public static void run(IMessage message){
+    public static void run(Message message){
         String pictureURL;
         boolean allowed;
 
@@ -23,7 +23,7 @@ public class CakeCommand {
             allowed = MiscUtils.randomCheck(pictureURL);
         } while (!allowed);
 
-        MessagesUtils.sendPlain(":cake: " + pictureURL , message.getChannel(), false);
+        MessagesUtils.sendPlain(":cake: " + pictureURL , message.getChannel().block(), false);
     }
 
 }

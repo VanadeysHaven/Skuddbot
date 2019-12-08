@@ -1,17 +1,17 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Enums.DataTypes;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.MySqlManager;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.handle.obj.IMessage;
 
 /**
  * Allows awesome users to add stuff to the pool of messages!
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.61-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.3-ALPHA-DEV
  */
 public class AddMessageCommand {
@@ -22,9 +22,9 @@ public class AddMessageCommand {
      *
      * @param message The message that triggered this command.
      */
-    public static void run(IMessage message){
-        if(Constants.awesomeUser.contains(message.getAuthor().getStringID())){
-            String[] args = message.getContent().split(" ");
+    public static void run(Message message){
+        if(Constants.awesomeUser.contains(message.getAuthor().get().getId().asString())){
+            String[] args = message.getContent().get().split(" ");
             if(args.length > 2){
                 DataTypes dataType;
 
@@ -50,10 +50,10 @@ public class AddMessageCommand {
 
                 if(input.length() > dataType.getMaxLength()){
                         MessagesUtils.sendPlain(":warning: Your message is exceeding the __" + dataType.getMaxLength() + " character limit__. To add it you need to make it shorter." +
-                                "For your convenience: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel(), false);
+                                "For your convenience: This is your message trimmed down to the correct length:\n```\n" + trimmed + "\n```", message.getChannel().block(), false);
                 } else {
                     MessagesUtils.addReaction(message, "Added `" + trimmed + "` as a `" + dataType.toString().toUpperCase() + "` message!", EmojiEnum.WHITE_CHECK_MARK, false);
-                    MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().getStringID());
+                    MySqlManager.addAwesomeString(dataType, trimmed, message.getAuthor().get().getId().asString());
                     Constants.awesomeStrings.put(trimmed, dataType);
                 }
             } else {

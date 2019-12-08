@@ -1,28 +1,28 @@
 package me.Cooltimmetje.Skuddbot.Commands.Custom;
 
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Profiles.ProfileManager;
 import me.Cooltimmetje.Skuddbot.Profiles.Server;
 import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
 import me.Cooltimmetje.Skuddbot.Profiles.SkuddUser;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
-import sx.blah.discord.handle.obj.IMessage;
 
 /**
  * This handles the creating, removing and editing of commands.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.5-ALPHA
  */
 public class CommandEditor {
 
     private static final String COMMAND_USAGE = "!command <add/edit/remove> <invoker>";
 
-    public static void run(IMessage message){
-        SkuddUser user = ProfileManager.getDiscord(message.getAuthor(), message.getGuild(), true);
-        Server server = ServerManager.getServer(message.getGuild());
-        String[] args = message.getContent().split(" ");
+    public static void run(Message message){
+        SkuddUser user = ProfileManager.getDiscord(message.getAuthor().get(), message.getGuild().block(), true);
+        Server server = ServerManager.getServer(message.getGuild().block());
+        String[] args = message.getContent().get().split(" ");
 
         if(!user.hasElevatedPermissions()){
             MessagesUtils.addReaction(message, "You do not have permission to edit commands.", EmojiEnum.X);

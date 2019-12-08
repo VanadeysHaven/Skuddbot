@@ -13,6 +13,8 @@ import me.Cooltimmetje.Skuddbot.Profiles.ServerManager;
  * @version v0.5.1-ALPHA
  * @since v0.4.34-ALPHA
  */
+
+//TODO: REWRITE
 public class ChallengeManager {
 
     public static void clearCooldowns() {

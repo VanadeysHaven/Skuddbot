@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
  * @version v0.5.1-ALPHA
  * @since v0.4.4-ALPHA
  */
+
+//TODO: REWRITE
 public class FFAHandler {
 
     private String serverID;

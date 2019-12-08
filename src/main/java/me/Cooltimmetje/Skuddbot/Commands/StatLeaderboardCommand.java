@@ -1,5 +1,10 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import com.sun.xml.internal.ws.util.StringUtils;
+import discord4j.core.object.entity.Guild;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.MessageChannel;
+import discord4j.core.object.util.Snowflake;
 import me.Cooltimmetje.Skuddbot.Enums.EmojiEnum;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStats;
 import me.Cooltimmetje.Skuddbot.Enums.UserStats.UserStatsCats;
@@ -10,10 +15,6 @@ import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableArrayGenerator;
 import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableDrawer;
 import me.Cooltimmetje.Skuddbot.Utilities.TableUtilities.TableRow;
-import org.apache.commons.lang3.StringUtils;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.*;
 
@@ -21,16 +22,16 @@ import java.util.*;
  * This command generates a leaderboard of a given stat.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.5-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.6-ALPHA
  */
 public class StatLeaderboardCommand {
 
-    public static void run(IMessage message){
+    public static void run(Message message){
         long startTime = System.currentTimeMillis();
-        String[] args = message.getContent().split(" ");
-        IChannel channel = message.getChannel();
-        IGuild guild = message.getGuild();
+        String[] args = message.getContent().get().split(" ");
+        MessageChannel channel = message.getChannel().block();
+        Guild guild = message.getGuild().block();
         Server server = ServerManager.getServer(guild);
         server.save();
         UserStats stat = null;
@@ -76,7 +77,7 @@ public class StatLeaderboardCommand {
             return;
         }
 
-        channel.setTypingStatus(true);
+        channel.type().block();
         LinkedHashMap<String,Integer> top = getTop(stat, guild);
 
         sb.append("**").append(stat.getCategory().getName()).append(": ").append(stat.getDescription()).append(" leaderboard** | **").append(guild.getName()).append("**\n```\n");
@@ -87,7 +88,7 @@ public class StatLeaderboardCommand {
         for(String string : top.keySet()){
             TableRow tr = new TableRow();
             String name = getName(string, guild);
-            SkuddUser su = ProfileManager.getByString(string, guild.getStringID(), true);
+            SkuddUser su = ProfileManager.getByString(string, guild.getId().asString(), true);
             if(lastValue == top.get(string)){
                 tr.addString(" ");
             } else {
@@ -106,8 +107,8 @@ public class StatLeaderboardCommand {
         MessagesUtils.sendPlain(sb.append("```").append("\n").append("Generated in `").append(System.currentTimeMillis() - startTime).append("ms`").toString().trim(), channel, false);
     }
 
-    private static LinkedHashMap<String,Integer> getTop(UserStats stat, IGuild guild){
-        HashMap<String,Integer> stats = MySqlManager.getStats(stat, guild.getStringID());
+    private static LinkedHashMap<String,Integer> getTop(UserStats stat, Guild guild){
+        HashMap<String,Integer> stats = MySqlManager.getStats(stat, guild.getId().asString());
         List<String> mapKeys = new ArrayList<>(stats.keySet());
         List<Integer> mapValues = new ArrayList<>(stats.values());
         mapKeys.sort(Collections.reverseOrder());
@@ -138,10 +139,10 @@ public class StatLeaderboardCommand {
         return sortedMap;
     }
 
-    private static String getName(String str, IGuild guild){
+    private static String getName(String str, Guild guild){
         String name = "";
         if(MiscUtils.isLong(str)){
-            name = Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(str)).getDisplayName(guild);
+            name = Main.getInstance().getSkuddbot().getUserById(Snowflake.of(str)).block().asMember(guild.getId()).block().getDisplayName();
         } else {
             name = str;
         }

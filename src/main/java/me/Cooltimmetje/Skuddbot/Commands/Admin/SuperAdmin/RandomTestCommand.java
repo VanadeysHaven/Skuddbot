@@ -1,10 +1,10 @@
 package me.Cooltimmetje.Skuddbot.Commands.Admin.SuperAdmin;
 
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.Logger;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.handle.obj.IMessage;
 
 import java.text.MessageFormat;
 
@@ -12,18 +12,18 @@ import java.text.MessageFormat;
  * This class contains a test for the RNG. This will roll a dice 1200 times, and spit out the results, if the RNG is fair, each face should have been rolled about 200 times.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.32-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.4.32-ALPHA
  */
 public class RandomTestCommand {
 
-    public static void run(IMessage message){
-        if(!Constants.adminUser.contains(message.getAuthor().getStringID())){
+    public static void run(Message message){
+        if(!Constants.adminUser.contains(message.getAuthor().get().getId().asString())){
             return;
         }
 
         Logger.info("Running random test.");
-        message.getChannel().toggleTypingStatus();
+        message.getChannel().block().type();
         int one = 0;
         int two = 0;
         int three = 0;
@@ -61,7 +61,7 @@ public class RandomTestCommand {
             }
         }
 
-        MessagesUtils.sendPlain(MessageFormat.format("Random test: Dice roll x1200\n```\n1: {0}\n2: {1}\n3: {1}\n4: {2}\n5: {4}\n6: {5}\n```", one, two, three, four, five, six), message.getChannel(), false);
+        MessagesUtils.sendPlain(MessageFormat.format("Random test: Dice roll x1200\n```\n1: {0}\n2: {1}\n3: {1}\n4: {2}\n5: {4}\n6: {5}\n```", one, two, three, four, five, six), message.getChannel().block(), false);
     }
 
 }

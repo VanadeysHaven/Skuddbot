@@ -1,6 +1,8 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.User;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 
 /**
@@ -54,6 +56,10 @@ public class ProfileManager {
 
     public static SkuddUser getDiscord(Member member, boolean createNew){
         return getDiscord(member.getId().asString(), member.getGuildId().asString(), createNew);
+    }
+
+    public static SkuddUser getDiscord(User user, Guild guild, boolean createNew) {
+        return getDiscord(user.asMember(guild.getId()).block(), createNew);
     }
 
     public static SkuddUser getTwitch(String twitchUsername, String twitchChannel, boolean createNew){

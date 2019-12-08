@@ -1,32 +1,28 @@
 package me.Cooltimmetje.Skuddbot.Commands.Useless;
 
+import discord4j.core.object.entity.Message;
 import me.Cooltimmetje.Skuddbot.Utilities.MessagesUtils;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.handle.obj.IMessage;
 
 /**
  * This will reverse the input.
  *
  * @author Tim (Cooltimmetje)
- * @version v0.4.2-ALPHA
+ * @version v0.5.1-ALPHA
  * @since v0.3-ALPHA
  */
 public class ReverseCommand {
 
-    public static void run(IMessage message){
-        String[] args = message.getContent().split(" ");
+    public static void run(Message message){
+        String[] args = message.getContent().get().split(" ");
         String input;
         if(args.length > 1){
             StringBuilder sb = new StringBuilder();
             int mentionCount = 0;
             for(int i=1; i < args.length; i++) {
-                if (message.getMentions().size() != 0) {
-                    if (message.getMentions().get(mentionCount).mention().replace("<@!", "<@").equals(args[i].replace("<@!", "<@"))) {
-                        if(message.getMentions().get(mentionCount).getNicknameForGuild(message.getGuild()) != null){
-                            sb.append("@").append(message.getMentions().get(mentionCount).getNicknameForGuild(message.getGuild()));
-                        } else {
-                            sb.append("@").append(message.getMentions().get(mentionCount).getName());
-                        }
+                if (message.getUserMentions().collectList().block().size() != 0) {
+                    if (message.getUserMentions().collectList().block().get(mentionCount).getMention().replace("<@!", "<@").equals(args[i].replace("<@!", "<@"))) {
+                        sb.append("@").append(message.getUserMentions().collectList().block().get(mentionCount).asMember(message.getGuild().block().getId()).block().getDisplayName());
                         mentionCount++;
                     } else {
                         sb.append(args[i]).append(" ");
@@ -40,7 +36,7 @@ public class ReverseCommand {
             input = "You didn't input any text D:";
         }
 
-        MessagesUtils.sendPlain(MiscUtils.reverse(input, false), message.getChannel(), false);
+        MessagesUtils.sendPlain(MiscUtils.reverse(input, false), message.getChannel().block(), false);
     }
 
 }

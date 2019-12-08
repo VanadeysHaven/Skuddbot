@@ -1,6 +1,8 @@
 package me.Cooltimmetje.Skuddbot.Profiles;
 
+import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.util.Snowflake;
 import lombok.Getter;
 import lombok.Setter;
 import me.Cooltimmetje.Skuddbot.Enums.AccountType;
@@ -17,19 +19,11 @@ import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IRole;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Holds user data. Doesn't need much explanation imo...
@@ -51,7 +45,7 @@ public class SkuddUser {
     private int level;
     private String twitchUsername;
     private String twitchVerify;
-    private IMessage verifyMessage;
+    private Message verifyMessage;
     private boolean inactive;
 
     //---- USER SETTINGS ----
@@ -88,7 +82,7 @@ public class SkuddUser {
 
     public SkuddUser(String id, String serverID, String twitchUsername){
         this.id = id;
-        this.name = (id != null ? Main.getInstance().getSkuddbot().getUserByID(Long.parseLong(id)).getName() : null);
+        this.name = (id != null ? Main.getInstance().getSkuddbot().getUserById(Snowflake.of(id)).block().getUsername() : null);
         this.serverID = serverID;
         this.xp = 0;
         this.level = 1;
@@ -96,9 +90,9 @@ public class SkuddUser {
         this.inactive = false;
 
         Constants.PROFILES_IN_MEMORY++;
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
+        Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID)).block();
         boolean isTwitch = id == null;
-        Logger.info(MessageFormat.format("[ProfileCreate][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : guild.getUserByID(Long.parseLong(id)).getName() + " (ID: " + id + ")", guild.getName(), guild.getStringID(), Constants.PROFILES_IN_MEMORY));
+        Logger.info(MessageFormat.format("[ProfileCreate][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : guild.getMemberById(Snowflake.of(id)).block().getUsername() + " (ID: " + id + ")", guild.getName(), guild.getId().asString(), Constants.PROFILES_IN_MEMORY));
 
         try {
             setSettings("{}");
@@ -133,9 +127,9 @@ public class SkuddUser {
             }
 
             Constants.PROFILES_IN_MEMORY++;
-            IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
+            Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID)).block();
             boolean isTwitch = id == null;
-            Logger.info(MessageFormat.format("[ProfileLoad][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(id)) == null ? name : guild.getUserByID(Long.parseLong(id)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getStringID(), Constants.PROFILES_IN_MEMORY));
+            Logger.info(MessageFormat.format("[ProfileLoad][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getMemberById(Snowflake.of(id)).block() == null ? name : guild.getMemberById(Snowflake.of(id)).block().getUsername()) + " (ID: " + id + ")", guild.getName(), guild.getId().asString(), Constants.PROFILES_IN_MEMORY));
 
             try{
                 setRoles();
@@ -167,9 +161,9 @@ public class SkuddUser {
                 setLevel(level);
 
                 if(getLevelUpNotify() == 0){
-                    MessagesUtils.addReaction(message, MessageFormat.format("{0}, you leveled up! You are now **level {1}**! {2}", message.getAuthor().mention(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "), EmojiEnum.ARROW_UP, false);
+                    MessagesUtils.addReaction(message, MessageFormat.format("{0}, you leveled up! You are now **level {1}**! {2}", message.getAuthor().get().getMention(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "), EmojiEnum.ARROW_UP, false);
                 } else if (getLevelUpNotify() == 1){
-                    MessagesUtils.sendPM(message.getAuthor(), MessageFormat.format(EmojiEnum.ARROW_UP + " You leveled up in **{0}**! You are now **level {1}**! {2}", message.getGuild().getName(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "));
+                    MessagesUtils.sendPM(message.getAuthor().get(), MessageFormat.format(EmojiEnum.ARROW_UP + " You leveled up in **{0}**! You are now **level {1}**! {2}", message.getGuild().block().getName(),getLevel(), levels > 1 ? "(You leveled up **" + levels + " times**)" : " "));
                 }
             }
         }
@@ -179,8 +173,8 @@ public class SkuddUser {
 
     public void save(){
         boolean isTwitch = id == null;
-        IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
-        Logger.info(MessageFormat.format("[ProfileSave][" + (isTwitch ? "Twitch" : "Discord") + "] User: {0} | Server: {1} (ID: {2})", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(id)) == null ? name : guild.getUserByID(Long.parseLong(id)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getStringID()));
+        Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID)).block();
+        Logger.info(MessageFormat.format("[ProfileSave][" + (isTwitch ? "Twitch" : "Discord") + "] User: {0} | Server: {1} (ID: {2})", isTwitch ? twitchUsername : (guild.getMemberById(Snowflake.of(id)).block() == null ? name : guild.getMemberById(Snowflake.of(id)).block().getUsername()) + " (ID: " + id + ")", guild.getName(), guild.getId().asString()));
 
         if(isTwitch){
             MySqlManager.saveTwitch(this);
@@ -219,7 +213,7 @@ public class SkuddUser {
         Constants.PROFILES_IN_MEMORY--;
         IGuild guild = Main.getInstance().getSkuddbot().getGuildByID(Long.parseLong(serverID));
         boolean isTwitch = id == null;
-        Logger.info(MessageFormat.format("[ProfileUnload][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(serverID)) == null ? name : guild.getUserByID(Long.parseLong(serverID)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getStringID(), Constants.PROFILES_IN_MEMORY));
+        Logger.info(MessageFormat.format("[ProfileUnload][{0}] User: {1} | Server: {2} (ID: {3}) - Profiles in memory: {4}", isTwitch ? "Twitch" : "Discord", isTwitch ? twitchUsername : (guild.getUserByID(Long.parseLong(serverID)) == null ? name : guild.getUserByID(Long.parseLong(serverID)).getName()) + " (ID: " + id + ")", guild.getName(), guild.getId().asString(), Constants.PROFILES_IN_MEMORY));
     }
 
     /**
@@ -620,7 +614,7 @@ public class SkuddUser {
             }
         }
         if(!elevatedPerms){
-            elevatedPerms = user == guild.getOwner() || Constants.adminUser.contains(user.getStringID());
+            elevatedPerms = user == guild.getOwner() || Constants.adminUser.contains(user.getId().asString());
         }
 
         return elevatedPerms;

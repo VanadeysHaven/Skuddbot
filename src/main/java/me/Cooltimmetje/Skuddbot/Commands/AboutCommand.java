@@ -1,12 +1,12 @@
 package me.Cooltimmetje.Skuddbot.Commands;
 
+import discord4j.core.object.entity.Message;
+import discord4j.core.spec.EmbedCreateSpec;
 import me.Cooltimmetje.Skuddbot.Utilities.Constants;
 import me.Cooltimmetje.Skuddbot.Utilities.MiscUtils;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.EmbedBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+
+import java.awt.*;
+import java.util.function.Consumer;
 
 /**
  * This class shows some information about the bot, such as the current branch, commit, and the manual.
@@ -22,26 +22,25 @@ public class AboutCommand {
      *
      * @param message This is the message that triggered the command.
      */
-    public static void run(IMessage message){
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.withAuthorIcon("http://i.imgur.com/v1vlVru.png").withAuthorName("Skuddbot " + Constants.config.get("version")).withThumbnail("http://i.imgur.com/v1vlVru.png");
+    public static void run(Message message){
+        Consumer<EmbedCreateSpec> template = spec -> {
+            spec.setAuthor("Skuddbot " + Constants.config.get("version"), null, "http://i.imgur.com/v1vlVru.png");
+            spec.setThumbnail("http://i.imgur.com/v1vlVru.png");
+            spec.setColor(new Color(MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255)));
 
-        embed.withColor(MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255), MiscUtils.randomInt(0,255));
+            spec.addField("__Deployed on:__", Constants.config.get("deployed_on"), true);
+            spec.addField("__Built on:__", Constants.config.get("built_on"), true);
+            spec.addField("__Branch:__", Constants.config.get("branch"), true);
+            spec.addField("__Deployed from:__", "`" + Constants.config.get("deployed_from") + "`", true);
+            spec.addField("__Users in memory:__", Constants.PROFILES_IN_MEMORY+"", true);
+            spec.addField("__Manual:__", Constants.config.get("manual"), true);
+            spec.addField("__Privacy Statement:__", Constants.config.get("privacy_statement"), true);
+            spec.addField("__Changelog:__", Constants.config.get("changelog"), true);
+        };
 
-        embed.appendField("__Deployed on:__", Constants.config.get("deployed_on"), true);
-        embed.appendField("__Built on:__", Constants.config.get("built_on"), true);
-        embed.appendField("__Branch:__", Constants.config.get("branch"), true);
-        embed.appendField("__Deployed from:__", "`" + Constants.config.get("deployed_from") + "`", true);
-        embed.appendField("__Users in memory:__", Constants.PROFILES_IN_MEMORY+"", true);
-        embed.appendField("__Manual:__", Constants.config.get("manual"), true);
-        embed.appendField("__Privacy Statement:__", Constants.config.get("privacy_statement"), true);
-        embed.appendField("__Changelog:__", Constants.config.get("changelog"), true);
-
-        try {
-            message.getChannel().sendMessage("", embed.build(), false);
-        } catch (RateLimitException | DiscordException | MissingPermissionsException e) {
-            e.printStackTrace();
-        }
+        message.getChannel().block().createMessage(msgSpec -> {
+            msgSpec.setEmbed(template);
+        }).block();
     }
 
 }
