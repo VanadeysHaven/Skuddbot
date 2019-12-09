@@ -184,7 +184,7 @@ public class SkuddUser {
 
     public void setRoles(){
         if(id != null && twitchUsername != null && Main.getInstance().getSkuddbot().getUserById(Snowflake.of(serverID)) != null) {
-            Member member = Main.getInstance().getSkuddbot().getUserById(Snowflake.of(serverID)).block().asMember(Snowflake.of(serverID)).block();
+            Member member = Main.getInstance().getSkuddbot().getUserById(Snowflake.of(id)).block().asMember(Snowflake.of(serverID)).block();
             Guild guild = Main.getInstance().getSkuddbot().getGuildById(Snowflake.of(serverID)).block();
             Role role = guild.getRoles().filter(r -> r.getName().equals("Linked")).blockFirst();
 

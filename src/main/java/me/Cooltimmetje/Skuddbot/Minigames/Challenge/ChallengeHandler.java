@@ -181,10 +181,10 @@ public class ChallengeHandler {
     }
 
     private void startInviteChallenge(Message message){
-        if(outstandingChallenges.get(message.getUserMentions().collectList().block().get(0).getId().asString()).equals(message.getAuthor().get().getId().asString())){ //Challenge was accepted
-            fight(message.getUserMentions().collectList().block().get(0).asMember(Snowflake.of(serverId)).block(), message.getAuthorAsMember().block(), message, (TextChannel) message.getChannel().block());
+        if(outstandingChallenges.get(message.getUserMentions().blockFirst().getId().asString()).equals(message.getAuthor().get().getId().asString())){ //Challenge was accepted
+            fight(message.getUserMentions().blockFirst().asMember(Snowflake.of(serverId)).block(), message.getAuthorAsMember().block(), message, (TextChannel) message.getChannel().block());
         } else { //Challenge was not accepted.
-            outstandingChallenges.put(message.getAuthor().get().getId().asString(), message.getUserMentions().collectList().block().get(0).getId().asString());
+            outstandingChallenges.put(message.getAuthor().get().getId().asString(), message.getUserMentions().blockFirst().getId().asString());
             senderMessage.put(message.getAuthor().get().getId().asString(), message.getId().asString());
 
             Message messageBot = MessagesUtils.sendPlain(EmojiEnum.CROSSED_SWORDS.getUnicode() + " **" + message.getAuthorAsMember().block().getDisplayName() + "** has challenged **" + message.getUserMentions().collectList().block().get(0).asMember(Snowflake.of(serverId)).block().getDisplayName() + "** to a fight! " +
@@ -192,7 +192,7 @@ public class ChallengeHandler {
             messageBot.addReaction(ReactionEmoji.unicode(EmojiEnum.CROSSED_SWORDS.getUnicode())).block();
 
             botMessage.put(message.getAuthor().get().getId().asString(), messageBot.getId().asString());
-            targetPunch.put(message.getAuthorAsMember().block(), message.getUserMentions().collectList().block().get(0).asMember(Snowflake.of(serverId)).block());
+            targetPunch.put(message.getAuthorAsMember().block(), message.getUserMentions().blockFirst().asMember(Snowflake.of(serverId)).block());
         }
     }
 

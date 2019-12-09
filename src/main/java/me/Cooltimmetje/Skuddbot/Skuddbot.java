@@ -2,6 +2,8 @@ package me.Cooltimmetje.Skuddbot;
 
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
+import discord4j.core.event.EventSubscriberAdapter;
+import discord4j.core.event.domain.Event;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
@@ -57,19 +59,46 @@ public class Skuddbot {
         if(!listenersReady){
             MiscUtils.setPlaying(true);
 
-            skuddbot.getEventDispatcher().on(GuildCreateEvent.class).subscribe(CreateServerListener::onCreate);
-            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(MessagesUtils::onReaction);
-            skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(CommandManager::onMessage);
-            skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(XPGiver::onMessage);
-            skuddbot.getEventDispatcher().on(MemberJoinEvent.class).subscribe(JoinQuitListener::onJoin);
-            skuddbot.getEventDispatcher().on(MemberLeaveEvent.class).subscribe(JoinQuitListener::onLeave);
-            skuddbot.getEventDispatcher().on(MessageCreateEvent.class).subscribe(TwitchLiveListener::onMessage);
-            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(ChallengeManager::onReaction);
-            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(FFAManager::onReaction);
-            skuddbot.getEventDispatcher().on(ReactionRemoveEvent.class).subscribe(FFAManager::onReactionRemove);
-            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(BlackjackManager::onReaction);
-            skuddbot.getEventDispatcher().on(ReactionAddEvent.class).subscribe(TdManager::onReaction);
-            skuddbot.getEventDispatcher().on(MessageCreateEvent.class).filter(msg -> msg.getMessage().getUserMentions().collectList().block().contains(skuddbot.getSelf().block())).subscribe(this::onMention);
+            EventSubscriberAdapter esa = new EventSubscriberAdapter(){
+                @Override
+                public void onGuildCreate(GuildCreateEvent event) {
+                    CreateServerListener.onCreate(event);
+                }
+
+                @Override
+                public void onMessageCreate(MessageCreateEvent event){
+                    CommandManager.onMessage(event);
+                    XPGiver.onMessage(event);
+                    TwitchLiveListener.onMessage(event);
+                    onMention(event);
+                }
+
+                @Override
+                public void onMemberJoin(MemberJoinEvent event) {
+                    JoinQuitListener.onJoin(event);
+                }
+
+                @Override
+                public void onMemberLeave(MemberLeaveEvent event) {
+                    JoinQuitListener.onLeave(event);
+                }
+
+                @Override
+                public void onReactionAdd(ReactionAddEvent event) {
+                    MessagesUtils.onReaction(event);
+                    ChallengeManager.onReaction(event);
+                    FFAManager.onReaction(event);
+                    BlackjackManager.onReaction(event);
+                    TdManager.onReaction(event);
+                }
+
+                @Override
+                public void onReactionRemove(ReactionRemoveEvent event) {
+                    FFAManager.onReactionRemove(event);
+                }
+            };
+
+            skuddbot.getEventDispatcher().on(Event.class).as(esa::listener).subscribe();
 
             Main.getSkuddbotTwitch().joinChannels();
             EmojiHelper.loadEmoji();
