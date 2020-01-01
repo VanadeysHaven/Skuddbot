@@ -32,7 +32,7 @@ public class CommandManager {
 
         if(event.getMessage().getChannel().block().getType() == Channel.Type.GUILD_TEXT) {
             switch (invoker) {
-                    case "!game":
+                case "!game":
                     GameCommand.run(event.getMessage());
                     break;
                 case "!xp":
@@ -175,6 +175,9 @@ public class CommandManager {
                     break;
                 case "!cake":
                     CakeCommand.run(event.getMessage());
+                    break;
+                case ">leavethisserver":
+                    LeaveCommand.run(event.getMessage());
                     break;
                 default:
                     ServerManager.getServer(event.getGuild().block()).runCommand(invoker, event.getMessage());
