@@ -176,9 +176,6 @@ public class CommandManager {
                 case "!cake":
                     CakeCommand.run(event.getMessage());
                     break;
-                case ">leavethisserver":
-                    LeaveCommand.run(event.getMessage());
-                    break;
                 default:
                     ServerManager.getServer(event.getGuild().block()).runCommand(invoker, event.getMessage());
                     break;
