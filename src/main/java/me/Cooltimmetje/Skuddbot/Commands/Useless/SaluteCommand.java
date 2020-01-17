@@ -46,11 +46,7 @@ public class SaluteCommand {
             if (chance <= 5 && guild.getId().asLong() == 198483566026424321L) {
                 MessagesUtils.sendPlain(MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + emojis.get(MiscUtils.randomInt(0, emojis.size())).toString() + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)) + "**7**" + MiscUtils.randomStringWithChars(MiscUtils.randomInt(10, 50)), message.getChannel().block(), false);
             } else {
-                if(message.getAuthor().get().getId().asLong() == 476517936467804160L) {
-                    MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).toString())) + "7", message.getChannel().block(), false);
-                } else {
-                    MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).asFormat())) + "7", message.getChannel().block(), false);
-                }
+                MessagesUtils.sendPlain(((emojis.size() == 0) ? ("o") : (emojis.get(MiscUtils.randomInt(0, emojis.size())).asFormat())) + "7", message.getChannel().block(), false);
             }
 
             cooldown.put(message.getAuthor().get().getId().asString(), System.currentTimeMillis());
